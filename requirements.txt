@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+
+pymupdf
+beautifulsoup4
+python-docx
+
+sentence-transformers
+chromadb
+
+numpy
+scikit-learn
+
+pytest
