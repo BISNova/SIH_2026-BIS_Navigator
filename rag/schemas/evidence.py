@@ -1,3 +1,4 @@
+
 from typing import Optional
 from pydantic import BaseModel
 
@@ -10,11 +11,14 @@ class EvidenceRecord(BaseModel):
     document_title: str
 
     document_type: Optional[str] = None
+
+    section: Optional[str] = None
     section_header: Optional[str] = None
+    page_number: Optional[int] = None
 
     text: str
 
     source_url: Optional[str] = None
     version: Optional[str] = None
 
-    authority_level: Optional[str] = None
+    authority_level: Optional[int] = None

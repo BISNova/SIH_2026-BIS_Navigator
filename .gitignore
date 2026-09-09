@@ -1,11 +1,19 @@
-.venv/
+# Python
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
 .env
 
-data/raw/*
-data/cleaned/*
-data/chunks/*
-
-.pytest_cache/
-.vscode/
+# Generated RAG data
+rag/data/raw/*
+rag/data/cleaned/*
+rag/data/chunks/*
+rag/data/embeddings/*
+rag/data/processed/*
+rag/data/vectorstore/*

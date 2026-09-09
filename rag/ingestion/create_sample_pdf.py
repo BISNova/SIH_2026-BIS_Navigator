@@ -1,8 +1,12 @@
 from pathlib import Path
 import pymupdf
 
+# Navigate from rag/ingestion/ to the project root (SIH_2026-BIS_Navigator)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+output_path = PROJECT_ROOT / "data" / "raw" / "sample_bis.pdf"
 
-output_path = Path("data/raw/sample_bis.pdf")
+# Ensure the 'data/raw' directories exist before saving
+output_path.parent.mkdir(parents=True, exist_ok=True)
 
 document = pymupdf.open()
 

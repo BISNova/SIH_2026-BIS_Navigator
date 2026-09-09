@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ApplicableStandard(BaseModel):
@@ -17,10 +17,18 @@ class P1Input(BaseModel):
 
     matched_product: Optional[str] = None
 
-    applicable_standards: List[ApplicableStandard] = []
+    applicable_standards: List[ApplicableStandard] = Field(
+        default_factory=list
+    )
 
     confidence_score: float = 0.0
     confidence_label: str = "low"
 
     needs_clarification: bool = False
     clarification_question: Optional[str] = None
+
+    def get_standard_ids(self) -> List[str]:
+        return [
+            standard.standard_id
+            for standard in self.applicable_standards
+        ]
