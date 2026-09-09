@@ -58,7 +58,7 @@ class EvidenceSufficiencyChecker:
             return {
                 "evidence_sufficient": False,
                 "confidence_score": 0.0,
-                "reason": "No evidence was retrieved.",
+                "reason": "No evidence was selected for the answer.",
                 "evidence_count": 0,
                 "strong_evidence_count": 0,
                 "matched_standard_count": 0,

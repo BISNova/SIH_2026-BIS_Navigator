@@ -2,7 +2,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from schemas.evidence import EvidenceRecord
+from rag.schemas.evidence import EvidenceRecord
 
 
 class P1Output(BaseModel):

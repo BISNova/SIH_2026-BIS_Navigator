@@ -1,9 +1,8 @@
+from rag.schemas.p1_input import P1Input, ApplicableStandard
+from rag.schemas.evidence import EvidenceRecord
+from rag.schemas.p1_output import P1Output
 
-from schemas.p1_input import P1Input, ApplicableStandard
-from schemas.evidence import EvidenceRecord
-from schemas.p1_output import P1Output
-
-from pipeline.evidence_pipeline import EvidencePipeline
+from rag.pipeline.evidence_pipeline import EvidencePipeline
 
 
 def test_p1_input_to_pipeline_to_output():
@@ -15,7 +14,11 @@ def test_p1_input_to_pipeline_to_output():
         query="What are the inspection requirements?",
         normalized_query="inspection requirements",
         status="matched",
-        matched_product="Synthetic Product A",
+        matched_product={
+                "product_id": "SYN-PROD-001",
+                "canonical_name": "Synthetic Product A",
+                "attributes": {}
+            },
         applicable_standards=[
             ApplicableStandard(
                 standard_id="SYN-STD-101",
@@ -119,7 +122,7 @@ def test_p1_input_to_pipeline_to_output():
     # --------------------------------------------------
 
     output = P1Output(
-        answer="Evidence retrieved successfully.",
+        answer=result["answer"],
         evidence=evidence_records,
         sources=[
             record.source_url
@@ -127,13 +130,7 @@ def test_p1_input_to_pipeline_to_output():
             if record.source_url
         ],
         confidence_score=result["confidence_score"],
-        confidence_label=(
-            "high"
-            if result["confidence_score"] >= 0.70
-            else "medium"
-            if result["confidence_score"] >= 0.50
-            else "low"
-        ),
+        confidence_label=result["confidence_label"],
         evidence_sufficient=result["evidence_sufficient"],
         clarification_needed=False,
     )
@@ -143,6 +140,8 @@ def test_p1_input_to_pipeline_to_output():
     # --------------------------------------------------
 
     assert output.answer
+
+    assert output.answer == result["answer"]
 
     assert len(output.evidence) == result[
         "selected_count"
@@ -155,6 +154,11 @@ def test_p1_input_to_pipeline_to_output():
     assert (
         output.confidence_score
         == result["confidence_score"]
+    )
+
+    assert (
+        output.confidence_label
+        == result["confidence_label"]
     )
 
     print("\n" + "=" * 70)
@@ -184,6 +188,11 @@ def test_p1_input_to_pipeline_to_output():
     print(
         f"Confidence:          "
         f"{result['confidence_score']:.4f}"
+    )
+
+    print(
+        f"Confidence label:    "
+        f"{result['confidence_label']}"
     )
 
     print("\nEvidenceRecord fields preserved:")

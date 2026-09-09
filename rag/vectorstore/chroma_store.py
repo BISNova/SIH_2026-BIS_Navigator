@@ -8,7 +8,7 @@ import chromadb
 # Paths
 # ---------------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 EMBEDDINGS_FILE = BASE_DIR / "data" / "embeddings" / "all_embeddings.json"
 CHROMA_DIR = BASE_DIR / "data" / "vectorstore" / "chroma"
