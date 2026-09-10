@@ -1,0 +1,170 @@
+[
+    {
+        "attribute_id": "ATTR-001",
+        "product_id": "PROD-001",
+        "attribute_name": "Capacity",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-002",
+        "product_id": "PROD-001",
+        "attribute_name": "Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Stainless Steel",
+            "Aluminium",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-003",
+        "product_id": "PROD-001",
+        "attribute_name": "Nature of Base",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Plain Base",
+            "Composite Base",
+            "Induction Base",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-004",
+        "product_id": "PROD-001",
+        "attribute_name": "Nature of Lid",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Standard Lid",
+            "Tempered Glass Lid",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-005",
+        "product_id": "PROD-002",
+        "attribute_name": "Water Heater Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Storage",
+            "Instantaneous",
+            "Immersion"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-006",
+        "product_id": "PROD-002",
+        "attribute_name": "Storage Capacity",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-007",
+        "product_id": "PROD-002",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-008",
+        "product_id": "PROD-002",
+        "attribute_name": "Power Rating",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-009",
+        "product_id": "PROD-002",
+        "attribute_name": "Mounting Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Wall Mounted",
+            "Floor Mounted",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-010",
+        "product_id": "PROD-003",
+        "attribute_name": "Gold Fineness",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "585",
+            "750",
+            "833",
+            "916",
+            "958",
+            "995"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-011",
+        "product_id": "PROD-003",
+        "attribute_name": "Caratage",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "14K",
+            "18K",
+            "20K",
+            "22K",
+            "23K",
+            "24KS"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-012",
+        "product_id": "PROD-003",
+        "attribute_name": "Article Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Jewellery",
+            "Artefact"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-013",
+        "product_id": "PROD-003",
+        "attribute_name": "Gold Colour",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Yellow Gold",
+            "White Gold",
+            "Rose Gold"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-014",
+        "product_id": "PROD-003",
+        "attribute_name": "Presence of Stones",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-015",
+        "product_id": "PROD-003",
+        "attribute_name": "Detachable Parts",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": false
+    }
+]
