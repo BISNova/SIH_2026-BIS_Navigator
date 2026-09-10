@@ -1,0 +1,8 @@
+{
+  "_comment": "Keys are sorted, comma-joined product_id pairs from Person 4's real products.json. Only 3 real products exist so far (PROD-001 pressure cooker, PROD-002 water heater, PROD-003 gold jewellery) and none of them are naturally ambiguous with each other, so there are no real pairs yet - add them here as Person 4 adds more products that could plausibly collide (e.g. two kinds of bottles, two kinds of heaters).",
+
+  "_default": {
+    "question": "Could you tell me a bit more about the product - what it's made of, or what it's mainly used for?",
+    "options": []
+  }
+}

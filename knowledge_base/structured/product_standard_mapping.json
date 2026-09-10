@@ -1,0 +1,185 @@
+[
+    {
+        "mapping_id": "MAP-001",
+        "product_id": "PROD-001",
+        "standard_id": "STD-001",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to domestic pressure cookers intended for household cooking. Excludes microwaveable pressure cookers.",
+        "variant_condition": {
+            "Capacity": "Any",
+            "Material": "Stainless Steel",
+            "Nature of Base": "Any",
+            "Nature of Lid": "Any"
+        },
+        "matching_keywords": [
+            "pressure cooker",
+            "domestic pressure cooker",
+            "cooker",
+            "household pressure cooker",
+            "kitchen pressure cooker"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-001",
+        "confidence": 1.0,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-002",
+        "product_id": "PROD-002",
+        "standard_id": "STD-002",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to stationary storage type electric water heaters intended for domestic use and covered by IS 2082:2018.",
+        "variant_condition": {
+            "storage_type": "Storage / Stationary Type",
+            "capacity": "Any applicable capacity",
+            "power_rating": "Any applicable rating",
+            "mounting_type": "Applicable storage water heater configurations"
+        },
+        "matching_keywords": [
+            "storage electric water heater",
+            "storage water heater",
+            "electric water heater",
+            "electric geyser",
+            "storage geyser",
+            "stationary storage type"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-003",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-003",
+        "product_id": "PROD-002",
+        "standard_id": "STD-003",
+        "relationship_type": "secondary",
+        "scope_condition": "General electrical safety requirements referred to for the storage electric water heater under the applicable product certification requirements.",
+        "variant_condition": {
+            "storage_type": "Storage / Stationary Type",
+            "electrical_appliance": true
+        },
+        "matching_keywords": [
+            "storage electric water heater",
+            "electric water heater",
+            "electric geyser",
+            "household electrical appliance",
+            "electrical safety"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-003",
+        "confidence": 0.96,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-004",
+        "product_id": "PROD-002",
+        "standard_id": "STD-004",
+        "relationship_type": "secondary",
+        "scope_condition": "Particular electrical safety requirements applicable to storage water heaters and referred to by the primary product standard.",
+        "variant_condition": {
+            "storage_type": "Storage / Stationary Type",
+            "water_heater_type": "Storage Water Heater"
+        },
+        "matching_keywords": [
+            "storage electric water heater",
+            "storage water heater",
+            "electric water heater",
+            "electric geyser",
+            "storage geyser"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-003",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-005",
+        "product_id": "PROD-003",
+        "standard_id": "STD-005",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to gold and gold-alloy jewellery and artefacts covered by BIS hallmarking requirements and conforming to the fineness and marking provisions of IS 1417:2016.",
+        "variant_condition": {
+            "Gold fineness": [
+                "585",
+                "750",
+                "833",
+                "916",
+                "958",
+                "995"
+            ],
+            "Caratage": [
+                "14K",
+                "18K",
+                "20K",
+                "22K",
+                "23K",
+                "24KS"
+            ],
+            "Article type": "Gold Jewellery / Artefact"
+        },
+        "matching_keywords": [
+            "gold jewellery",
+            "gold jewelry",
+            "gold articles",
+            "gold artefacts",
+            "gold ornaments",
+            "hallmarked gold jewellery",
+            "hallmarked gold articles",
+            "gold fineness",
+            "gold hallmark"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-005",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-006",
+        "product_id": "PROD-003",
+        "standard_id": "STD-006",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies indirectly to the hallmarking of gold jewellery and artefacts through the requirements governing recognized Assaying and Hallmarking Centres that perform assaying and hallmarking activities.",
+        "variant_condition": {
+            "Article type": "Gold Jewellery / Artefact",
+            "hallmarking_process": true,
+            "assaying_hallmarking_centre": "Required"
+        },
+        "matching_keywords": [
+            "assaying and hallmarking centre",
+            "A&H centre",
+            "assay centre",
+            "hallmarking centre",
+            "gold jewellery hallmarking",
+            "gold assay"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-006",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-007",
+        "product_id": "PROD-003",
+        "standard_id": "STD-007",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies to determination of gold content in gold bullion, gold alloys and gold jewellery/artefacts through the specified cupellation (fire assay) method.",
+        "variant_condition": {
+            "Material": "Gold / Gold Alloy",
+            "Article type": "Gold Jewellery / Artefact",
+            "assay_method": "Cupellation / Fire Assay"
+        },
+        "matching_keywords": [
+            "gold assay",
+            "fire assay",
+            "cupellation",
+            "gold content",
+            "gold fineness",
+            "gold jewellery assay",
+            "gold alloy assay"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-007",
+        "confidence": 0.98,
+        "active": true
+    }
+]

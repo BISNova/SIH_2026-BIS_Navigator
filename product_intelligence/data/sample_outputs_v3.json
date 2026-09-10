@@ -1,0 +1,180 @@
+{
+  "matched_pressure_cooker": {
+    "answer": "Based on the available evidence:\n\nClause Clause 8.6: [Curated summary - not verbatim BIS text] Test 'Lid Removal Under Pressure' (Clause 8.6): Lid shall not be capable of unsafe removal while the cooker is under pressure. Acceptance criteria: Lid-removal safety requirement is satisfied.\n\nClause cert_step_7: [Curated summary - not verbatim BIS text] Certification step 7 (Grant of BIS licence): After satisfactory assessment and confirmation of product conformity, BIS grants the licence to use the BIS Standard Mark for the approved domestic pressure cooker and applicable manufacturing premises.\n\nClause cert_step_4: [Curated summary - not verbatim BIS text] Certification step 4 (Factory assessment): BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, testing facilities and the manufacturer's ability to consistently produce pressure cookers conforming to IS 2347.\n\nClause Clause 5.5: [Curated summary - not verbatim BIS text] Test 'Pressure Regulating Device' (Clause 5.5): Pressure regulating device shall operate correctly at the specified pressure. Acceptance criteria: Device operates within the pressure requirements of IS 2347.\n\nClause cert_step_8: [Curated summary - not verbatim BIS text] Certification step 8 (Marking and labelling): After obtaining the licence, the manufacturer marks the certified pressure cookers with the BIS Standard Mark (ISI Mark) and other marking details required by IS 2347 and the applicable BIS licence/product manual.",
+    "evidence": [
+      {
+        "chunk_id": "chunk_20",
+        "standard_id": "STD-001",
+        "document_id": "DOC-001",
+        "document_title": "Product Manual for Domestic Pressure Cooker",
+        "document_type": "PRODUCT_MANUAL",
+        "section": "Clause 8.6",
+        "section_header": "Testing - Lid Removal Under Pressure",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Test 'Lid Removal Under Pressure' (Clause 8.6): Lid shall not be capable of unsafe removal while the cooker is under pressure. Acceptance criteria: Lid-removal safety requirement is satisfied.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf",
+        "version": "PM/IS 2347/9/February 2025",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_8",
+        "standard_id": "STD-001",
+        "document_id": "DOC-001",
+        "document_title": "Product Manual for Domestic Pressure Cooker",
+        "document_type": "PRODUCT_MANUAL",
+        "section": "cert_step_7",
+        "section_header": "Certification Process - Grant of BIS licence",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Certification step 7 (Grant of BIS licence): After satisfactory assessment and confirmation of product conformity, BIS grants the licence to use the BIS Standard Mark for the approved domestic pressure cooker and applicable manufacturing premises.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf",
+        "version": "PM/IS 2347/9/February 2025",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_5",
+        "standard_id": "STD-001",
+        "document_id": "DOC-001",
+        "document_title": "Product Manual for Domestic Pressure Cooker",
+        "document_type": "PRODUCT_MANUAL",
+        "section": "cert_step_4",
+        "section_header": "Certification Process - Factory assessment",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Certification step 4 (Factory assessment): BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, testing facilities and the manufacturer's ability to consistently produce pressure cookers conforming to IS 2347.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf",
+        "version": "PM/IS 2347/9/February 2025",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_15",
+        "standard_id": "STD-001",
+        "document_id": "DOC-001",
+        "document_title": "Product Manual for Domestic Pressure Cooker",
+        "document_type": "PRODUCT_MANUAL",
+        "section": "Clause 5.5",
+        "section_header": "Testing - Pressure Regulating Device",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Test 'Pressure Regulating Device' (Clause 5.5): Pressure regulating device shall operate correctly at the specified pressure. Acceptance criteria: Device operates within the pressure requirements of IS 2347.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf",
+        "version": "PM/IS 2347/9/February 2025",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_9",
+        "standard_id": "STD-001",
+        "document_id": "DOC-001",
+        "document_title": "Product Manual for Domestic Pressure Cooker",
+        "document_type": "PRODUCT_MANUAL",
+        "section": "cert_step_8",
+        "section_header": "Certification Process - Marking and labelling",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Certification step 8 (Marking and labelling): After obtaining the licence, the manufacturer marks the certified pressure cookers with the BIS Standard Mark (ISI Mark) and other marking details required by IS 2347 and the applicable BIS licence/product manual.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf",
+        "version": "PM/IS 2347/9/February 2025",
+        "authority_level": 1
+      }
+    ],
+    "sources": [
+      "https://www.bis.gov.in/wp-content/uploads/2025/02/PM-IS-2347.pdf"
+    ],
+    "confidence_score": 0.6176,
+    "confidence_label": "medium",
+    "evidence_sufficient": true,
+    "clarification_needed": false,
+    "clarification_question": null
+  },
+  "matched_gold_jewellery": {
+    "answer": "Based on the available evidence:\n\nClause scope: [Curated summary - not verbatim BIS text] Scope of 1417 (Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification): Specifies the fineness grades, gold content requirements, marking requirements and related provisions for gold and gold-alloy jewellery and artefacts.\n\nClause scope: [Curated summary - not verbatim BIS text] Scope of 1418 (Determination of Gold in Gold Bullion, Gold Alloys and Gold Jewellery/Artefacts - Cupellation (Fire Assay) Method): Specifies the cupellation (fire assay) method for determination of gold in gold bullion, gold alloys and gold jewellery/artefacts.\n\nClause scope: [Curated summary - not verbatim BIS text] Scope of 15820 (Establishment and Operation of Assaying and Hallmarking Centres - General Requirements): Specifies general requirements for establishment and operation of Assaying and Hallmarking Centres, including infrastructure, personnel, quality management and operational requirements for hallmarking activities.\n\nClause IS 1417:2016, Clause 4: [Curated summary - not verbatim BIS text] Test 'Permitted Gold Grade / Fineness Verification' (IS 1417:2016, Clause 4): The article shall correspond to a permitted gold fineness grade under IS 1417:2016. Acceptance criteria: The tested fineness shall satisfy the minimum gold-content requirement of the declared grade.\n\nClause IS 1417:2016, Clause 5.6: [Curated summary - not verbatim BIS text] Test 'Retesting of Hallmarked Jewellery / Artefacts' (IS 1417:2016, Clause 5.6): Retesting of hallmarked jewellery/artefacts is permitted subject to the tolerance specified by the standard. Acceptance criteria: Negative tolerance on retesting shall not exceed 2 ppt.",
+    "evidence": [
+      {
+        "chunk_id": "chunk_42",
+        "standard_id": "STD-005",
+        "document_id": "DOC-005",
+        "document_title": "IS 1417:2016 - Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification",
+        "document_type": "INDIAN_STANDARD",
+        "section": "scope",
+        "section_header": "Scope - Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Scope of 1417 (Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification): Specifies the fineness grades, gold content requirements, marking requirements and related provisions for gold and gold-alloy jewellery and artefacts.",
+        "source_url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-10_1124.pdf",
+        "version": "Fourth Revision",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_52",
+        "standard_id": "STD-007",
+        "document_id": "NO-DOC-STD-007",
+        "document_title": "Determination of Gold in Gold Bullion, Gold Alloys and Gold Jewellery/Artefacts - Cupellation (Fire Assay) Method",
+        "document_type": "INDIAN_STANDARD",
+        "section": "scope",
+        "section_header": "Scope - Determination of Gold in Gold Bullion, Gold Alloys and Gold Jewellery/Artefacts - Cupellation (Fire Assay) Method",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Scope of 1418 (Determination of Gold in Gold Bullion, Gold Alloys and Gold Jewellery/Artefacts - Cupellation (Fire Assay) Method): Specifies the cupellation (fire assay) method for determination of gold in gold bullion, gold alloys and gold jewellery/artefacts.",
+        "source_url": "https://www.bis.gov.in/hallmarking-overview/hallmarking-faqs/hallmarking-faq/?lang=en",
+        "version": "unknown",
+        "authority_level": 4
+      },
+      {
+        "chunk_id": "chunk_51",
+        "standard_id": "STD-006",
+        "document_id": "NO-DOC-STD-006",
+        "document_title": "Establishment and Operation of Assaying and Hallmarking Centres - General Requirements",
+        "document_type": "INDIAN_STANDARD",
+        "section": "scope",
+        "section_header": "Scope - Establishment and Operation of Assaying and Hallmarking Centres - General Requirements",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Scope of 15820 (Establishment and Operation of Assaying and Hallmarking Centres - General Requirements): Specifies general requirements for establishment and operation of Assaying and Hallmarking Centres, including infrastructure, personnel, quality management and operational requirements for hallmarking activities.",
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2024/10/Implementation-Guidelines-IS-15820.pdf",
+        "version": "unknown",
+        "authority_level": 4
+      },
+      {
+        "chunk_id": "chunk_44",
+        "standard_id": "STD-005",
+        "document_id": "DOC-005",
+        "document_title": "IS 1417:2016 - Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification",
+        "document_type": "INDIAN_STANDARD",
+        "section": "IS 1417:2016, Clause 4",
+        "section_header": "Testing - Permitted Gold Grade / Fineness Verification",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Test 'Permitted Gold Grade / Fineness Verification' (IS 1417:2016, Clause 4): The article shall correspond to a permitted gold fineness grade under IS 1417:2016. Acceptance criteria: The tested fineness shall satisfy the minimum gold-content requirement of the declared grade.",
+        "source_url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-10_1124.pdf",
+        "version": "Fourth Revision",
+        "authority_level": 1
+      },
+      {
+        "chunk_id": "chunk_50",
+        "standard_id": "STD-005",
+        "document_id": "DOC-005",
+        "document_title": "IS 1417:2016 - Gold and Gold Alloys, Jewellery/Artefacts - Fineness and Marking - Specification",
+        "document_type": "INDIAN_STANDARD",
+        "section": "IS 1417:2016, Clause 5.6",
+        "section_header": "Testing - Retesting of Hallmarked Jewellery / Artefacts",
+        "page_number": 1,
+        "text": "[Curated summary - not verbatim BIS text] Test 'Retesting of Hallmarked Jewellery / Artefacts' (IS 1417:2016, Clause 5.6): Retesting of hallmarked jewellery/artefacts is permitted subject to the tolerance specified by the standard. Acceptance criteria: Negative tolerance on retesting shall not exceed 2 ppt.",
+        "source_url": "https://www.services.bis.gov.in/tmp/tbl5_2024-11-10_1124.pdf",
+        "version": "Fourth Revision",
+        "authority_level": 1
+      }
+    ],
+    "sources": [
+      "https://www.services.bis.gov.in/tmp/tbl5_2024-11-10_1124.pdf",
+      "https://www.bis.gov.in/hallmarking-overview/hallmarking-faqs/hallmarking-faq/?lang=en",
+      "https://www.bis.gov.in/wp-content/uploads/2024/10/Implementation-Guidelines-IS-15820.pdf"
+    ],
+    "confidence_score": 0.6653,
+    "confidence_label": "medium",
+    "evidence_sufficient": true,
+    "clarification_needed": false,
+    "clarification_question": null
+  },
+  "not_found": {
+    "answer": "We don't have this product in our curated knowledge base yet.",
+    "evidence": [],
+    "sources": [],
+    "confidence_score": 0.0,
+    "confidence_label": "low",
+    "evidence_sufficient": false,
+    "clarification_needed": false,
+    "clarification_question": null
+  }
+}

@@ -1,0 +1,4 @@
+product_id,product_name,standard_id,is_number,product_manual,qco,scheme,tests,labs,status,last_verified
+PROD-001,Domestic Pressure Cooker,[STD-001],IS 2347:2017,YES,YES,Scheme-I,YES,YES,READY,2026-09-09
+PROD-002,Storage Electric Water Heater,[STD-002&STD-003&STD-004],IS 2082:2018,YES,YES,Scheme-I,YES,YES,READY,2026-09-09
+PROD-003,Gold Jewellery / Gold Articles,[STD-005],IS 1417:2016,YES,YES,Hallmarking Scheme,YES,YES,READY,2026-09-09

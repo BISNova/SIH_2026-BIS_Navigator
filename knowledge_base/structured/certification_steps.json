@@ -1,0 +1,120 @@
+[
+    {
+        "standard_id": "STD-001",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify the applicable Indian Standard (IS 2347), confirm that the product is within its scope, and ensure that the manufacturing unit, production facilities, quality-control arrangements, testing facilities and applicable raw materials are capable of meeting the standard requirements.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit an application to BIS through the applicable online product certification process for a licence to use the BIS Standard Mark under Scheme-I. The application should identify the manufacturing premises, product, applicable standard and relevant manufacturing and testing details.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness and applicability of the requested certification against IS 2347.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, testing facilities and the manufacturer's ability to consistently produce pressure cookers conforming to IS 2347.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples of the pressure cooker are drawn and tested against the applicable requirements of IS 2347. Testing may be performed in the manufacturer's laboratory, BIS-recognized laboratory or other laboratory as permitted by the applicable BIS certification procedure.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during assessment or testing, the manufacturer must take corrective action and provide evidence of compliance as required by BIS before the licence can be granted.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of product conformity, BIS grants the licence to use the BIS Standard Mark for the approved domestic pressure cooker and applicable manufacturing premises.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the manufacturer marks the certified pressure cookers with the BIS Standard Mark (ISI Mark) and other marking details required by IS 2347 and the applicable BIS licence/product manual.",
+                "source_document_id": "DOC-001"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must continue to comply with IS 2347 and the BIS licence conditions. BIS may conduct surveillance visits, draw market or factory samples and require testing to verify continuing conformity.",
+                "source_document_id": "DOC-001"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-002",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 2082:2018 as the applicable primary product standard, confirm that the storage electric water heater is within its scope, and ensure that the manufacturing facilities, quality-control arrangements, testing facilities and applicable components are capable of meeting the standard requirements.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit an application to BIS through the applicable online product certification process for a licence to use the BIS Standard Mark under Scheme-I. The application should identify the manufacturing premises, product, applicable standard and relevant manufacturing and testing details.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness and applicability of the requested certification against IS 2082:2018 and the applicable referred safety requirements.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, testing facilities and the manufacturer's ability to consistently produce storage electric water heaters conforming to the applicable requirements.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples of the storage electric water heater are drawn and tested against the applicable requirements of IS 2082:2018 and the referred electrical safety standards, including IS 302 Part 1:2024 and IS 302 Part 2/Sec 21:2024, as applicable.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during assessment or testing, the manufacturer must take corrective action and provide evidence of compliance as required by BIS before the licence can be granted.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of product conformity, BIS grants the licence to use the BIS Standard Mark for the approved storage electric water heater and applicable manufacturing premises.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the manufacturer marks the certified storage electric water heaters with the BIS Standard Mark and other marking details required by IS 2082:2018 and the applicable BIS licence or product manual.",
+                "source_document_id": "DOC-003"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must continue to comply with IS 2082:2018, the referred safety requirements and BIS licence conditions. BIS may conduct surveillance activities, draw samples and require testing to verify continuing conformity.",
+                "source_document_id": "DOC-003"
+            }
+        ]
+    }
+]

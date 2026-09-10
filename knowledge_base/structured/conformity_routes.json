@@ -1,0 +1,38 @@
+[
+    {
+        "route_id": "ROUTE-001",
+        "standard_id": "STD-001",
+        "scheme_id": "SCHEME-I",
+        "scheme_name": "Scheme-I (ISI Mark Scheme)",
+        "certification_type": "BIS Product Certification",
+        "mandatory": true,
+        "mandatory_reason": "Domestic Pressure Cooker is covered under the Domestic Pressure Cooker (Quality Control) Order, 2020. The QCO requires products covered by the order to bear the Standard Mark under a BIS licence as per Scheme-I. BIS currently lists Domestic Pressure Cooker against IS 2347 under Scheme-I. The latest applicable version of the Indian Standard is to be followed as notified by BIS.",
+        "standard_mark": "ISI Mark",
+        "application_route": "Apply online to BIS for a product certification licence under Scheme-I through the BIS Manakonline portal. The manufacturer must demonstrate conformity to IS 2347, with assessment of manufacturing infrastructure, process controls, quality-control/testing capabilities and product conformity through the applicable BIS assessment and testing process.",
+        "source_document_id": "DOC-001"
+    },
+    {
+        "route_id": "ROUTE-002",
+        "standard_id": "STD-002",
+        "scheme_id": "SCHEME-I",
+        "scheme_name": "Scheme-I (ISI Mark Scheme)",
+        "certification_type": "BIS Product Certification",
+        "mandatory": true,
+        "mandatory_reason": "Stationary storage type electric water heaters are covered under the applicable Quality Control Order and are required to conform to IS 2082:2018 and bear the Standard Mark under a BIS licence.",
+        "standard_mark": "ISI Mark",
+        "application_route": "Apply for BIS product certification under Scheme-I through the BIS online certification portal, undergo factory assessment and product testing, and obtain a BIS licence before applying the Standard Mark.",
+        "source_document_id": "DOC-003"
+    },
+    {
+        "route_id": "ROUTE-003",
+        "standard_id": "STD-005",
+        "scheme_id": "SCHEME-HM",
+        "scheme_name": "BIS Hallmarking Scheme",
+        "certification_type": "Jeweller Registration and Hallmarking",
+        "mandatory": true,
+        "mandatory_reason": "Jewellers selling hallmarked gold and silver jewellery/artefacts are required to obtain BIS registration in areas covered by mandatory hallmarking requirements. Hallmarking is carried out through BIS-recognized Assaying and Hallmarking Centres.",
+        "standard_mark": "BIS Hallmark",
+        "application_route": "Jeweller obtains BIS registration through the National Single Window System (NSWS) or BIS Manakonline portal, then submits a hallmarking request through the Hallmarking portal to a BIS-recognized Assaying & Hallmarking Centre. The centre receives and assays the jewellery and applies the hallmark to articles that conform to the required purity/fineness.",
+        "source_document_id": "DOC-005"
+    }
+]

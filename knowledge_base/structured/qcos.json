@@ -1,0 +1,37 @@
+[
+    {
+        "qco_id": "QCO-001",
+        "qco_name": "Domestic Pressure Cooker (Quality Control) Order, 2020",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade (DPIIT), Government of India",
+        "notification_number": "S.O. 294(E)",
+        "notification_date": "2020-01-21",
+        "effective_date": "2021-02-01",
+        "status": "current",
+        "product_scope": "Domestic Pressure Cooker",
+        "standard_id": "STD-001",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "name": "Domestic Pressure Cooker (Quality Control) (Amendment) Order, 2020",
+                "notification_number": "S.O. 2019(E)",
+                "notification_date": "2020-06-23",
+                "change": "Changed the commencement date of the principal QCO from 1 August 2020 to 1 February 2021."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2020/01/Pressure_cooker_QCO.pdf"
+    },
+    {
+        "qco_id": "QCO-002",
+        "qco_name": "Electrical Appliances for Domestic Water Heating (Quality Control) Order, 2025",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade (DPIIT), Government of India",
+        "notification_number": "S.O. 355(E)",
+        "notification_date": "2025-01-16",
+        "effective_date": "2025-03-01",
+        "status": "current",
+        "product_scope": "Electrical appliances for domestic water heating, including stationary storage type electric water heaters",
+        "standard_id": "STD-002",
+        "scheme_id": "SCHEME-I",
+        "amendments": [],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/01/Electrical-Appliances-for-domestic-water-heating-QCO-2025.pdf"
+    }
+]
