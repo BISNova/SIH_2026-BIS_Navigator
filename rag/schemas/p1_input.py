@@ -41,6 +41,10 @@ class P1Input(BaseModel):
     needs_clarification: bool = False
     clarification_question: Optional[str] = None
 
+    # Response language requested by the caller.
+    # Defaults to English for backward compatibility.
+    language: str = "en"
+
     def get_standard_ids(self) -> List[str]:
         return [
             standard.standard_id

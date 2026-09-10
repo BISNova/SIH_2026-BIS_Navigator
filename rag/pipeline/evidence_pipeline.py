@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -11,10 +12,14 @@ from sentence_transformers import SentenceTransformer
 # Project path setup
 # ============================================================
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+RAG_DIR = PROJECT_ROOT / "rag"
 
-if str(BASE_DIR) not in sys.path:
-    sys.path.insert(0, str(BASE_DIR))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+if str(RAG_DIR) not in sys.path:
+    sys.path.insert(0, str(RAG_DIR))
 
 
 # ============================================================
@@ -25,7 +30,7 @@ from retrieval.retriever import EvidenceRetriever
 from retrieval.reranker import EvidenceReranker
 from evidence.selector import EvidenceSelector
 from evidence.sufficiency import EvidenceSufficiencyChecker
-from answer.generator import GroundedAnswerGenerator
+from answer.gemini_generator import GeminiAnswerGenerator
 from citations.builder import CitationBuilder
 from confidence.scorer import ConfidenceScorer
 
@@ -40,7 +45,8 @@ from rag.knowledge.evidence_builder import P4EvidenceBuilder
 
 class EvidencePipeline:
     """
-    P1 End-to-End Evidence Pipeline with P4 Knowledge Integration.
+    P1 End-to-End Evidence Pipeline with P4 Knowledge Integration
+    and Gemini-based grounded answer generation.
 
     Flow:
 
@@ -52,7 +58,7 @@ class EvidencePipeline:
         │                             │
         ▼                             ▼
     P1 Chroma                  P4 Structured Knowledge
-    Retrieval                  Evidence Builder
+    P1 Retrieval               P4 Evidence Builder
         │                             │
         └──────────────┬──────────────┘
                        ▼
@@ -60,24 +66,48 @@ class EvidencePipeline:
                        ↓
                     Reranking
                        ↓
-          Coverage-aware Selection
+          Query-aware Evidence Selection
                        ↓
                 Evidence Sufficiency
                        ↓
                 Confidence Scoring
                        ↓
-            Grounded Answer Generation
+              Gemini Answer Generation
                        ↓
                 Citation Building
                        ↓
               Final Evidence Package
 
+    Important architecture rule:
+
+    Gemini does NOT perform retrieval.
+
+    Gemini receives only evidence that has already passed:
+        1. P1/P4 retrieval
+        2. reranking
+        3. evidence selection
+        4. evidence sufficiency checks
+
+    Therefore:
+
+        Retrieval   = finding evidence
+        Reranking   = prioritizing evidence
+        Selection   = choosing evidence for the answer
+        Sufficiency = deciding whether evidence is reliable enough
+        Gemini      = explaining the selected evidence
+
     P4 integration is activated when standard_ids
     are supplied.
 
-    For multi-standard queries, selection is coverage-aware:
-    at least one relevant evidence item is selected from each
-    expected standard whenever suitable evidence is available.
+    For multi-standard queries, selection is coverage-aware.
+
+    For completeness/list-style questions, the pipeline uses
+    query-aware evidence selection.
+
+    For test-completeness queries, authoritative P4 TEST
+    records are preserved in full. Reranking determines their
+    order, but the normal semantic-score threshold is not used
+    to discard an authoritative P4 test record.
     """
 
     # ========================================================
@@ -96,10 +126,6 @@ class EvidencePipeline:
 
         print("Embedding model loaded.")
 
-        # ----------------------------------------------------
-        # Existing P1 components
-        # ----------------------------------------------------
-
         self.retriever = EvidenceRetriever()
 
         self.reranker = EvidenceReranker()
@@ -117,7 +143,7 @@ class EvidencePipeline:
 
         self.confidence_scorer = ConfidenceScorer()
 
-        self.answer_generator = GroundedAnswerGenerator(
+        self.answer_generator = GeminiAnswerGenerator(
             minimum_evidence_score=0.30
         )
 
@@ -125,10 +151,6 @@ class EvidencePipeline:
 
         self.retrieval_top_k = retrieval_top_k
         self.rerank_top_k = rerank_top_k
-
-        # ----------------------------------------------------
-        # P4 components
-        # ----------------------------------------------------
 
         self.p4_adapter = P4KnowledgeAdapter()
 
@@ -140,14 +162,7 @@ class EvidencePipeline:
     # Query embedding
     # ========================================================
 
-    def _embed_query(
-        self,
-        query: str,
-    ) -> list[float]:
-        """
-        Generate a normalized embedding for the query.
-        """
-
+    def _embed_query(self, query: str) -> list[float]:
         embedding = self.model.encode(
             query,
             normalize_embeddings=True,
@@ -156,7 +171,7 @@ class EvidencePipeline:
         return embedding.tolist()
 
     # ========================================================
-    # Similarity calculation
+    # Similarity
     # ========================================================
 
     def _calculate_similarity(
@@ -164,14 +179,6 @@ class EvidencePipeline:
         query_embedding: list[float],
         text: str,
     ) -> float:
-        """
-        Calculate cosine similarity between the query embedding
-        and an evidence text embedding.
-
-        Both vectors are normalized, so their dot product is
-        equivalent to cosine similarity.
-        """
-
         if not text or not text.strip():
             return 0.0
 
@@ -196,6 +203,108 @@ class EvidencePipeline:
         )
 
     # ========================================================
+    # General completeness detection
+    # ========================================================
+
+    def _is_completeness_query(
+        self,
+        query: str,
+    ) -> bool:
+        if not query:
+            return False
+
+        normalized_query = " ".join(
+            query.lower().strip().split()
+        )
+
+        completeness_terms = (
+            "what tests are required",
+            "what tests are needed",
+            "which tests are required",
+            "which tests are needed",
+            "list all tests",
+            "list the tests",
+            "all required tests",
+            "all tests",
+            "required tests",
+            "tests required",
+            "what requirements are required",
+            "what are the requirements",
+            "which requirements are required",
+            "list all requirements",
+            "list the requirements",
+            "all requirements",
+            "required requirements",
+            "what documents are required",
+            "which documents are required",
+            "list all documents",
+            "list the documents",
+            "all required documents",
+            "what certification steps",
+            "what are the certification steps",
+            "list all certification steps",
+            "all certification steps",
+        )
+
+        return any(
+            phrase in normalized_query
+            for phrase in completeness_terms
+        )
+
+    # ========================================================
+    # Test completeness detection
+    # ========================================================
+
+    def _is_test_completeness_query(
+        self,
+        query: str,
+    ) -> bool:
+        if not query:
+            return False
+
+        normalized_query = " ".join(
+            query.lower().strip().split()
+        )
+
+        test_terms = (
+            "test",
+            "tests",
+            "testing",
+        )
+
+        contains_test_term = any(
+            term in normalized_query
+            for term in test_terms
+        )
+
+        if not contains_test_term:
+            return False
+
+        completeness_test_terms = (
+            "what tests are required",
+            "what tests are needed",
+            "which tests are required",
+            "which tests are needed",
+            "list all tests",
+            "list the tests",
+            "all required tests",
+            "all tests",
+            "required tests",
+            "tests required",
+            "required testing",
+            "tests needed",
+            "what testing is required",
+            "what testing is needed",
+            "which testing is required",
+            "which testing is needed",
+        )
+
+        return any(
+            phrase in normalized_query
+            for phrase in completeness_test_terms
+        )
+
+    # ========================================================
     # Prepare P4 evidence
     # ========================================================
 
@@ -205,21 +314,12 @@ class EvidencePipeline:
         query_embedding: list[float],
         standard_ids: list[str],
     ) -> list[dict[str, Any]]:
-        """
-        Build structured P4 evidence for the supplied standards.
-
-        Each P4 EvidenceRecord is converted into a dictionary and
-        assigned a semantic similarity score so that it can enter
-        the existing P1 reranking pipeline.
-        """
-
         if not standard_ids:
             return []
 
         p4_records: list[Any] = []
 
         for standard_id in standard_ids:
-
             records = (
                 self.p4_evidence_builder.build_for_standard(
                     standard_id
@@ -233,15 +333,12 @@ class EvidencePipeline:
 
         for record in p4_records:
 
-            # Pydantic v2
             if hasattr(record, "model_dump"):
                 item = record.model_dump()
 
-            # Pydantic v1 compatibility
             elif hasattr(record, "dict"):
                 item = record.dict()
 
-            # Already a dictionary
             elif isinstance(record, dict):
                 item = dict(record)
 
@@ -260,8 +357,6 @@ class EvidencePipeline:
 
             item["similarity_score"] = similarity_score
 
-            # Initial rerank value.
-            # The actual reranker will overwrite this.
             item.setdefault(
                 "rerank_score",
                 similarity_score,
@@ -280,11 +375,6 @@ class EvidencePipeline:
         p1_evidence: list[dict[str, Any]],
         p4_evidence: list[dict[str, Any]],
     ) -> list[dict[str, Any]]:
-        """
-        Merge P1 retrieved evidence and P4 structured evidence.
-
-        Duplicate chunk IDs are removed while preserving order.
-        """
 
         merged: list[dict[str, Any]] = []
 
@@ -310,55 +400,150 @@ class EvidencePipeline:
         return merged
 
     # ========================================================
-    # Coverage-aware evidence selection
+    # Identify P4 test evidence
+    # ========================================================
+
+    @staticmethod
+    def _is_p4_test_evidence(
+        candidate: dict[str, Any],
+    ) -> bool:
+
+        if not isinstance(candidate, dict):
+            return False
+
+        chunk_id = str(
+            candidate.get("chunk_id", "")
+        ).strip().upper()
+
+        return chunk_id.startswith("P4-TEST-")
+
+    # ========================================================
+    # Evidence selection with standard coverage
     # ========================================================
 
     def _select_with_standard_coverage(
         self,
         candidates: list[dict[str, Any]],
         standard_ids: list[str] | None,
+        max_evidence: int | None = None,
+        test_completeness_query: bool = False,
     ) -> list[dict[str, Any]]:
-        """
-        Select final evidence while preserving coverage of
-        applicable standards.
-
-        Normal P1 behavior:
-            candidates → selector → top evidence
-
-        Multi-standard P4 behavior:
-            1. Prefer at least one relevant candidate from every
-               expected standard.
-            2. Fill remaining evidence slots with highest-scoring
-               candidates overall.
-            3. Never exceed self.rerank_top_k.
-
-        This method does not weaken the sufficiency checker.
-        It simply gives the sufficiency checker a better evidence
-        set to evaluate.
-        """
 
         if not candidates:
             return []
 
+        evidence_limit = (
+            max_evidence
+            if max_evidence is not None
+            else self.rerank_top_k
+        )
+
         # ----------------------------------------------------
-        # General P1 query
+        # No standard filtering required
         # ----------------------------------------------------
 
         if not standard_ids:
-            return self.selector.select(
-                candidates=candidates
-            )
+
+            if evidence_limit == self.rerank_top_k:
+                return self.selector.select(
+                    candidates=candidates
+                )
+
+            selected = []
+
+            for candidate in candidates:
+
+                score = float(
+                    candidate.get(
+                        "rerank_score",
+                        0.0,
+                    )
+                )
+
+                if score < self.selector.minimum_score:
+                    continue
+
+                selected.append(candidate)
+
+                if len(selected) >= evidence_limit:
+                    break
+
+            return selected
+
+        # ----------------------------------------------------
+        # Expected standards
+        # ----------------------------------------------------
 
         expected_standards = list(
             dict.fromkeys(standard_ids)
         )
 
         # ----------------------------------------------------
-        # First filter by the existing selector threshold.
+        # SPECIAL CASE:
+        # Test-completeness query
         #
-        # We do this ourselves instead of immediately calling
-        # selector.select(), because we need to preserve enough
-        # candidates to achieve standard coverage.
+        # For authoritative P4 TEST records:
+        #
+        #   reranking = ordering
+        #   P4 completeness = preservation
+        #
+        # We intentionally DO NOT discard a P4 test simply
+        # because its rerank score is below 0.30.
+        # ----------------------------------------------------
+
+        if test_completeness_query:
+
+            p4_test_candidates = [
+                candidate
+                for candidate in candidates
+                if self._is_p4_test_evidence(candidate)
+            ]
+
+            if p4_test_candidates:
+
+                # Preserve every authoritative P4 test record.
+                #
+                # They have already been selected from the
+                # standard-specific P4 knowledge base.
+                #
+                # Their rerank score is still useful for ordering,
+                # but not for deleting an authoritative requirement.
+
+                selected = list(
+                    p4_test_candidates
+                )
+
+                selected.sort(
+                    key=lambda item: (
+                        float(
+                            item.get(
+                                "rerank_score",
+                                item.get(
+                                    "similarity_score",
+                                    0.0,
+                                ),
+                            )
+                        ),
+                        float(
+                            item.get(
+                                "similarity_score",
+                                0.0,
+                            )
+                        ),
+                    ),
+                    reverse=True,
+                )
+
+                # Make sure every requested standard that has
+                # P4 test records remains represented.
+                #
+                # Since all P4 test records are preserved, this
+                # naturally maintains standard coverage.
+
+                return selected
+
+        # ----------------------------------------------------
+        # Normal score-based filtering
         # ----------------------------------------------------
 
         valid_candidates = []
@@ -380,13 +565,6 @@ class EvidencePipeline:
         if not valid_candidates:
             return []
 
-        # ----------------------------------------------------
-        # Candidates are already sorted by the reranker.
-        #
-        # We still sort here to make this method safe if it is
-        # called independently.
-        # ----------------------------------------------------
-
         valid_candidates.sort(
             key=lambda item: (
                 float(
@@ -405,16 +583,13 @@ class EvidencePipeline:
             reverse=True,
         )
 
+        # ----------------------------------------------------
+        # Standard coverage
+        # ----------------------------------------------------
+
         selected: list[dict[str, Any]] = []
 
         selected_chunk_ids: set[str] = set()
-
-        # ----------------------------------------------------
-        # STEP 1
-        #
-        # Select the strongest candidate for every expected
-        # standard.
-        # ----------------------------------------------------
 
         for standard_id in expected_standards:
 
@@ -422,13 +597,20 @@ class EvidencePipeline:
 
             for candidate in valid_candidates:
 
-                if candidate.get("chunk_id") in selected_chunk_ids:
+                chunk_id = candidate.get(
+                    "chunk_id"
+                )
+
+                if chunk_id in selected_chunk_ids:
                     continue
 
-                if candidate.get("standard_id") != standard_id:
+                if candidate.get(
+                    "standard_id"
+                ) != standard_id:
                     continue
 
                 best_candidate = candidate
+
                 break
 
             if best_candidate is None:
@@ -440,20 +622,20 @@ class EvidencePipeline:
                 best_candidate.get("chunk_id")
             )
 
-            if len(selected) >= self.rerank_top_k:
+            if len(selected) >= evidence_limit:
                 break
 
         # ----------------------------------------------------
-        # STEP 2
-        #
-        # Fill remaining slots with strongest candidates.
+        # Fill remaining evidence slots
         # ----------------------------------------------------
 
-        if len(selected) < self.rerank_top_k:
+        if len(selected) < evidence_limit:
 
             for candidate in valid_candidates:
 
-                chunk_id = candidate.get("chunk_id")
+                chunk_id = candidate.get(
+                    "chunk_id"
+                )
 
                 if chunk_id in selected_chunk_ids:
                     continue
@@ -462,15 +644,8 @@ class EvidencePipeline:
 
                 selected_chunk_ids.add(chunk_id)
 
-                if len(selected) >= self.rerank_top_k:
+                if len(selected) >= evidence_limit:
                     break
-
-        # ----------------------------------------------------
-        # Final ordering by rerank score.
-        #
-        # Coverage is guaranteed, but the final evidence is
-        # still presented in relevance order.
-        # ----------------------------------------------------
 
         selected.sort(
             key=lambda item: (
@@ -500,10 +675,8 @@ class EvidencePipeline:
         self,
         query: str,
         standard_ids: list[str] | None = None,
+        language: str = "en",
     ) -> dict:
-        """
-        Run the complete P1 + P4 evidence pipeline.
-        """
 
         if not query or not query.strip():
             raise ValueError(
@@ -511,13 +684,13 @@ class EvidencePipeline:
             )
 
         # ----------------------------------------------------
-        # 1. Query embedding
+        # Query embedding
         # ----------------------------------------------------
 
         query_embedding = self._embed_query(query)
 
         # ----------------------------------------------------
-        # 2. Existing P1 retrieval
+        # P1 retrieval
         # ----------------------------------------------------
 
         retrieved_candidates = self.retriever.retrieve(
@@ -527,7 +700,7 @@ class EvidencePipeline:
         )
 
         # ----------------------------------------------------
-        # 3. P4 structured evidence
+        # P4 retrieval
         # ----------------------------------------------------
 
         p4_candidates: list[dict[str, Any]] = []
@@ -541,7 +714,7 @@ class EvidencePipeline:
             )
 
         # ----------------------------------------------------
-        # 4. Merge P1 + P4
+        # Merge P1 + P4
         # ----------------------------------------------------
 
         combined_candidates = self._merge_evidence(
@@ -550,92 +723,216 @@ class EvidencePipeline:
         )
 
         # ----------------------------------------------------
-        # 5. Reranking
-        #
-        # IMPORTANT:
-        # For multi-standard P4 queries, use a larger reranking
-        # pool so evidence from lower-ranked applicable standards
-        # is not discarded before coverage-aware selection.
+        # Query classification
         # ----------------------------------------------------
 
-        if standard_ids and len(standard_ids) > 1:
+        completeness_query = (
+            self._is_completeness_query(query)
+        )
+
+        test_completeness_query = (
+            self._is_test_completeness_query(query)
+        )
+
+        # ----------------------------------------------------
+        # Evidence budget
+        # ----------------------------------------------------
+
+        if test_completeness_query and standard_ids:
+
+            test_p4_count = sum(
+                1
+                for item in p4_candidates
+                if self._is_p4_test_evidence(item)
+            )
+
+            evidence_budget = max(
+                self.rerank_top_k,
+                test_p4_count,
+            )
+
+        elif completeness_query and standard_ids:
+
+            evidence_budget = max(
+                self.rerank_top_k,
+                len(p4_candidates),
+            )
+
+        else:
+
+            evidence_budget = self.rerank_top_k
+
+        # ----------------------------------------------------
+        # Reranking candidates
+        # ----------------------------------------------------
+
+        if test_completeness_query and standard_ids:
+
+            p4_test_candidates = [
+                item
+                for item in p4_candidates
+                if self._is_p4_test_evidence(item)
+            ]
+
+            if p4_test_candidates:
+
+                test_chunk_ids = {
+                    item.get("chunk_id")
+                    for item in p4_test_candidates
+                }
+
+                p4_chunk_ids = {
+                    item.get("chunk_id")
+                    for item in p4_candidates
+                }
+
+                reranking_candidates = [
+                    item
+                    for item in combined_candidates
+                    if (
+                        item.get("chunk_id")
+                        not in p4_chunk_ids
+                        or item.get("chunk_id")
+                        in test_chunk_ids
+                    )
+                ]
+
+            else:
+
+                reranking_candidates = (
+                    combined_candidates
+                )
+
+            coverage_rerank_top_k = max(
+                evidence_budget,
+                len(reranking_candidates),
+            )
+
+        elif completeness_query and standard_ids:
+
+            coverage_rerank_top_k = max(
+                evidence_budget,
+                len(combined_candidates),
+            )
+
+            reranking_candidates = (
+                combined_candidates
+            )
+
+        elif standard_ids and len(standard_ids) > 1:
 
             coverage_rerank_top_k = max(
                 self.rerank_top_k,
                 len(standard_ids) * 5,
             )
 
+            reranking_candidates = (
+                combined_candidates
+            )
+
         else:
 
-            coverage_rerank_top_k = self.rerank_top_k
+            coverage_rerank_top_k = (
+                self.rerank_top_k
+            )
+
+            reranking_candidates = (
+                combined_candidates
+            )
+
+        # ----------------------------------------------------
+        # Reranking
+        # ----------------------------------------------------
 
         reranked_candidates = self.reranker.rerank(
             query=query,
-            candidates=combined_candidates,
+            candidates=reranking_candidates,
             top_k=coverage_rerank_top_k,
             standard_ids=standard_ids,
         )
 
         # ----------------------------------------------------
-        # 6. Coverage-aware selection
+        # Evidence selection
         # ----------------------------------------------------
 
         selected_evidence = (
             self._select_with_standard_coverage(
                 candidates=reranked_candidates,
                 standard_ids=standard_ids,
+                max_evidence=evidence_budget,
+                test_completeness_query=(
+                    test_completeness_query
+                ),
             )
         )
 
         # ----------------------------------------------------
-        # 7. Evidence sufficiency
+        # Evidence sufficiency
         # ----------------------------------------------------
 
-        sufficiency = self.sufficiency_checker.check(
-            evidence=selected_evidence,
-            standard_ids=standard_ids,
+        sufficiency = (
+            self.sufficiency_checker.check(
+                evidence=selected_evidence,
+                standard_ids=standard_ids,
+            )
         )
 
         evidence_sufficient = (
-            sufficiency["evidence_sufficient"]
+            sufficiency[
+                "evidence_sufficient"
+            ]
         )
 
         # ----------------------------------------------------
-        # 8. Confidence scoring
+        # Confidence
         # ----------------------------------------------------
 
-        confidence = self.confidence_scorer.score(
-            evidence=selected_evidence,
-            evidence_sufficient=evidence_sufficient,
-            sufficiency_confidence=(
-                sufficiency["confidence_score"]
-            ),
+        confidence = (
+            self.confidence_scorer.score(
+                evidence=selected_evidence,
+                evidence_sufficient=(
+                    evidence_sufficient
+                ),
+                sufficiency_confidence=(
+                    sufficiency[
+                        "confidence_score"
+                    ]
+                ),
+            )
         )
 
         # ----------------------------------------------------
-        # 9. Grounded answer generation
+        # Gemini answer generation
         # ----------------------------------------------------
 
-        answer_result = self.answer_generator.generate(
-            query=query,
-            evidence=selected_evidence,
-            evidence_sufficient=evidence_sufficient,
+        answer_result = (
+            self.answer_generator.generate(
+                query=query,
+                evidence=selected_evidence,
+                evidence_sufficient=(
+                    evidence_sufficient
+                ),
+                language=language,
+            )
         )
 
         # ----------------------------------------------------
-        # 10. Citation building
+        # Citations
         # ----------------------------------------------------
 
-        citations = self.citation_builder.build(
-            selected_evidence
+        citations = (
+            self.citation_builder.build(
+                selected_evidence
+            )
         )
 
         # ----------------------------------------------------
-        # 11. Final result
+        # Final response
         # ----------------------------------------------------
 
         return {
             "query": query,
+
             "standard_ids": standard_ids,
 
             "retrieved_count": len(
@@ -644,6 +941,12 @@ class EvidencePipeline:
 
             "p4_evidence_count": len(
                 p4_candidates
+            ),
+
+            "p4_test_evidence_count": sum(
+                1
+                for item in p4_candidates
+                if self._is_p4_test_evidence(item)
             ),
 
             "combined_evidence_count": len(
@@ -660,7 +963,9 @@ class EvidencePipeline:
 
             "evidence": selected_evidence,
 
-            "answer": answer_result["answer"],
+            "answer": answer_result[
+                "answer"
+            ],
 
             "evidence_used": answer_result[
                 "evidence_used"
@@ -711,30 +1016,44 @@ class EvidencePipeline:
                     "matched_standard_count"
                 ]
             ),
+
+            "language": language,
+
+            "completeness_query": (
+                completeness_query
+            ),
+
+            "test_completeness_query": (
+                test_completeness_query
+            ),
+
+            "evidence_budget": (
+                evidence_budget
+            ),
         }
 
 
 # ============================================================
-# Standalone End-to-End Tests
+# Standalone testing
 # ============================================================
 
 if __name__ == "__main__":
 
     print("=" * 70)
     print(
-        "P1 + P4 — End-to-End Evidence Pipeline"
+        "P1 + P4 + Gemini — End-to-End Evidence Pipeline"
     )
     print("=" * 70)
 
     pipeline = EvidencePipeline()
 
     # ========================================================
-    # TEST 1 — Pressure Cooker
+    # TEST 1
     # ========================================================
 
     print("\n" + "=" * 70)
     print(
-        "TEST 1 — P4 Integration: Domestic Pressure Cooker"
+        "TEST 1 — P4 + Gemini: Domestic Pressure Cooker"
     )
     print("=" * 70)
 
@@ -746,16 +1065,32 @@ if __name__ == "__main__":
     result = pipeline.run(
         query=query,
         standard_ids=["STD-001"],
+        language="en",
     )
 
     print("\nQuery:")
     print(query)
+
+    print("\nLanguage:")
+    print(result["language"])
+
+    print("\nCompleteness query:")
+    print(result["completeness_query"])
+
+    print("\nTest completeness query:")
+    print(result["test_completeness_query"])
+
+    print("\nEvidence budget:")
+    print(result["evidence_budget"])
 
     print("\nP1 retrieved evidence:")
     print(result["retrieved_count"])
 
     print("\nP4 structured evidence:")
     print(result["p4_evidence_count"])
+
+    print("\nP4 test evidence:")
+    print(result["p4_test_evidence_count"])
 
     print("\nCombined candidates:")
     print(result["combined_evidence_count"])
@@ -765,6 +1100,15 @@ if __name__ == "__main__":
 
     print("\nSelected evidence:")
     print(result["selected_count"])
+
+    print("\nSelected evidence IDs:")
+
+    for item in result["evidence"]:
+
+        print(
+            f"{item.get('chunk_id')} | "
+            f"{item.get('document_title')}"
+        )
 
     print("\nAnswer:")
     print("-" * 70)
@@ -791,7 +1135,8 @@ if __name__ == "__main__":
 
         print(
             f"{item.get('chunk_id')} | "
-            f"Standard {item.get('standard_id')} | "
+            f"Standard "
+            f"{item.get('standard_id')} | "
             f"Score "
             f"{item.get('rerank_score', 0):.4f}"
         )
@@ -809,12 +1154,12 @@ if __name__ == "__main__":
         )
 
     # ========================================================
-    # TEST 2 — Storage Electric Water Heater
+    # TEST 2
     # ========================================================
 
     print("\n" + "=" * 70)
     print(
-        "TEST 2 — P4 Integration: "
+        "TEST 2 — P4 + Gemini: "
         "Storage Electric Water Heater"
     )
     print("=" * 70)
@@ -831,16 +1176,32 @@ if __name__ == "__main__":
             "STD-003",
             "STD-004",
         ],
+        language="en",
     )
 
     print("\nQuery:")
     print(query)
+
+    print("\nLanguage:")
+    print(result["language"])
+
+    print("\nCompleteness query:")
+    print(result["completeness_query"])
+
+    print("\nTest completeness query:")
+    print(result["test_completeness_query"])
+
+    print("\nEvidence budget:")
+    print(result["evidence_budget"])
 
     print("\nP1 retrieved evidence:")
     print(result["retrieved_count"])
 
     print("\nP4 structured evidence:")
     print(result["p4_evidence_count"])
+
+    print("\nP4 test evidence:")
+    print(result["p4_test_evidence_count"])
 
     print("\nCombined candidates:")
     print(result["combined_evidence_count"])
@@ -852,11 +1213,13 @@ if __name__ == "__main__":
     print(result["selected_count"])
 
     print("\nSelected evidence details:")
+
     for item in result["evidence"]:
 
         print(
             f"{item.get('chunk_id')} | "
-            f"Standard={item.get('standard_id')} | "
+            f"Standard="
+            f"{item.get('standard_id')} | "
             f"Similarity="
             f"{item.get('similarity_score', 0):.4f} | "
             f"Keyword="
@@ -904,7 +1267,7 @@ if __name__ == "__main__":
         )
 
     # ========================================================
-    # TEST 3 — General P1 question
+    # TEST 3
     # ========================================================
 
     print("\n" + "=" * 70)
@@ -921,10 +1284,23 @@ if __name__ == "__main__":
     result = pipeline.run(
         query=query,
         standard_ids=None,
+        language="en",
     )
 
     print("\nQuery:")
     print(query)
+
+    print("\nLanguage:")
+    print(result["language"])
+
+    print("\nCompleteness query:")
+    print(result["completeness_query"])
+
+    print("\nTest completeness query:")
+    print(result["test_completeness_query"])
+
+    print("\nEvidence budget:")
+    print(result["evidence_budget"])
 
     print("\nP1 retrieved evidence:")
     print(result["retrieved_count"])
@@ -948,7 +1324,7 @@ if __name__ == "__main__":
     )
 
     # ========================================================
-    # TEST 4 — Unknown / unrelated question
+    # TEST 4
     # ========================================================
 
     print("\n" + "=" * 70)
@@ -965,10 +1341,23 @@ if __name__ == "__main__":
     result = pipeline.run(
         query=query,
         standard_ids=None,
+        language="en",
     )
 
     print("\nQuery:")
     print(query)
+
+    print("\nLanguage:")
+    print(result["language"])
+
+    print("\nCompleteness query:")
+    print(result["completeness_query"])
+
+    print("\nTest completeness query:")
+    print(result["test_completeness_query"])
+
+    print("\nEvidence budget:")
+    print(result["evidence_budget"])
 
     print("\nAnswer:")
     print("-" * 70)
@@ -996,12 +1385,8 @@ if __name__ == "__main__":
 
         print("No citations generated.")
 
-    # ========================================================
-    # Completion
-    # ========================================================
-
     print("\n" + "=" * 70)
     print(
-        "P1 + P4 end-to-end pipeline test completed."
+        "P1 + P4 + Gemini end-to-end pipeline test completed."
     )
     print("=" * 70)

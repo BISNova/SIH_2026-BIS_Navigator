@@ -97,6 +97,7 @@ class P1Service:
         result = self.pipeline.run(
             query=query,
             standard_ids=standard_ids,
+            language=p1_input.language,
         )
 
         # --------------------------------------------------
