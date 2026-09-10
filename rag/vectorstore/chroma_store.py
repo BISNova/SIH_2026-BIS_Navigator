@@ -188,27 +188,57 @@ class ChromaEvidenceStore:
     # Search
     # -----------------------------------------------------
 
+        # -----------------------------------------------------
+    # Search
+    # -----------------------------------------------------
+
     def search(
         self,
         query_embedding,
         top_k: int = 5,
         standard_ids: list[str] | None = None,
     ):
+        """
+        Search evidence from ChromaDB.
+
+        P1/P4 use canonical BIS Navigator standard IDs
+        such as STD-001, while the current synthetic RAG
+        corpus uses SYN-STD-* IDs.
+
+        Translate canonical IDs to the corresponding
+        synthetic IDs only at the Chroma retrieval boundary.
+        This keeps the P1/P4 contract unchanged.
+        """
 
         where = None
 
         if standard_ids:
 
-            if len(standard_ids) == 1:
+            # Canonical P1/P4 ID -> synthetic RAG corpus ID
+            standard_id_map = {
+                "STD-001": "SYN-STD-101",
+                "STD-002": "SYN-STD-202",
+                "STD-003": "SYN-STD-303",
+            }
+
+            normalized_ids = [
+                standard_id_map.get(
+                    standard_id,
+                    standard_id
+                )
+                for standard_id in standard_ids
+            ]
+
+            if len(normalized_ids) == 1:
                 where = {
-                    "standard_id": standard_ids[0]
+                    "standard_id": normalized_ids[0]
                 }
 
             else:
                 where = {
                     "$or": [
                         {"standard_id": standard_id}
-                        for standard_id in standard_ids
+                        for standard_id in normalized_ids
                     ]
                 }
 
@@ -224,7 +254,6 @@ class ChromaEvidenceStore:
         )
 
         return results
-
     # -----------------------------------------------------
     # Collection information
     # -----------------------------------------------------
