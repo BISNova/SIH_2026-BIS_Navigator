@@ -166,5 +166,1453 @@
             false
         ],
         "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-016",
+        "product_id": "PROD-004",
+        "attribute_name": "Iron Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Dry Iron",
+            "Steam Iron"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-017",
+        "product_id": "PROD-004",
+        "attribute_name": "Rated Power",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-018",
+        "product_id": "PROD-004",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-019",
+        "product_id": "PROD-004",
+        "attribute_name": "Steam Function",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-020",
+        "product_id": "PROD-004",
+        "attribute_name": "Soleplate Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Aluminium",
+            "Stainless Steel",
+            "Ceramic",
+            "Non-stick Coated",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-021",
+        "product_id": "PROD-005",
+        "attribute_name": "Product Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Food Mixer",
+            "Liquidizer",
+            "Grinder",
+            "Mixer Grinder",
+            "Centrifugal Juicer"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-022",
+        "product_id": "PROD-005",
+        "attribute_name": "Rated Power",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-023",
+        "product_id": "PROD-005",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-024",
+        "product_id": "PROD-005",
+        "attribute_name": "Dry Grinding Arrangement",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-025",
+        "product_id": "PROD-005",
+        "attribute_name": "Whisking Arrangement",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-026",
+        "product_id": "PROD-005",
+        "attribute_name": "Juicer Arrangement",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-027",
+        "product_id": "PROD-006",
+        "attribute_name": "Appliance Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Domestic Gas Stove",
+            "Built-in Hob"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-028",
+        "product_id": "PROD-006",
+        "attribute_name": "Number of Burners",
+        "attribute_type": "integer",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-029",
+        "product_id": "PROD-006",
+        "attribute_name": "Burner Type",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-030",
+        "product_id": "PROD-006",
+        "attribute_name": "Ignition Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Manual",
+            "Automatic",
+            "Electric"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-031",
+        "product_id": "PROD-006",
+        "attribute_name": "Built-in",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-032",
+        "product_id": "PROD-006",
+        "attribute_name": "Glass Top",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-033",
+        "product_id": "PROD-007",
+        "attribute_name": "Helmet Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Full Face",
+            "Open Face"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-034",
+        "product_id": "PROD-007",
+        "attribute_name": "Lower Face Cover",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-035",
+        "product_id": "PROD-007",
+        "attribute_name": "Visor",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            true,
+            false
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-036",
+        "product_id": "PROD-007",
+        "attribute_name": "Size",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-037",
+        "product_id": "PROD-007",
+        "attribute_name": "Shell Material",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-038",
+        "product_id": "PROD-007",
+        "attribute_name": "Retention System",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Chin Strap",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-039",
+        "product_id": "PROD-008",
+        "attribute_name": "Water Source",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Surface Water",
+            "Ground Water",
+            "Municipal Water",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-040",
+        "product_id": "PROD-008",
+        "attribute_name": "Treatment Process",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-041",
+        "product_id": "PROD-008",
+        "attribute_name": "Packaging Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Bottle",
+            "Pouch",
+            "Jar",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-042",
+        "product_id": "PROD-008",
+        "attribute_name": "Package Size",
+        "attribute_type": "numeric_with_unit",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-043",
+        "product_id": "PROD-008",
+        "attribute_name": "Packaging Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "PET",
+            "HDPE",
+            "Glass",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-044",
+        "product_id": "PROD-009",
+        "attribute_name": "Grade",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "OPC 33 Grade",
+            "OPC 43 Grade",
+            "OPC 53 Grade",
+            "OPC 43S Grade",
+            "OPC 53S Grade"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-045",
+        "product_id": "PROD-010",
+        "attribute_name": "Vehicle Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Two-Wheeler",
+            "Three-Wheeler",
+            "Passenger Car",
+            "Commercial Vehicle"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-046",
+        "product_id": "PROD-010",
+        "attribute_name": "Construction Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Radial",
+            "Diagonal",
+            "Belted Bias"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-047",
+        "product_id": "PROD-010",
+        "attribute_name": "Tube Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Tubeless",
+            "Tube Type"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-048",
+        "product_id": "PROD-010",
+        "attribute_name": "Tyre Size",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-049",
+        "product_id": "PROD-010",
+        "attribute_name": "Load Index",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-050",
+        "product_id": "PROD-010",
+        "attribute_name": "Speed Symbol",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-051",
+        "product_id": "PROD-011",
+        "attribute_name": "Switch Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "One-Way",
+            "Two-Way",
+            "Intermediate",
+            "Bell Push",
+            "Double Pole",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-052",
+        "product_id": "PROD-011",
+        "attribute_name": "Rated Current",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "6A",
+            "10A",
+            "16A",
+            "20A",
+            "32A"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-053",
+        "product_id": "PROD-011",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "string",
+        "allowed_values": [
+            "250V AC",
+            "440V AC"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-054",
+        "product_id": "PROD-011",
+        "attribute_name": "Poles",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "1 Pole",
+            "2 Pole",
+            "3 Pole",
+            "4 Pole"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-055",
+        "product_id": "PROD-011",
+        "attribute_name": "Operation Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Rocker",
+            "Rocker/Tumbler",
+            "Push Button",
+            "Rotary",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-056",
+        "product_id": "PROD-011",
+        "attribute_name": "Terminal Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Screw Terminal",
+            "Screwless Terminal",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-057",
+        "product_id": "PROD-011",
+        "attribute_name": "Screw or Screwless",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Screw",
+            "Screwless"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-058",
+        "product_id": "PROD-011",
+        "attribute_name": "Mounting Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Flush",
+            "Surface",
+            "Panel",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-059",
+        "product_id": "PROD-011",
+        "attribute_name": "Enclosure/Protection Type",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-060",
+        "product_id": "PROD-011",
+        "attribute_name": "Special Load Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "General Purpose",
+            "Fluorescent Load",
+            "Motor Load",
+            "Electronic Load",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-061",
+        "product_id": "PROD-012",
+        "attribute_name": "Lamp Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Self-Ballasted LED Lamp",
+            "LED Bulb",
+            "LED Candle Lamp",
+            "LED Decorative Lamp",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-062",
+        "product_id": "PROD-012",
+        "attribute_name": "Cap Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "B15d",
+            "B22d",
+            "E14",
+            "E27",
+            "GU10",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-063",
+        "product_id": "PROD-012",
+        "attribute_name": "Rated Power",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-064",
+        "product_id": "PROD-012",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-065",
+        "product_id": "PROD-012",
+        "attribute_name": "Operating Frequency",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-066",
+        "product_id": "PROD-012",
+        "attribute_name": "Dimmable",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-067",
+        "product_id": "PROD-012",
+        "attribute_name": "Colour Temperature",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-068",
+        "product_id": "PROD-012",
+        "attribute_name": "Lumen Output",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-069",
+        "product_id": "PROD-012",
+        "attribute_name": "CRI",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-070",
+        "product_id": "PROD-012",
+        "attribute_name": "Shape",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "A",
+            "Candle",
+            "Globe",
+            "Spot",
+            "PAR",
+            "Tube",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-071",
+        "product_id": "PROD-012",
+        "attribute_name": "Input Current",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-072",
+        "product_id": "PROD-013",
+        "attribute_name": "Toy Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "General Toy",
+            "Educational Toy",
+            "Soft Toy",
+            "Ride-On Toy",
+            "Activity Toy",
+            "Toy Worn on Body",
+            "Electrical Toy",
+            "Battery-Operated Toy",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-073",
+        "product_id": "PROD-013",
+        "attribute_name": "Intended Age Group",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Under 3 Years",
+            "3 to 6 Years",
+            "Over 6 Years",
+            "Mixed / Multiple Age Groups"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-074",
+        "product_id": "PROD-013",
+        "attribute_name": "Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Plastic",
+            "Rubber",
+            "Textile",
+            "Wood",
+            "Metal",
+            "Paper / Cardboard",
+            "Leather",
+            "Composite",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-075",
+        "product_id": "PROD-013",
+        "attribute_name": "Electrically Operated",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-076",
+        "product_id": "PROD-013",
+        "attribute_name": "Battery Operated",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-077",
+        "product_id": "PROD-013",
+        "attribute_name": "Soft Filled",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-078",
+        "product_id": "PROD-013",
+        "attribute_name": "Activity Toy",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-079",
+        "product_id": "PROD-013",
+        "attribute_name": "Ride-On",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-080",
+        "product_id": "PROD-013",
+        "attribute_name": "Toy Worn on Body",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-081",
+        "product_id": "PROD-013",
+        "attribute_name": "Food Contact",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-082",
+        "product_id": "PROD-013",
+        "attribute_name": "Mouth Contact",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-083",
+        "product_id": "PROD-013",
+        "attribute_name": "Small Parts Present",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-084",
+        "product_id": "PROD-014",
+        "attribute_name": "Cylinder Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "LPG Cylinder",
+            "Domestic LPG Cylinder",
+            "Commercial LPG Cylinder",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-085",
+        "product_id": "PROD-014",
+        "attribute_name": "Water Capacity",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-086",
+        "product_id": "PROD-014",
+        "attribute_name": "Nominal Capacity",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-087",
+        "product_id": "PROD-014",
+        "attribute_name": "Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Low Carbon Steel",
+            "Other Steel"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-088",
+        "product_id": "PROD-014",
+        "attribute_name": "Wall Thickness",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-089",
+        "product_id": "PROD-014",
+        "attribute_name": "Manufacturing Method",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Welded",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-090",
+        "product_id": "PROD-014",
+        "attribute_name": "Valve Type",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-091",
+        "product_id": "PROD-014",
+        "attribute_name": "Foot Ring",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-092",
+        "product_id": "PROD-014",
+        "attribute_name": "Bung Type",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-093",
+        "product_id": "PROD-014",
+        "attribute_name": "Protective Coating",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Painted",
+            "Powder Coated",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-094",
+        "product_id": "PROD-014",
+        "attribute_name": "Intended Gas",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "LPG",
+            "Propane",
+            "Butane",
+            "LPG Mixture",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-095",
+        "product_id": "PROD-015",
+        "attribute_name": "Product Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "TMT Bar",
+            "High Strength Deformed Bar",
+            "Deformed Steel Wire",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-096",
+        "product_id": "PROD-015",
+        "attribute_name": "Grade",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Fe 415",
+            "Fe 415D",
+            "Fe 415S",
+            "Fe 500",
+            "Fe 500D",
+            "Fe 500S",
+            "Fe 550",
+            "Fe 550D",
+            "Fe 600",
+            "Fe 650",
+            "Fe 700"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-097",
+        "product_id": "PROD-015",
+        "attribute_name": "Nominal Diameter",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-098",
+        "product_id": "PROD-015",
+        "attribute_name": "Bar or Wire",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Bar",
+            "Wire"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-099",
+        "product_id": "PROD-015",
+        "attribute_name": "Rib Pattern",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-100",
+        "product_id": "PROD-015",
+        "attribute_name": "Surface Condition",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Plain",
+            "Deformed",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-101",
+        "product_id": "PROD-015",
+        "attribute_name": "Manufacturing Process",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Hot Rolled",
+            "Thermo-Mechanically Treated",
+            "Cold Worked",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-102",
+        "product_id": "PROD-015",
+        "attribute_name": "Cast/Lot",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-103",
+        "product_id": "PROD-015",
+        "attribute_name": "Length",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-104",
+        "product_id": "PROD-015",
+        "attribute_name": "Intended Use",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Concrete Reinforcement",
+            "Structural Reinforcement",
+            "General Construction",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-105",
+        "product_id": "PROD-016",
+        "attribute_name": "Fan Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Electric Ceiling Fan",
+            "Ceiling Fan with Light",
+            "Low-Speed Air Circulation Fan",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-106",
+        "product_id": "PROD-016",
+        "attribute_name": "Motor Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Induction Motor",
+            "Electronically Commutated Motor",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-107",
+        "product_id": "PROD-016",
+        "attribute_name": "Sweep Size",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-108",
+        "product_id": "PROD-016",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-109",
+        "product_id": "PROD-016",
+        "attribute_name": "Rated Frequency",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-110",
+        "product_id": "PROD-016",
+        "attribute_name": "Power Input",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-111",
+        "product_id": "PROD-016",
+        "attribute_name": "Speed",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-112",
+        "product_id": "PROD-016",
+        "attribute_name": "Regulator Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Electronic Regulator",
+            "Resistive Regulator",
+            "Capacitive Regulator",
+            "Integrated Electronic Control",
+            "No External Regulator",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-113",
+        "product_id": "PROD-016",
+        "attribute_name": "Remote Control",
+        "attribute_type": "boolean",
+        "allowed_values": [
+            "true",
+            "false"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-114",
+        "product_id": "PROD-016",
+        "attribute_name": "Insulation Class",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Class I",
+            "Class II",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-115",
+        "product_id": "PROD-016",
+        "attribute_name": "Number of Blades",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-116",
+        "product_id": "PROD-016",
+        "attribute_name": "Blade Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Aluminium",
+            "Steel",
+            "Plastic",
+            "Wood",
+            "Composite",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-117",
+        "product_id": "PROD-017",
+        "attribute_name": "Valve Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Type A",
+            "Type B",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-118",
+        "product_id": "PROD-017",
+        "attribute_name": "Cylinder Water Capacity",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-119",
+        "product_id": "PROD-017",
+        "attribute_name": "Inlet Thread Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Parallel Thread",
+            "Taper Thread",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-120",
+        "product_id": "PROD-017",
+        "attribute_name": "Valve Body Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Threaded Valve Body",
+            "Direct Weld Valve Body",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-121",
+        "product_id": "PROD-017",
+        "attribute_name": "Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Brass",
+            "Steel",
+            "Stainless Steel",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-122",
+        "product_id": "PROD-017",
+        "attribute_name": "Working Pressure",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-123",
+        "product_id": "PROD-017",
+        "attribute_name": "Operating Temperature",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-124",
+        "product_id": "PROD-017",
+        "attribute_name": "Sealing Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Metallic",
+            "Elastomeric",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-125",
+        "product_id": "PROD-017",
+        "attribute_name": "Outlet Connection",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-126",
+        "product_id": "PROD-017",
+        "attribute_name": "Cylinder Application",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Domestic LPG Cylinder",
+            "Commercial LPG Cylinder",
+            "Industrial LPG Cylinder",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-127",
+        "product_id": "PROD-018",
+        "attribute_name": "Cement Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Portland Pozzolana Cement",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-128",
+        "product_id": "PROD-018",
+        "attribute_name": "Pozzolanic Material",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Fly Ash",
+            "Calcined Clay",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-129",
+        "product_id": "PROD-018",
+        "attribute_name": "Manufacturing Process",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Intergrinding",
+            "Separate Grinding and Blending",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-130",
+        "product_id": "PROD-018",
+        "attribute_name": "Grade or Strength Class",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "33 Grade",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-131",
+        "product_id": "PROD-018",
+        "attribute_name": "Raw Material Source",
+        "attribute_type": "string",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-132",
+        "product_id": "PROD-018",
+        "attribute_name": "Fineness",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-133",
+        "product_id": "PROD-018",
+        "attribute_name": "Packaging Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Bag",
+            "Bulk",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-134",
+        "product_id": "PROD-018",
+        "attribute_name": "Bag Size",
+        "attribute_type": "number",
+        "allowed_values": [],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-135",
+        "product_id": "PROD-019",
+        "attribute_name": "Refrigerator Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Single Door",
+            "Double Door",
+            "Side-by-Side",
+            "Multi-Door",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-136",
+        "product_id": "PROD-019",
+        "attribute_name": "Cooling Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Direct Cool",
+            "Frost Free",
+            "Other"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-137",
+        "product_id": "PROD-019",
+        "attribute_name": "Number of Doors",
+        "attribute_type": "number",
+        "allowed_values": null,
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-138",
+        "product_id": "PROD-019",
+        "attribute_name": "Rated Voltage",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-139",
+        "product_id": "PROD-019",
+        "attribute_name": "Rated Frequency",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-140",
+        "product_id": "PROD-019",
+        "attribute_name": "Storage Volume",
+        "attribute_type": "number",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-141",
+        "product_id": "PROD-019",
+        "attribute_name": "Freezer Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Top Freezer",
+            "Bottom Freezer",
+            "Internal Freezer",
+            "No Separate Freezer",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-142",
+        "product_id": "PROD-019",
+        "attribute_name": "Inverter or Non-Inverter",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Inverter",
+            "Non-Inverter",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-143",
+        "product_id": "PROD-019",
+        "attribute_name": "Climate Class",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "SN",
+            "N",
+            "ST",
+            "T",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-144",
+        "product_id": "PROD-020",
+        "attribute_name": "Footwear Class",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Class I",
+            "Class II"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-145",
+        "product_id": "PROD-020",
+        "attribute_name": "Footwear Design",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Design A",
+            "Design B",
+            "Design C",
+            "Design D",
+            "Design E"
+        ],
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-146",
+        "product_id": "PROD-020",
+        "attribute_name": "Material Type",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Leather",
+            "Textile",
+            "Synthetic",
+            "Other"
+        ],
+        "required_for_matching": false
+    },
+    {
+        "attribute_id": "ATTR-147",
+        "product_id": "PROD-020",
+        "attribute_name": "Size Range",
+        "attribute_type": "string",
+        "allowed_values": null,
+        "required_for_matching": true
+    },
+    {
+        "attribute_id": "ATTR-148",
+        "product_id": "PROD-020",
+        "attribute_name": "Specialised Protection",
+        "attribute_type": "enum",
+        "allowed_values": [
+            "Standard Safety",
+            "Penetration Resistant",
+            "Electrical Protection",
+            "Water Resistant",
+            "Other"
+        ],
+        "required_for_matching": false
     }
 ]

@@ -116,5 +116,1266 @@
                 "source_document_id": "DOC-003"
             }
         ]
+    },
+    {
+        "standard_id": "STD-008",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify the applicable electric iron standard, confirm that the product is within its scope, and ensure that the manufacturing facilities, quality-control arrangements and testing capabilities meet the applicable requirements.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS application under Scheme-I, providing details of the manufacturing premises, electric iron, applicable standard and relevant manufacturing and testing arrangements.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness and applicability of the requested certification.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the manufacturer's ability to produce conforming electric irons.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of the electric iron product and safety standards.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified, the manufacturer takes corrective action and provides the required evidence of compliance.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity, BIS grants the licence to use the BIS Standard Mark for the approved product and manufacturing premises.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "The licensee marks the certified electric irons with the BIS Standard Mark and other marking details required by the applicable standard and licence conditions.",
+                "source_document_id": "DOC-XXX"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee continues to comply with the applicable standards, SIT requirements and BIS licence conditions, including ongoing testing and surveillance requirements.",
+                "source_document_id": "DOC-XXX"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-011",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Confirm that the electric food mixer, liquidizer, grinder or centrifugal juicer falls within IS 4250:2025 and prepare the manufacturing and quality-control arrangements required for certification.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product-certification application under Scheme-I with the required product, manufacturing-premises and supporting information.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS reviews the application and supporting information for completeness and applicability of the requested certification.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing facilities, production controls, quality-control arrangements and testing capabilities relevant to the product.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 4250:2025 and the relevant electrical safety requirements.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Any non-conformities identified during assessment or testing must be addressed before certification is granted.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "BIS grants the licence to use the BIS Standard Mark after satisfactory assessment and conformity results.",
+                "source_document_id": "DOC-013"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the required BIS marking and continues to maintain conformity with IS 4250:2025 and the applicable BIS licence conditions.",
+                "source_document_id": "DOC-013"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-014",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Confirm that the LPG stove or built-in hob is within the scope of IS 4246:2025 and prepare the manufacturing and quality-control arrangements required for certification.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product-certification application under Scheme-I with the required product, manufacturing-premises and supporting information.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS reviews the application and supporting information for completeness and applicability.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing facilities, production controls, quality-control arrangements and testing capabilities relevant to the LPG stove or built-in hob.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 4246:2025 and the relevant referenced requirements.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Any non-conformities identified during assessment or testing must be addressed before certification is granted.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "BIS grants the licence to use the BIS Standard Mark after satisfactory assessment and conformity results.",
+                "source_document_id": "DOC-017"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the required BIS marking and continues to maintain conformity with IS 4246:2025 and applicable BIS licence conditions.",
+                "source_document_id": "DOC-017"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-016",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Confirm that the protective helmet is within the scope of IS 4151:2015 and identify the applicable model, design, type and size varieties for certification.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product-certification application under Scheme-I with the required product and manufacturing-premises information.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 3,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing facilities, production controls, quality-control arrangements and testing capabilities relevant to the helmet.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 4,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 4151:2015, covering the declared model, design, type and size varieties.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 5,
+                "title": "Close non-conformities",
+                "description": "Any non-conformities identified during assessment or testing must be addressed before the licence is granted.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 6,
+                "title": "Grant of BIS licence",
+                "description": "BIS grants the licence to use the BIS Standard Mark after satisfactory assessment and conformity results.",
+                "source_document_id": "DOC-021"
+            },
+            {
+                "step_no": 7,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the required BIS marking and continues to maintain conformity with IS 4151:2015 and applicable BIS licence conditions.",
+                "source_document_id": "DOC-021"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-017",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Confirm that the packaged drinking water is within the scope of IS 14543:2024 and prepare the manufacturing, quality-control and testing arrangements needed for certification.",
+                "source_document_id": "DOC-026"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS application",
+                "description": "Submit an application to BIS under Scheme-I for voluntary certification and provide the required product and manufacturing information.",
+                "source_document_id": "DOC-026"
+            },
+            {
+                "step_no": 3,
+                "title": "Product sampling and testing",
+                "description": "Samples are examined and tested against the applicable quality and safety requirements of IS 14543:2024.",
+                "source_document_id": "DOC-026"
+            },
+            {
+                "step_no": 4,
+                "title": "Address non-conformities",
+                "description": "Any non-conformities identified during assessment or testing are addressed before certification is granted.",
+                "source_document_id": "DOC-026"
+            },
+            {
+                "step_no": 5,
+                "title": "Grant and maintain certification",
+                "description": "After satisfactory conformity assessment, BIS grants the certification and the manufacturer maintains continuing conformity with the standard and applicable BIS requirements.",
+                "source_document_id": "DOC-026"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-018",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Confirm that the Ordinary Portland Cement grade is within the scope of IS 269:2015 and prepare the manufacturing, quality-control and testing arrangements required for certification.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product-certification application under Scheme-I with the required product, manufacturing-premises and supporting information.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 3,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing facilities, quality-control arrangements, testing capabilities and ability to consistently produce cement conforming to IS 269:2015.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 4,
+                "title": "Product sampling and testing",
+                "description": "Samples of the declared OPC grade are drawn and tested against the applicable chemical, physical and strength requirements of IS 269:2015.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 5,
+                "title": "Close non-conformities",
+                "description": "Any non-conformities identified during assessment or testing must be addressed before certification is granted.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 6,
+                "title": "Grant of BIS licence",
+                "description": "BIS grants the licence to use the BIS Standard Mark after satisfactory assessment and conformity results for the applicable cement grade.",
+                "source_document_id": "DOC-030"
+            },
+            {
+                "step_no": 7,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the required BIS marking and continues to maintain conformity with IS 269:2015 and applicable BIS licence conditions.",
+                "source_document_id": "DOC-030"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-019",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 15627:2022 as the applicable product standard for pneumatic tyres for two- and three-wheeled motor vehicles, quadricycles and E-rickshaw/E-Carts, and confirm that the product, manufacturing facilities and quality-control arrangements can meet the applicable requirements.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, tyre product and applicable standard.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information for completeness and applicability against IS 15627:2022 and the applicable certification requirements.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the manufacturer's capability to consistently produce tyres conforming to IS 15627:2022.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 15627:2022 through the prescribed BIS testing and assessment process.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Where assessment or testing identifies deficiencies or non-conformities, the manufacturer takes corrective action and provides the required evidence before certification is finalized.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and conformity confirmation, BIS grants the licence to use the BIS Standard Mark for the approved tyre products and manufacturing premises.",
+                "source_document_id": "DOC-033"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "The licensee marks certified tyre products with the BIS Standard Mark and other marking details required by IS 15627:2022 and the applicable BIS product manual/licence conditions.",
+                "source_document_id": "DOC-033"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-020",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 15633:2022 as the applicable product standard for pneumatic tyres for passenger car vehicles and confirm that the product, manufacturing facilities and quality-control arrangements can meet the applicable requirements.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, tyre product and applicable standard.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information for completeness and applicability against IS 15633:2022 and the applicable certification requirements.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the manufacturer's capability to consistently produce tyres conforming to IS 15633:2022.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 15633:2022 through the prescribed BIS testing and assessment process.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Where assessment or testing identifies deficiencies or non-conformities, the manufacturer takes corrective action and provides the required evidence before certification is finalized.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and conformity confirmation, BIS grants the licence to use the BIS Standard Mark for the approved tyre products and manufacturing premises.",
+                "source_document_id": "DOC-034"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "The licensee marks certified tyre products with the BIS Standard Mark and other marking details required by IS 15633:2022 and the applicable BIS product manual/licence conditions.",
+                "source_document_id": "DOC-034"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-021",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 15636:2022 as the applicable product standard for pneumatic tyres for commercial vehicles and confirm that the product, manufacturing facilities and quality-control arrangements can meet the applicable requirements.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, tyre product and applicable standard.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information for completeness and applicability against IS 15636:2022 and the applicable certification requirements.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the manufacturer's capability to consistently produce tyres conforming to IS 15636:2022.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 15636:2022 through the prescribed BIS testing and assessment process.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Where assessment or testing identifies deficiencies or non-conformities, the manufacturer takes corrective action and provides the required evidence before certification is finalized.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and conformity confirmation, BIS grants the licence to use the BIS Standard Mark for the approved tyre products and manufacturing premises.",
+                "source_document_id": "DOC-035"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "The licensee marks certified tyre products with the BIS Standard Mark and other marking details required by IS 15636:2022 and the applicable BIS product manual/licence conditions.",
+                "source_document_id": "DOC-035"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-022",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 3854:2023 as the applicable product standard for switches for domestic and similar purposes, determine the applicable switch type and ratings, and ensure that the manufacturing facilities, quality-control arrangements and testing capabilities can meet the requirements of the standard.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, switch product, applicable ratings and the relevant product standard and certification details.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness, product applicability and the proposed scope of certification against IS 3854:2023 and the applicable Product Manual requirements.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, inspection procedures and testing facilities required for producing switches conforming to IS 3854:2023.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples of the switches are drawn and tested against the applicable requirements of IS 3854:2023, including the relevant construction, electrical safety, performance and environmental tests for the declared product configuration.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during factory assessment or product testing, the manufacturer takes corrective action and provides the required evidence or repeat test results before certification is finalized.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory factory assessment and confirmation of product conformity, BIS grants the licence to use the BIS Standard Mark for the approved switch products and manufacturing premises.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the licensee marks the certified switches with the BIS Standard Mark and the marking information required by IS 3854:2023 and the applicable BIS Product Manual and licence conditions.",
+                "source_document_id": "DOC-039"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must maintain continuing conformity with IS 3854:2023, the applicable product scope and BIS licence conditions. BIS may conduct surveillance, inspect the manufacturing premises and draw samples for testing to verify continued conformity.",
+                "source_document_id": "DOC-039"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-023",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable CRS standard",
+                "description": "Confirm that the product is a self-ballasted LED lamp for general lighting services covered by IS 16102 (Part 1):2026 and determine the applicable lamp type, cap, rated power and voltage configuration.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 2,
+                "title": "Obtain laboratory test report",
+                "description": "Submit representative lamp samples to a BIS-recognized laboratory having the applicable IS 16102 (Part 1) scope and obtain the prescribed test report demonstrating conformity with the safety requirements.",
+                "source_document_id": "DOC-047"
+            },
+            {
+                "step_no": 3,
+                "title": "Prepare CRS application",
+                "description": "Prepare the Compulsory Registration Scheme application with the product details, manufacturer information, applicable standard, laboratory test report and required supporting documents.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 4,
+                "title": "Submit registration application",
+                "description": "Submit the registration application to BIS under Scheme-II along with the prescribed documentation and test evidence for the applicable IS 16102 (Part 1) requirements.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 5,
+                "title": "BIS application scrutiny",
+                "description": "BIS reviews the application, laboratory test report and supporting information to verify completeness and conformity with the applicable CRS requirements.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 6,
+                "title": "Address deficiencies",
+                "description": "Where deficiencies are identified in the application or test documentation, provide the required corrections, clarifications or additional evidence before registration is completed.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS registration",
+                "description": "After satisfactory review, BIS grants the registration for the approved self-ballasted LED lamp product under Scheme-II.",
+                "source_document_id": "DOC-045"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and maintain conformity",
+                "description": "The registered product shall carry the prescribed Standard Mark and BIS registration number, and the manufacturer shall maintain continuing conformity with the applicable standard and registration conditions.",
+                "source_document_id": "DOC-045"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-025",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 9873 (Part 1):2025 as the primary standard for the non-electric toy, determine the toy type and intended age group, and identify all applicable secondary standards such as flammability, migration of certain elements, activity toys or phthalates based on the product characteristics.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, toy product, primary standard, applicable secondary standards and proposed licence scope.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify product classification, applicability of the selected IS 9873 standards, completeness of the proposed licence scope and conformity-assessment requirements.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises to verify manufacturing capability, production controls, quality-control arrangements, inspection procedures and testing facilities needed to consistently manufacture toys conforming to the applicable requirements.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative toy samples are drawn and tested against IS 9873 (Part 1):2025 and all applicable secondary standards identified from the toy configuration, such as Part 2 for flammability, Part 3 for migration of certain elements, Part 4 for activity toys and Part 9 for certain phthalates.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during factory assessment or product testing, the manufacturer takes corrective action and provides the required evidence or repeat test results before certification is finalized.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory factory assessment and confirmation of conformity with the applicable toy standards, BIS grants the licence to use the BIS Standard Mark for the approved toy products and manufacturing premises.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the licensee marks the certified toys with the BIS Standard Mark and the applicable identification, manufacturer and other marking information required by the standards, Product Manual and BIS licence conditions.",
+                "source_document_id": "DOC-054"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must maintain continuing conformity with IS 9873 (Part 1):2025 and all applicable secondary standards and BIS licence conditions. BIS may conduct surveillance, inspect manufacturing facilities and draw samples for testing to verify continued conformity.",
+                "source_document_id": "DOC-054"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-030",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 3196 (Part 1):2013 as the primary standard for the LPG cylinder, confirm that the cylinder is within the applicable water-capacity and construction scope, and ensure that materials, manufacturing processes, inspection arrangements and testing facilities satisfy the Product Manual and applicable regulatory requirements.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, LPG cylinder product, applicable capacity range and proposed licence scope.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness, product applicability, manufacturing capability and the proposed licence scope against IS 3196 (Part 1):2013 and the applicable Product Manual requirements.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, raw-material controls, fabrication and welding processes, inspection arrangements, quality-control procedures and testing facilities required for consistent production of conforming LPG cylinders.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative cylinder samples are drawn and tested against the applicable requirements of IS 3196 (Part 1):2013 and the associated test methods, including relevant dimensional, material, pressure, leakage, mechanical and weld-related tests.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during factory assessment or product testing, the manufacturer takes corrective action and provides the required evidence or repeat test results before certification is finalized.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity, BIS grants the licence to use the BIS Standard Mark for the approved LPG cylinder product and manufacturing premises.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the licensee marks the certified LPG cylinders with the BIS Standard Mark and the prescribed cylinder identification, capacity, test and other marking information required by IS 3196 (Part 1):2013, the Product Manual and applicable regulations.",
+                "source_document_id": "DOC-061"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must maintain continuing conformity with IS 3196 (Part 1):2013, the Product Manual, Scheme-I requirements and applicable regulatory conditions. BIS may conduct surveillance, inspect manufacturing facilities and draw samples for testing to verify continued conformity.",
+                "source_document_id": "DOC-061"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-033",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 1786:2008 as the applicable standard for high strength deformed steel bars and wires for concrete reinforcement, determine the applicable product form, strength grade and nominal diameter range, and ensure that the manufacturing process, raw-material controls, inspection arrangements and testing facilities meet the Product Manual requirements.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, product form, applicable IS 1786 grade and size range, and proposed licence scope.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness, manufacturing capability, applicable grade and size scope, and conformity with the requirements of IS 1786:2008 and the Product Manual.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, raw-material controls, production and thermo-mechanical treatment processes where applicable, quality-control procedures, inspection arrangements and testing facilities required to consistently produce conforming reinforcement steel.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative samples are drawn and tested for the applicable grade and size against the chemical, dimensional and mechanical requirements of IS 1786:2008, including relevant tensile, elongation, bend and re-bend requirements as prescribed by the Product Manual and SIT.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during factory assessment or product testing, the manufacturer takes corrective action and provides the required evidence or repeat test results before certification is finalized.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity with the applicable grade and size scope, BIS grants the licence to use the BIS Standard Mark for the approved reinforcement steel products and manufacturing premises.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the licensee marks the certified bars or wires with the BIS Standard Mark and the required grade, identification and other marking information specified by IS 1786:2008 and the applicable Product Manual and licence conditions.",
+                "source_document_id": "DOC-067"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must maintain continuing conformity with IS 1786:2008, the approved grade and size scope, the Product Manual and Scheme of Inspection and Testing. BIS may conduct surveillance, inspect manufacturing facilities and draw samples for testing to verify continued conformity.",
+                "source_document_id": "DOC-067"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-034",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Prepare for BIS application",
+                "description": "Identify IS 374:2019 as the applicable standard for the electric ceiling type fan, determine the applicable fan type, motor type, sweep size, rated voltage and frequency, and identify the applicable regulator or remote-control configuration covered by the proposed licence scope.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 2,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I, identifying the manufacturing premises, fan configuration, applicable sweep-size range and proposed licence scope.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 3,
+                "title": "Application scrutiny",
+                "description": "BIS scrutinizes the application and supporting information to verify completeness, applicability of IS 374:2019, declared fan configuration and proposed licence scope.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises to verify production capability, component and material controls, manufacturing processes, quality-control procedures, inspection arrangements and testing facilities required for conforming ceiling fans and applicable regulators or controls.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative fan samples are drawn and tested against the applicable requirements of IS 374:2019, including performance, electrical safety and regulator or control requirements relevant to the declared fan size, motor type and control configuration.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 6,
+                "title": "Close assessment non-conformities",
+                "description": "Where deficiencies or non-conformities are identified during factory assessment or product testing, the manufacturer takes corrective action and provides the required evidence or repeat test results before certification is finalized.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity, BIS grants the licence to use the BIS Standard Mark for the approved electric ceiling fan products and manufacturing premises within the certified scope.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "After obtaining the licence, the licensee marks the certified fans and applicable regulators or controls with the BIS Standard Mark and the required identification, rating and other marking information specified by IS 374:2019, the Product Manual and licence conditions.",
+                "source_document_id": "DOC-074"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "The licensee must maintain continuing conformity with IS 374:2019, the approved product scope, the Product Manual and Scheme of Inspection and Testing. BIS may conduct surveillance, inspect manufacturing facilities and draw samples for testing to verify continued conformity.",
+                "source_document_id": "DOC-074"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-035",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Determine applicable valve scope",
+                "description": "Confirm the LPG cylinder water capacity and valve construction/type and determine whether the valve fitting falls within the applicable IS 8776:2024 scope before preparing the certification application.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS application",
+                "description": "Identify the applicable valve variety, materials, dimensions, working conditions and manufacturing arrangements and prepare the BIS Scheme-I certification application.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I with the manufacturing-premises details, applicable valve variety and supporting technical information.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 4,
+                "title": "Application scrutiny and factory assessment",
+                "description": "BIS reviews the application and assesses the manufacturing and quality-control arrangements relevant to the proposed valve variety and applicable IS 8776 requirements.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative valve samples are tested against the applicable IS 8776 requirements, including dimensional, pressure, leakage, operational and material-related tests.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Any deficiencies identified during assessment or testing are corrected and the required evidence or repeat testing is completed before certification is finalized.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory conformity assessment, BIS grants the licence to use the BIS Standard Mark for the approved valve fitting scope.",
+                "source_document_id": "DOC-079"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the required BIS and product identification markings and maintains continuing conformity with IS 8776:2024 and applicable BIS licence conditions.",
+                "source_document_id": "DOC-079"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-036",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Determine applicable valve scope",
+                "description": "Confirm the LPG cylinder water capacity and valve variety and determine whether the valve fitting falls within the applicable IS 8737:2017 scope before preparing the certification application.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS application",
+                "description": "Identify the applicable valve variety, materials, manufacturing arrangements and proposed licence scope and prepare the BIS Scheme-I certification application.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS licence application",
+                "description": "Submit the BIS product certification application under Scheme-I with the manufacturing-premises details, applicable valve variety and required supporting information.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 4,
+                "title": "Application scrutiny and factory assessment",
+                "description": "BIS scrutinizes the application and assesses the manufacturing, raw-material, inspection and quality-control arrangements relevant to the proposed valve variety.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Representative samples are tested against the applicable IS 8737 requirements. Each valve variety is required to be tested for grant of licence or change in scope, with the current Product Manual defining the applicable sample size and Scheme of Inspection and Testing.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Any deficiencies or test failures identified during assessment are addressed through corrective action and the required evidence or repeat testing before certification is finalized.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory conformity assessment, BIS grants the licence to use the BIS Standard Mark for the approved valve-fitting variety and scope.",
+                "source_document_id": "DOC-081"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and maintain conformity",
+                "description": "The licensee applies the prescribed BIS and product identification markings, including the applicable batch and valve identification information, and maintains continuing conformity with IS 8737:2017 and BIS licence conditions.",
+                "source_document_id": "DOC-081"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-037",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable PPC standard and variant",
+                "description": "Identify IS 1489 (Part 1):2015 as the applicable standard for Portland Pozzolana Cement using fly ash, and confirm that the product and manufacturing process fall within the standard scope.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS licence application",
+                "description": "Prepare the manufacturing, quality-control, testing and product information required for applying for a BIS licence under Scheme-I for Portland Pozzolana Cement covered by IS 1489 (Part 1):2015.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS application",
+                "description": "Submit the applicable BIS product certification application identifying the manufacturing premises, Portland Pozzolana Cement product, applicable standard and relevant production and testing details.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the capability to consistently manufacture PPC conforming to IS 1489 (Part 1):2015.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable chemical and physical requirements of IS 1489 (Part 1):2015.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address any deficiencies or test non-conformities identified during assessment or product testing and provide corrective-action evidence as required by BIS.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "Upon satisfactory assessment and confirmation of conformity, BIS grants the licence to use the Standard Mark for the approved PPC manufactured at the assessed premises.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "Mark the certified PPC in accordance with the marking and labelling requirements of IS 1489 (Part 1):2015, the product manual and applicable BIS licence conditions.",
+                "source_document_id": "DOC-088"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "Continue to comply with IS 1489 (Part 1):2015 and BIS licence conditions, including applicable surveillance, sampling and testing requirements for maintaining continuing conformity.",
+                "source_document_id": "DOC-088"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-038",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable PPC standard and variant",
+                "description": "Identify IS 1489 (Part 2):2015 as the applicable standard for Portland Pozzolana Cement using calcined clay, and confirm that the product and manufacturing process fall within the standard scope.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS licence application",
+                "description": "Prepare the manufacturing, quality-control, testing and product information required for applying for a BIS licence under Scheme-I for Portland Pozzolana Cement covered by IS 1489 (Part 2):2015.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS application",
+                "description": "Submit the applicable BIS product certification application identifying the manufacturing premises, Portland Pozzolana Cement product, applicable standard and relevant production and testing details.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities to verify the capability to consistently manufacture PPC conforming to IS 1489 (Part 2):2015.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable chemical and physical requirements of IS 1489 (Part 2):2015.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address any deficiencies or test non-conformities identified during assessment or product testing and provide corrective-action evidence as required by BIS.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "Upon satisfactory assessment and confirmation of conformity, BIS grants the licence to use the Standard Mark for the approved PPC manufactured at the assessed premises.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "Mark the certified PPC in accordance with the marking and labelling requirements of IS 1489 (Part 2):2015, the product manual and applicable BIS licence conditions.",
+                "source_document_id": "DOC-089"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "Continue to comply with IS 1489 (Part 2):2015 and BIS licence conditions, including applicable surveillance, sampling and testing requirements for maintaining continuing conformity.",
+                "source_document_id": "DOC-089"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-039",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable refrigerator requirements",
+                "description": "Identify IS 17550 (Part 1):2024 as the applicable general-requirements standard for the household refrigerating appliance and confirm that the refrigerator configuration falls within its scope.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS licence application",
+                "description": "Prepare the manufacturing, product, quality-control, testing and marking information required for application for a BIS licence under Scheme-I for the household refrigerating appliance.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS application",
+                "description": "Submit the applicable BIS product certification application identifying the manufacturing premises, refrigerator model or product range, applicable IS 17550 requirements and relevant production and testing details.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 4,
+                "title": "Application scrutiny and factory assessment",
+                "description": "BIS scrutinizes the application and assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities for the applicant's ability to consistently manufacture conforming household refrigerating appliances.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn and tested against the applicable requirements of IS 17550 (Part 1):2024 and the other applicable parts of the IS 17550 series, including relevant safety and performance requirements.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address deficiencies or non-conformities identified during factory assessment or product testing and provide corrective-action evidence as required by BIS.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity, BIS grants the licence to use the BIS Standard Mark for the approved household refrigerating appliance and manufacturing premises.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "Mark the certified refrigerator in accordance with the applicable IS 17550 marking requirements, product manual provisions and BIS licence conditions.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "Continue to comply with the applicable IS 17550 requirements, product manual and BIS licence conditions, including applicable inspection, surveillance, sampling and testing requirements for maintaining continuing conformity.",
+                "source_document_id": "DOC-096"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-040",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable performance requirements",
+                "description": "Identify IS 17550 (Part 2):2024 as the applicable performance-requirements standard for the household refrigerating appliance and confirm the refrigerator configuration is within scope.",
+                "source_document_id": "DOC-094"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS certification information",
+                "description": "Ensure the product, manufacturing, quality-control and testing information needed to demonstrate conformity with the applicable IS 17550 performance requirements is available.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS application",
+                "description": "Include the applicable performance requirements of IS 17550 (Part 2):2024 within the BIS product certification application for the refrigerator.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 4,
+                "title": "Factory assessment",
+                "description": "BIS verifies the manufacturing and quality-control arrangements relevant to consistent refrigerator performance and conformity with the applicable standard requirements.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 5,
+                "title": "Performance testing",
+                "description": "Samples are tested against the applicable performance requirements of IS 17550 (Part 2):2024.",
+                "source_document_id": "DOC-094"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address any identified non-conformities and provide corrective-action evidence as required by BIS.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 7,
+                "title": "Maintain conformity under licence",
+                "description": "Maintain conformity with the applicable IS 17550 performance requirements and BIS licence conditions following successful certification.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "Apply the applicable BIS Standard Mark and required product information in accordance with the product manual and licence conditions.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 9,
+                "title": "Surveillance and continuing compliance",
+                "description": "Continue applicable BIS surveillance, sampling and testing activities to demonstrate ongoing conformity with the IS 17550 requirements.",
+                "source_document_id": "DOC-096"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-041",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify energy and volume requirements",
+                "description": "Identify IS 17550 (Part 3):2025 as the applicable standard for determination of energy consumption and volume for the household refrigerating appliance.",
+                "source_document_id": "DOC-095"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare energy and volume data",
+                "description": "Ensure the refrigerator model information, rated characteristics and testing arrangements necessary for determination of energy consumption and volume are available.",
+                "source_document_id": "DOC-095"
+            },
+            {
+                "step_no": 3,
+                "title": "Include applicable requirements in BIS certification",
+                "description": "Include the applicable IS 17550 (Part 3):2025 energy-consumption and volume requirements within the BIS certification framework for the refrigerator.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 4,
+                "title": "Verify testing capability",
+                "description": "Verify that the manufacturer or applicable testing facility has the capability to perform the energy-consumption and volume determinations required by the standard.",
+                "source_document_id": "DOC-095"
+            },
+            {
+                "step_no": 5,
+                "title": "Energy and volume testing",
+                "description": "Test the refrigerator using the applicable methods specified in IS 17550 (Part 3):2025 for energy consumption and volume determination.",
+                "source_document_id": "DOC-095"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address any deviations identified from the applicable energy-consumption or volume requirements and provide corrective-action evidence as required.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 7,
+                "title": "Confirm conformity",
+                "description": "Use satisfactory test results and the applicable BIS certification assessment to confirm conformity with the relevant IS 17550 requirements.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and product information",
+                "description": "Provide the required BIS Standard Mark and applicable product information in accordance with the relevant certification and marking requirements.",
+                "source_document_id": "DOC-096"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain continuing compliance",
+                "description": "Maintain conformity with IS 17550 (Part 3):2025 and applicable BIS licence conditions, including continuing testing, inspection and surveillance requirements.",
+                "source_document_id": "DOC-096"
+            }
+        ]
+    },
+    {
+        "standard_id": "STD-042",
+        "steps": [
+            {
+                "step_no": 1,
+                "title": "Identify applicable safety-footwear requirements",
+                "description": "Identify IS 15298 (Part 2):2024 as the applicable standard for the safety footwear and confirm the footwear class, design, size range and protection characteristics fall within the standard and applicable certification grouping.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 2,
+                "title": "Prepare BIS licence application",
+                "description": "Prepare the manufacturing, product, quality-control, testing and marking information required for application for a BIS licence under Scheme-I for safety footwear.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 3,
+                "title": "Submit BIS application",
+                "description": "Submit the applicable BIS product certification application identifying the manufacturing premises, safety-footwear varieties and sizes, applicable standard and relevant production and testing details.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 4,
+                "title": "Application scrutiny and factory assessment",
+                "description": "BIS scrutinizes the application and assesses the manufacturing premises, production controls, quality-control arrangements and testing facilities relevant to consistent manufacture of conforming safety footwear.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 5,
+                "title": "Product sampling and testing",
+                "description": "Samples are drawn according to the applicable grouping and sampling provisions and tested against the relevant requirements of IS 15298 (Part 2):2024, including applicable basic and additional protection requirements.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 6,
+                "title": "Close non-conformities",
+                "description": "Address deficiencies or test non-conformities identified during factory assessment or product testing and provide corrective-action evidence as required by BIS.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 7,
+                "title": "Grant of BIS licence",
+                "description": "After satisfactory assessment and confirmation of conformity, BIS grants the licence to use the BIS Standard Mark for the approved safety-footwear varieties and manufacturing premises.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 8,
+                "title": "Marking and labelling",
+                "description": "Mark the certified safety footwear with the required BIS Standard Mark and applicable product information in accordance with IS 15298 (Part 2):2024, the Product Manual and BIS licence conditions.",
+                "source_document_id": "DOC-102"
+            },
+            {
+                "step_no": 9,
+                "title": "Maintain conformity and surveillance",
+                "description": "Continue to comply with IS 15298 (Part 2):2024, the Product Manual and BIS licence conditions, including applicable inspection, surveillance, sampling and testing requirements for maintaining continuing conformity.",
+                "source_document_id": "DOC-102"
+            }
+        ]
     }
 ]

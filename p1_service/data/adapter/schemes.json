@@ -1,0 +1,47 @@
+[
+    {
+        "scheme_id": "SCHEME-I",
+        "scheme_code": "Scheme-I",
+        "name": "ISI Mark Scheme",
+        "description": "BIS product certification scheme under which manufacturers may be granted a licence to use the BIS Standard Mark (ISI Mark) on products conforming to the applicable Indian Standard.",
+        "standard_mark": "ISI Mark",
+        "applicable_context": "Product certification",
+        "source_url": "https://www.bis.gov.in/product-certification/product-certification-process/?lang=en"
+    },
+    {
+        "scheme_id": "SCHEME-II",
+        "scheme_code": "Scheme-II",
+        "name": "Compulsory Registration Scheme (CRS)",
+        "description": "BIS registration scheme for specified products, under which manufacturers are required to register products that conform to the applicable Indian Standard and comply with the applicable regulatory requirements.",
+        "standard_mark": "BIS Standard Mark with Registration Number",
+        "applicable_context": "Product registration / compulsory registration",
+        "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+    },
+    {
+        "scheme_id": "SCHEME-IV",
+        "scheme_code": "Scheme-IV",
+        "name": "Certificate of Conformity Scheme",
+        "description": "BIS product certification scheme for grant of a Certificate of Conformity (CoC) for products conforming to the applicable Indian Standard or specified conformity requirements.",
+        "standard_mark": "BIS Standard Mark / Certificate of Conformity",
+        "applicable_context": "Certificate of conformity for products",
+        "source_url": "https://www.bis.gov.in/product-certification/product-certification-process/?lang=en"
+    },
+    {
+        "scheme_id": "SCHEME-X",
+        "scheme_code": "Scheme-X",
+        "name": "Certification Scheme",
+        "description": "BIS conformity assessment certification scheme applicable to specified products under the BIS conformity assessment framework.",
+        "standard_mark": "BIS Standard Mark",
+        "applicable_context": "Product certification under specified regulatory requirements",
+        "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/?lang=en"
+    },
+    {
+        "scheme_id": "SCHEME-HM",
+        "scheme_code": "HALLMARKING",
+        "name": "BIS Hallmarking Scheme",
+        "description": "BIS hallmarking framework for precious metal jewellery and artefacts, involving BIS registration of jewellers and hallmarking through BIS-recognized Assaying and Hallmarking Centres.",
+        "standard_mark": "BIS Hallmark",
+        "applicable_context": "Hallmarking of gold and silver jewellery/artefacts for declared purity and fineness",
+        "source_url": "https://www.bis.gov.in/hallmarking-overview/?lang=en"
+    }
+]

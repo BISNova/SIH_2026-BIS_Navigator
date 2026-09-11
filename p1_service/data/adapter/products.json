@@ -1,0 +1,115 @@
+[
+    {
+        "product_id": "PROD-001",
+        "canonical_name": "Domestic Pressure Cooker",
+        "category": "Kitchen Appliances",
+        "subcategory": "Pressure Cooker",
+        "description": "A pressure cooker intended for household cooking, designed to cook food under pressure using a sealed cooking vessel.",
+        "keywords": [
+            "pressure cooker",
+            "domestic pressure cooker",
+            "cooker",
+            "household pressure cooker"
+        ],
+        "synonyms": [
+            "pressure cooker",
+            "domestic pressure cooker",
+            "cooker",
+            "kitchen pressure cooker"
+        ],
+        "typical_use": "Home cooking, pressure cooking, meal preparation, steaming.",
+        "material": "Stainless Steel",
+        "product_type": "Domestic",
+        "variant_attributes": [
+            "Capacity",
+            "Material",
+            "Nature of Base",
+            "Nature of Lid"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-002",
+        "canonical_name": "Storage Electric Water Heater",
+        "category": "Electrical Appliances",
+        "subcategory": "Electric Water Heater",
+        "description": "Stationary storage-type electric water heater designed for heating and storing domestic hot water.",
+        "keywords": [
+            "storage electric water heater",
+            "storage water heater",
+            "electric water heater",
+            "electric geyser",
+            "storage geyser",
+            "domestic water heater"
+        ],
+        "synonyms": [
+            "storage water heater",
+            "electric geyser",
+            "storage geyser",
+            "domestic electric water heater"
+        ],
+        "typical_use": [
+            "Domestic hot water heating",
+            "Bathing",
+            "Household water heating"
+        ],
+        "material": "Metallic storage tank with insulation and electrical heating components",
+        "product_type": "Storage / Stationary Type",
+        "variant_attributes": [
+            "Storage capacity",
+            "Power rating",
+            "Rated voltage",
+            "Mounting type",
+            "Heating element type",
+            "Tank material",
+            "Pressure rating"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-003",
+        "canonical_name": "Gold Jewellery / Gold Articles",
+        "category": "Precious Metal Jewellery",
+        "subcategory": "Gold Jewellery / Artefacts",
+        "description": "Gold jewellery and artefacts intended for sale as precious metal articles and subject to BIS hallmarking requirements.",
+        "keywords": [
+            "gold jewellery",
+            "gold jewelry",
+            "gold articles",
+            "gold artefacts",
+            "gold ornaments",
+            "hallmarked gold jewellery",
+            "hallmarked gold articles"
+        ],
+        "synonyms": [
+            "gold jewellery",
+            "gold jewelry",
+            "gold ornaments",
+            "gold artefacts",
+            "gold articles"
+        ],
+        "typical_use": [
+            "Personal adornment",
+            "Jewellery",
+            "Precious metal artefacts",
+            "Retail sale"
+        ],
+        "material": "Gold and gold alloys",
+        "product_type": "Gold Jewellery / Artefact",
+        "variant_attributes": [
+            "Gold fineness",
+            "Caratage",
+            "Article type",
+            "Gold colour",
+            "Presence of stones",
+            "Detachable parts"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": true,
+        "active": true
+    }
+]

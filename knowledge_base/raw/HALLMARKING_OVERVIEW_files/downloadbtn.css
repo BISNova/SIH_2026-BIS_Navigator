@@ -1,0 +1,30 @@
+.download-btn-24 {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.download-btn-24 ul li a {
+    padding: 20px;
+    text-align: center;
+    background-color: #2957a3;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 7px;
+    line-height: 7px;
+    /* margin-top: 10px; */
+}
+
+
+.download-btn-24 ul li {
+    display: inline;
+}
+@media (max-width:768px) {
+	ul.btnpress {
+    width: 100%;
+    text-align: center;
+}
+	ul.btnpress li {
+    display: inline-block;
+    margin-bottom: 50px;
+}
+}

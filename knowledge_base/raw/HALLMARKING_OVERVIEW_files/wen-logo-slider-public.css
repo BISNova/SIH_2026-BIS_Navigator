@@ -1,0 +1,141 @@
+ /**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+ .wls-wrap{
+	display: none;
+ }
+
+.slick-prev:before, .slick-next:before{
+	color: red;
+	opacity:0.5;
+}
+.slick-prev,
+.slick-next{
+	height: 30px;
+	text-align: center;
+	opacity: 1;
+	width: 30px;
+}
+
+.slick-prev,
+.slick-prev:hover,
+.slick-prev:focus,
+.slick-prev:active,
+.slick-prev:visited{
+	background: url(../images/arrows.png) left center;
+/*background: #000  url(../images/arw-left.png) no-repeat;
+*/}
+.slick-next,
+.slick-next:hover,
+.slick-next:focus,
+.slick-next:active,
+.slick-next:visited{
+	background: url(../images/arrows.png) right center;
+}
+.slick-prev:hover, .slick-next:hover {
+    opacity: 0.6;
+    padding: 0 !important;
+}
+
+
+.slick-prev:before,
+.slick-next:before
+{
+content: none;	
+}
+.slick-slide{overflow: hidden;}
+ .slick-slide a img,
+ .slick-slide img
+ {
+    padding: 0 2%;
+    position: relative;
+    text-align: center;
+  	width: 100%;
+  	margin: 0 auto;
+ } 
+#dashboard button:active,
+#dashboard button:focus,
+#dashboard button:hover{
+	border-top: none;
+}
+.slick-active{
+	color: #000;
+	font-weight: bolder;
+
+}
+
+.entry-content h2{text-transform: capitalize;}
+ /*for Caption*/  
+.panel > .ws-caption{ display:none; background: rgba(0, 0, 0, 0.7);height: auto;margin-left: 2%;position: absolute;width: 96%;}
+/*for rtl*/
+div[dir="rtl"] .panel > .ws-caption{margin-left: 0; margin-right: 2%;}
+
+.panel > .ws-caption h4{color: #fff!important;font-size: 14px; margin: 0!important; padding: 5%; text-align: left;}
+
+ul.slick-dots li span.wls-pagination-number{background: #666; border-radius: 50px; color: #ccc; display: inline-block; font-size: 10px; height: 20px; line-height: 2; padding: 4px;  width: 20px;}
+ul.slick-dots li.slick-active span.wls-pagination-number{background: #000; color: #fff; }
+
+ul.slick-dots li span.wls-pagination-image{opacity: 0.4;}
+ul.slick-dots li.slick-active span.wls-pagination-image{ opacity: 1;}
+ul.slick-dots li.slick-active span.wls-pagination-image img {border-bottom: 2px solid #111;}
+ul.slick-dots li span.wls-pagination-image img{height: 20px;}
+
+.wls-wrap .slick-next, .wls-wrap .slick-next:hover, .wls-wrap .slick-next:focus, .wls-wrap .slick-next:active, .wls-wrap .slick-next:visited,
+.wls-wrap .slick-prev, .wls-wrap .slick-prev:hover, .wls-wrap .slick-prev:focus, .wls-wrap .slick-prev:active, .wls-wrap .slick-prev:visited{box-shadow: none; text-indent: -9999px; background-color: inherit; width: 30px; height: 30px;;}
+.wls-wrap .slick-next{right: -30px;}
+.wls-wrap .slick-disabled{opacity: 0.3; cursor:default; }
+
+.panel.slick-slide{
+	-moz-transform: scale(1);
+   -ms-transform: scale(1);
+   -o-transform: scale(1);
+   -webkit-transform: scale(1); 
+   transform: scale(1); 
+   -webkit-transition: 1s;
+ -moz-transition:  1s;
+ -ms-transition: 1s;
+ -o-transition: 1s;
+ transition: all 1s ease-in-out;
+}
+
+.panel.slick-center{
+   -moz-transform: scale(1.08);
+   -ms-transform: scale(1.08);
+   -o-transform: scale(1.08);
+   -webkit-transform: scale(1.08); 
+   transform: scale(1.08); 
+ -webkit-transition: 1s;
+ -moz-transition:  1s;
+ -ms-transition: 1s;
+ -o-transition: 1s;
+ 
+ transition: all 1s ease-in-out;
+ z-index: 1;
+}
+.panel.slick-slide.slick-cloned :nth-child(4){
+ height: 100px;
+ background-color: red;
+}
+
+/*
+ * Additional CSS of plugin to get compatible with Travel-log theme
+*/
+.wls-wrap .slick-slider .slick-prev,
+.wls-wrap .slick-slider .slick-next{
+	top:50%;
+	margin-top:-15px;
+}
+
+.wls-wrap .slick-slider {
+	overflow:visible;
+}
+
+.wls-wrap .slick-slider .slick-prev{
+	left:20px;
+	z-index: 1;
+}
+.wls-wrap .slick-slider .slick-next{
+	right:10px;
+}

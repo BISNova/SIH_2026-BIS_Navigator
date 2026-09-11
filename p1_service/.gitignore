@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Generated RAG data (regenerate, don't commit - see README.md)
+# NOTE: fixed during integration - these previously pointed at
+# "rag/data/..." but the actual generated data lives at "data/..."
+# (project root), so none of the original patterns ever matched.
+data/raw/*
+data/processed/*
+data/embeddings/*
+data/vectorstore/*
+!data/adapter/
+!data/adapter/*.json

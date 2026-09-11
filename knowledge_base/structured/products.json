@@ -111,5 +111,688 @@
         "image_supported": false,
         "hallmarking_applicable": true,
         "active": true
+    },
+    {
+        "product_id": "PROD-004",
+        "canonical_name": "Electric Iron",
+        "category": "Electrical Appliances",
+        "subcategory": "Electric Iron",
+        "description": "Household electric iron used for pressing and smoothing clothes and other fabrics.",
+        "keywords": [
+            "electric iron",
+            "clothes iron",
+            "steam iron",
+            "dry iron"
+        ],
+        "synonyms": [
+            "electric iron",
+            "clothes iron",
+            "steam iron",
+            "dry iron"
+        ],
+        "typical_use": [
+            "Clothes ironing",
+            "Fabric pressing",
+            "Garment care"
+        ],
+        "material": "Metal and heat-resistant insulating materials",
+        "product_type": "Household Electrical Appliance",
+        "variant_attributes": [
+            "Iron Type",
+            "Rated Power",
+            "Rated Voltage",
+            "Steam Function",
+            "Soleplate Material"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-005",
+        "canonical_name": "Electric Food Mixer / Liquidizer / Grinder",
+        "category": "Kitchen Appliances",
+        "subcategory": "Electric Food Mixer / Liquidizer / Grinder",
+        "description": "Motor-driven household appliance used for mixing, liquidizing, grinding or, where provided, centrifugal juicing of food.",
+        "keywords": [
+            "electric food mixer",
+            "liquidizer",
+            "grinder",
+            "mixer grinder",
+            "food processor",
+            "centrifugal juicer"
+        ],
+        "synonyms": [
+            "mixer grinder",
+            "electric mixer",
+            "liquidizer",
+            "food mixer",
+            "kitchen grinder",
+            "juicer"
+        ],
+        "typical_use": [
+            "Food mixing",
+            "Liquidizing",
+            "Dry grinding",
+            "Juicing"
+        ],
+        "material": "Metal, plastic and food-contact materials",
+        "product_type": "Household Electrical Appliance",
+        "variant_attributes": [
+            "Product Type",
+            "Rated Power",
+            "Rated Voltage",
+            "Dry Grinding Arrangement",
+            "Whisking Arrangement",
+            "Juicer Arrangement"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-006",
+        "canonical_name": "LPG Stove / Domestic Gas Stove",
+        "category": "Kitchen Appliances",
+        "subcategory": "Domestic Gas Stove / Built-in Hob",
+        "description": "Domestic gas cooking appliance designed for use with LPG, including conventional gas stoves and built-in hobs.",
+        "keywords": [
+            "LPG stove",
+            "domestic gas stove",
+            "gas stove",
+            "LPG gas stove",
+            "built-in hob",
+            "gas hob"
+        ],
+        "synonyms": [
+            "LPG stove",
+            "gas stove",
+            "domestic gas stove",
+            "LPG hob",
+            "built-in gas hob"
+        ],
+        "typical_use": [
+            "Household cooking",
+            "Food preparation"
+        ],
+        "material": "Metal, glass and heat-resistant materials",
+        "product_type": "Domestic Gas Appliance",
+        "variant_attributes": [
+            "Appliance Type",
+            "Number of Burners",
+            "Burner Type",
+            "Ignition Type",
+            "Built-in",
+            "Glass Top"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-007",
+        "canonical_name": "Protective Helmet for Two-Wheeler Riders",
+        "category": "Personal Protective Equipment",
+        "subcategory": "Two-Wheeler Rider Helmet",
+        "description": "Protective helmet intended for riders of two-wheeled motor vehicles and designed to provide head protection during riding.",
+        "keywords": [
+            "protective helmet",
+            "two-wheeler helmet",
+            "motorcycle helmet",
+            "motorbike helmet",
+            "rider helmet",
+            "safety helmet"
+        ],
+        "synonyms": [
+            "two-wheeler helmet",
+            "motorcycle helmet",
+            "motorbike helmet",
+            "rider helmet",
+            "protective riding helmet"
+        ],
+        "typical_use": [
+            "Two-wheeler riding",
+            "Motorcycle riding",
+            "Rider head protection"
+        ],
+        "material": "Protective shell, impact-absorbing liner and retention system materials",
+        "product_type": "Protective Safety Equipment",
+        "variant_attributes": [
+            "Helmet Type",
+            "Lower Face Cover",
+            "Visor",
+            "Size",
+            "Shell Material",
+            "Retention System"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-008",
+        "canonical_name": "Packaged Drinking Water",
+        "category": "Food and Beverage",
+        "subcategory": "Packaged Drinking Water",
+        "description": "Drinking water processed and packaged for human consumption, excluding packaged natural mineral water.",
+        "keywords": [
+            "packaged drinking water",
+            "bottled drinking water",
+            "packaged water",
+            "bottled water"
+        ],
+        "synonyms": [
+            "packaged drinking water",
+            "bottled drinking water",
+            "packaged water",
+            "bottled water"
+        ],
+        "typical_use": [
+            "Human consumption",
+            "Drinking",
+            "Retail packaged water"
+        ],
+        "material": "Treated drinking water in food-grade packaging",
+        "product_type": "Packaged Food / Beverage",
+        "variant_attributes": [
+            "Water Source",
+            "Treatment Process",
+            "Packaging Type",
+            "Package Size",
+            "Packaging Material"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-009",
+        "canonical_name": "Ordinary Portland Cement",
+        "category": "Construction Materials",
+        "subcategory": "Cement",
+        "description": "Ordinary Portland Cement manufactured for use in construction and covered by IS 269:2015.",
+        "keywords": [
+            "ordinary portland cement",
+            "OPC",
+            "portland cement",
+            "cement"
+        ],
+        "synonyms": [
+            "OPC",
+            "ordinary portland cement",
+            "portland cement"
+        ],
+        "typical_use": [
+            "Concrete construction",
+            "Mortar",
+            "General construction"
+        ],
+        "material": "Cementitious hydraulic binder",
+        "product_type": "Ordinary Portland Cement",
+        "variant_attributes": [
+            "Grade"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-010",
+        "canonical_name": "Automotive Tyres",
+        "category": "Automotive Components",
+        "subcategory": "Pneumatic Tyres",
+        "description": "Pneumatic tyres intended for automotive vehicles, including tyres for two- and three-wheelers, passenger cars and commercial vehicles.",
+        "keywords": [
+            "automotive tyres",
+            "automotive tires",
+            "pneumatic tyres",
+            "vehicle tyres",
+            "vehicle tires",
+            "car tyres",
+            "motorcycle tyres",
+            "commercial vehicle tyres"
+        ],
+        "synonyms": [
+            "automotive tyres",
+            "automotive tires",
+            "vehicle tyres",
+            "pneumatic tyres"
+        ],
+        "typical_use": [
+            "Two-wheeler vehicles",
+            "Three-wheeler vehicles",
+            "Passenger cars",
+            "Commercial vehicles"
+        ],
+        "material": "Rubber, textile and steel reinforcing materials",
+        "product_type": "Pneumatic Tyre",
+        "variant_attributes": [
+            "Vehicle Type",
+            "Tyre Type",
+            "Construction Type",
+            "Radial or Diagonal",
+            "Tubeless or Tube Type",
+            "Tyre Size",
+            "Load Index",
+            "Speed Symbol"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-011",
+        "canonical_name": "Electrical Switches",
+        "category": "Electrical Accessories",
+        "subcategory": "Switches for Domestic and Similar Purposes",
+        "description": "Electrical switches intended for domestic and similar purposes, covered primarily by IS 3854:2023.",
+        "keywords": [
+            "electrical switch",
+            "electric switch",
+            "domestic switch",
+            "wall switch",
+            "household switch",
+            "switches for domestic and similar purposes",
+            "IS 3854 switch"
+        ],
+        "synonyms": [
+            "electrical switch",
+            "domestic electrical switch",
+            "household switch",
+            "wall switch",
+            "light switch"
+        ],
+        "typical_use": "Control of electrical circuits in domestic and similar premises, including lighting and general-purpose loads.",
+        "material": null,
+        "product_type": "Domestic and Similar Purpose",
+        "variant_attributes": [
+            "Switch Type",
+            "Rated Current",
+            "Rated Voltage",
+            "Poles",
+            "Operation Type",
+            "Terminal Type",
+            "Screw or Screwless",
+            "Mounting Type",
+            "Enclosure/Protection Type",
+            "Special Load Type"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-012",
+        "canonical_name": "Self-Ballasted LED Lamps for General Lighting Services",
+        "category": "Lighting",
+        "subcategory": "LED Lamps",
+        "description": "Self-ballasted LED lamps intended for general lighting services, covered by the IS 16102 series for safety and performance requirements.",
+        "keywords": [
+            "LED lamp",
+            "LED bulb",
+            "self-ballasted LED lamp",
+            "LED lighting",
+            "general lighting LED lamp",
+            "LED bulb for general lighting",
+            "IS 16102"
+        ],
+        "synonyms": [
+            "LED bulb",
+            "LED lamp",
+            "self-ballasted lamp",
+            "self-ballasted LED bulb",
+            "general lighting LED lamp"
+        ],
+        "typical_use": "General indoor and outdoor lighting in domestic, commercial and similar applications.",
+        "material": null,
+        "product_type": "Self-Ballasted LED Lamp",
+        "variant_attributes": [
+            "Lamp Type",
+            "Cap Type",
+            "Rated Power",
+            "Rated Voltage",
+            "Operating Frequency",
+            "Dimmable",
+            "Colour Temperature",
+            "Lumen Output",
+            "CRI",
+            "Shape",
+            "Input Current"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-013",
+        "canonical_name": "Toys",
+        "category": "Consumer Products",
+        "subcategory": "Toys",
+        "description": "Toys intended primarily for children, subject to the applicable safety requirements of the IS 9873 Safety of Toys series based on toy type, intended age group, material and construction.",
+        "keywords": [
+            "toy",
+            "toys",
+            "children's toy",
+            "kids toy",
+            "childrens toy",
+            "toy product",
+            "IS 9873 toys",
+            "toy safety"
+        ],
+        "synonyms": [
+            "children's toy",
+            "kids toy",
+            "children's product",
+            "plaything",
+            "toy product"
+        ],
+        "typical_use": "Play, entertainment, educational activities and recreational use by children.",
+        "material": null,
+        "product_type": "Toy",
+        "variant_attributes": [
+            "Toy Type",
+            "Intended Age Group",
+            "Material",
+            "Electrically Operated",
+            "Battery Operated",
+            "Soft Filled",
+            "Activity Toy",
+            "Ride-On",
+            "Toy Worn on Body",
+            "Food Contact",
+            "Mouth Contact",
+            "Small Parts Present"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-014",
+        "canonical_name": "LPG Cylinders",
+        "category": "Pressure Vessels",
+        "subcategory": "LPG Cylinders",
+        "description": "Welded low carbon steel cylinders exceeding 5 litre water capacity intended for low-pressure liquefied gases, including LPG cylinders covered by IS 3196 (Part 1):2013.",
+        "keywords": [
+            "LPG cylinder",
+            "liquefied petroleum gas cylinder",
+            "LPG gas cylinder",
+            "gas cylinder",
+            "welded steel cylinder",
+            "IS 3196 cylinder",
+            "domestic LPG cylinder"
+        ],
+        "synonyms": [
+            "LPG cylinder",
+            "gas cylinder",
+            "LPG gas cylinder",
+            "steel gas cylinder",
+            "liquefied petroleum gas cylinder"
+        ],
+        "typical_use": "Storage and distribution of LPG for domestic, commercial and similar applications.",
+        "material": "Low Carbon Steel",
+        "product_type": "Welded Cylinder",
+        "variant_attributes": [
+            "Cylinder Type",
+            "Water Capacity",
+            "Nominal Capacity",
+            "Material",
+            "Wall Thickness",
+            "Manufacturing Method",
+            "Valve Type",
+            "Foot Ring",
+            "Bung Type",
+            "Protective Coating",
+            "Intended Gas"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-015",
+        "canonical_name": "TMT / High Strength Deformed Steel Bars for Concrete Reinforcement",
+        "category": "Construction Materials",
+        "subcategory": "Reinforcement Steel",
+        "description": "High strength deformed steel bars and wires used for concrete reinforcement, primarily covered by IS 1786:2008 and its applicable amendments.",
+        "keywords": [
+            "TMT bar",
+            "TMT bars",
+            "reinforcement steel",
+            "reinforcement bar",
+            "steel rebar",
+            "deformed steel bar",
+            "high strength steel bar",
+            "Fe 500",
+            "Fe 500D",
+            "Fe 415",
+            "IS 1786"
+        ],
+        "synonyms": [
+            "TMT bar",
+            "reinforcement bar",
+            "rebar",
+            "deformed steel bar",
+            "reinforcing steel",
+            "reinforcement steel bar"
+        ],
+        "typical_use": "Reinforcement of reinforced concrete structures including buildings, bridges, foundations, columns, beams and slabs.",
+        "material": "High Strength Steel",
+        "product_type": "Deformed Steel Bar / Wire",
+        "variant_attributes": [
+            "Product Type",
+            "Grade",
+            "Nominal Diameter",
+            "Bar or Wire",
+            "Rib Pattern",
+            "Surface Condition",
+            "Manufacturing Process",
+            "Cast/Lot",
+            "Length",
+            "Intended Use"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-016",
+        "canonical_name": "Electric Ceiling Fans",
+        "category": "Electrical Appliances",
+        "subcategory": "Electric Ceiling Fans",
+        "description": "Electric ceiling type fans intended for general air circulation, covered primarily by IS 374:2019 and applicable amendments.",
+        "keywords": [
+            "ceiling fan",
+            "electric ceiling fan",
+            "ceiling type fan",
+            "electric fan",
+            "BIS ceiling fan",
+            "IS 374 fan"
+        ],
+        "synonyms": [
+            "ceiling fan",
+            "electric ceiling fan",
+            "ceiling type electric fan",
+            "household ceiling fan"
+        ],
+        "typical_use": "Air circulation and ventilation in residential, commercial and similar indoor spaces.",
+        "material": null,
+        "product_type": "Electric Ceiling Type Fan",
+        "variant_attributes": [
+            "Fan Type",
+            "Motor Type",
+            "Sweep Size",
+            "Rated Voltage",
+            "Rated Frequency",
+            "Power Input",
+            "Speed",
+            "Regulator Type",
+            "Remote Control",
+            "Insulation Class",
+            "Number of Blades",
+            "Blade Material"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-017",
+        "canonical_name": "LPG Cylinder Valve Fittings",
+        "category": "Gas Cylinder Components",
+        "subcategory": "LPG Cylinder Valve Fittings",
+        "description": "Valve fittings used with liquefied petroleum gas cylinders, including valve types covered by IS 8776:2024 and IS 8737:2017 depending on cylinder water capacity and valve construction.",
+        "keywords": [
+            "LPG valve",
+            "LPG cylinder valve",
+            "LPG valve fitting",
+            "gas cylinder valve",
+            "LPG cylinder valve fitting",
+            "cylinder valve",
+            "IS 8776",
+            "IS 8737"
+        ],
+        "synonyms": [
+            "LPG cylinder valve",
+            "LPG valve",
+            "gas cylinder valve",
+            "valve fitting",
+            "LPG valve fitting"
+        ],
+        "typical_use": "Controlling filling, storage and discharge of LPG from LPG cylinders.",
+        "material": null,
+        "product_type": "Valve Fitting",
+        "variant_attributes": [
+            "Valve Type",
+            "Cylinder Water Capacity",
+            "Inlet Thread Type",
+            "Valve Body Type",
+            "Material",
+            "Working Pressure",
+            "Operating Temperature",
+            "Sealing Type",
+            "Outlet Connection",
+            "Cylinder Application"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-018",
+        "canonical_name": "Portland Pozzolana Cement (PPC)",
+        "category": "Construction Materials",
+        "subcategory": "Portland Pozzolana Cement",
+        "description": "Portland Pozzolana Cement for concrete and construction applications, with applicability determined by whether the pozzolanic material is fly ash or calcined clay under the relevant IS 1489 Part 1 or Part 2 requirements.",
+        "keywords": [
+            "PPC",
+            "Portland Pozzolana Cement",
+            "Portland pozzolana cement",
+            "fly ash based PPC",
+            "calcined clay based PPC",
+            "IS 1489",
+            "IS 1489 Part 1",
+            "IS 1489 Part 2"
+        ],
+        "synonyms": [
+            "PPC cement",
+            "Portland pozzolana cement",
+            "fly ash PPC",
+            "calcined clay PPC"
+        ],
+        "typical_use": "Concrete production, building construction, masonry, infrastructure and general cement-based construction applications.",
+        "material": "Cementitious material with pozzolanic constituent",
+        "product_type": "Portland Pozzolana Cement",
+        "variant_attributes": [
+            "Cement Type",
+            "Pozzolanic Material",
+            "Manufacturing Process",
+            "Grade or Strength Class",
+            "Raw Material Source",
+            "Fineness",
+            "Packaging Type",
+            "Bag Size"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-019",
+        "canonical_name": "Domestic Refrigerator",
+        "category": "Home Appliances",
+        "subcategory": "Household Refrigerating Appliance",
+        "description": "A household refrigerating appliance intended for domestic food storage and preservation, including direct-cool and frost-free refrigerator types covered by the applicable IS 17550 requirements.",
+        "keywords": [
+            "domestic refrigerator",
+            "household refrigerator",
+            "refrigerator",
+            "fridge",
+            "household refrigerating appliance",
+            "IS 17550"
+        ],
+        "synonyms": [
+            "refrigerator",
+            "fridge",
+            "domestic fridge",
+            "household refrigerator"
+        ],
+        "typical_use": "Domestic cooling, refrigeration and frozen-food storage.",
+        "material": "Varies by construction",
+        "product_type": "Household Refrigerating Appliance",
+        "variant_attributes": [
+            "Refrigerator Type",
+            "Cooling Type",
+            "Number of Doors",
+            "Rated Voltage",
+            "Rated Frequency",
+            "Storage Volume",
+            "Freezer Type",
+            "Inverter or Non-Inverter",
+            "Climate Class"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
+    },
+    {
+        "product_id": "PROD-020",
+        "canonical_name": "Safety Footwear",
+        "category": "Personal Protective Equipment",
+        "subcategory": "Safety Footwear",
+        "description": "Personal protective footwear designed to provide specified protection against workplace hazards, including mechanical, penetration, slip, electrical, water and other specialised risks covered by the applicable safety-footwear requirements.",
+        "keywords": [
+            "safety footwear",
+            "safety shoes",
+            "protective footwear",
+            "safety boots",
+            "industrial safety shoes",
+            "IS 15298 Part 2"
+        ],
+        "synonyms": [
+            "safety shoes",
+            "protective shoes",
+            "safety boots",
+            "protective footwear",
+            "industrial safety footwear"
+        ],
+        "typical_use": "Industrial, construction, manufacturing, warehousing and other workplaces requiring protective footwear.",
+        "material": "Leather or other permitted footwear materials",
+        "product_type": "Personal Protective Equipment",
+        "variant_attributes": [
+            "Footwear Class",
+            "Material Type",
+            "Footwear Design",
+            "Size Range",
+            "Toe Cap Type",
+            "Penetration Resistant",
+            "Slip Resistant",
+            "Electrical Property",
+            "Water Resistant",
+            "Specialised Protection"
+        ],
+        "image_supported": false,
+        "hallmarking_applicable": false,
+        "active": true
     }
 ]

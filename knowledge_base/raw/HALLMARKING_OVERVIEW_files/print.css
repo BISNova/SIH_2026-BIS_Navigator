@@ -1,0 +1,154 @@
+@media print {
+
+    /* ========== A4 Page Setup ========== */
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm;
+    }
+
+    body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    /* ========== Hide Non-Printable Elements ========== */
+    header,
+    #header,
+    .top_header_area,
+    .fixheader,
+    .topnavs,
+    nav,
+    .main-navigation,
+    #block-mainmenu,
+    #block-headersearch,
+    #block-email,
+    .sticky-container,
+    .accordion-menu,
+    .pojo-a11y-toolbar-toggle,
+    .goverment_logo,
+    .mylivechat_inline,
+    .background-image,
+    .login_section,
+    .sticky-popup,
+    .popup-wrap,
+    .desktopmedia,
+    .mediamobile,
+    .circlemobile,
+    .circledesktop,
+    .mobile,
+    .row.mobile,
+    .mobile.events,
+    .what_we_area.row.mobile,
+    .btn-pause,
+    .btn-play,
+    .yt-prev,
+    .yt-next,
+    .pause-play-Vgallery,
+    .social-icons,
+    .search-form,
+    button,
+    .btn,
+    .no-print,
+    #selection7,
+    .site-footer,
+    footer {
+        display: none !important;
+    }
+
+    /* ========== Show Only Main Content ========== */
+    #site-wrapper,
+    .desktop,
+    .what_we_area.row.desktop,
+    .desktop.events,
+    .events,
+    .eventcontent,
+    .main-content,
+    .layout-container,
+    .container,
+    .col-md-12,
+    .wrapper_sec {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        float: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: static !important;
+    }
+
+    /* ========== Fix Overlapping / Broken Layout ========== */
+    .seven-cols {
+        margin-top: 20px !important;
+        margin-bottom: 30px !important;
+        width: 100% !important;
+    }
+
+    .seven-cols img {
+        max-width: 100% !important;
+        height: auto !important;
+        padding: 10px !important;
+        margin-top: 10px !important;
+    }
+
+    .footer_about {
+        width: 100% !important;
+    }
+
+    /* Fix the messy links / menu area that was overflowing */
+    .menu,
+    .sub-menu,
+    ul,
+    li {
+        position: static !important;
+        float: none !important;
+        width: auto !important;
+        overflow: visible !important;
+        white-space: normal !important;
+    }
+
+    /* ========== Links ========== */
+    a {
+        color: #000 !important;
+        text-decoration: underline !important;
+    }
+
+    /* Remove URL after links (you already had this) */
+    a[href]:after {
+        content: none !important;
+    }
+
+    /* ========== Images & Media ========== */
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    #slider,
+    .nivoSlider,
+    .nivoSlider a,
+    .nivoSlider a img {
+        width: 100% !important;
+        height: auto !important;
+        float: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ========== Page Break Control ========== */
+    h1, h2, h3, h4, h5, h6,
+    img, table, .video-card, article {
+        page-break-inside: avoid;
+    }
+
+    /* ========== Clean Backgrounds ========== */
+    * {
+        background: transparent !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}

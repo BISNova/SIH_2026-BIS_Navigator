@@ -1,82 +1,97 @@
-# Integration Notes v3 — Real KB + Real RAG
+# Integration Notes — P2 ↔ P1 (HTTP-based)
 
-## The one real limitation - read this before running anything
+## Architecture: two separate services, not a monolith
 
-Two things were built to work around this **for testing only**:
+P1 (Evidence/RAG) is now a standalone deployed FastAPI service
+(`p1_service/`), not something P2 imports in-process. P2's backend
+(`backend/`) calls it over real HTTP via `integration/p1_client.py`.
+This replaced an earlier in-process integration - if you find references
+to that elsewhere (old chat history, old docs), they're superseded by
+this document.
 
-1. **`integration/mock_embedder.py`** - a deterministic hash-based fake embedder with the same
-   `.encode()` interface as `sentence_transformers.SentenceTransformer`. It has **zero semantic
-   understanding** - it's only good for proving the wiring works (chunks index, retrieval returns
-   results, the full pipeline runs without crashing), never for judging answer quality.
-2. **`integration/generate_mock_embeddings_and_index.py`** - runs Person 1's *actual*
-   `embed.py`/`chroma_store.py` code with only the model swapped, so her real ingestion/indexing
-   logic gets exercised for real.
+## The contract
 
-**You saw this limitation in action already**: the "electric geyser" test query got "I don't have
-enough reliable evidence to answer this question" - that's her real sufficiency checker correctly
-refusing to answer on noisy, non-semantic mock embeddings. That's a good sign (the honesty
-safeguard works), not a bug. **On a machine with real internet access, delete the
-`mock.patch(...)` blocks in `run_pipeline.py` / test files, run `embed.py` normally, and every
-answer will be grounded in actually-relevant evidence.**
+`integration/p1_contract.py` mirrors P1's actual
+`p1_service/rag/schemas/p1_input.py` / `p1_output.py` field-for-field,
+defined independently (no shared Python import between the two
+services - just a matching JSON shape). If P1's schema changes, this
+file needs a matching update.
 
-## What's real and copyright-safe about the evidence text
+### P2 → P1 (`P1InputPayload`)
 
-Person 4's KB delivery has structured metadata and curated summaries (`scope_summary`,
-certification steps, test requirements) but **no raw extracted document text** - no PDFs, no
-verbatim clauses. `integration/build_evidence_chunks.py` builds 52 evidence chunks (covering all
-7 real standards) entirely from Person 4's own paraphrased summaries, each chunk explicitly
-prefixed `"[Curated summary - not verbatim BIS text]"` so nobody mistakes this for real extracted
-clause text in a demo.
+| Field | Type | Notes |
+|---|---|---|
+| `query` | str | verbatim user query |
+| `normalized_query` | str | cleaned version |
+| `status` | str | `"matched"` / `"clarification_needed"` / `"not_found"` |
+| `matched_product` | object | `{product_id, canonical_name, attributes}` |
+| `applicable_standards` | list | see below |
+| `confidence_score` / `confidence_label` | float / str | product-match confidence |
+| `needs_clarification` / `clarification_question` | bool / str | |
+| `language` | str | defaults `"en"` - not yet wired to a frontend toggle |
 
-**You mentioned Person 4 may add raw source files later.** When that happens, the correct pipeline
-becomes: `raw file -> ingestion/extract.py -> clean.py -> chunk.py -> merge with documents.json
-metadata -> embed.py -> chroma_store.py`, which **replaces** `build_evidence_chunks.py` entirely -
-her `chunk.py` already outputs a compatible shape (chunk_id/text/section/section_header), it just
-needs the same document-metadata merge step our script does now. Nothing else in the integration
-layer (adapter, orchestrator) needs to change - they only care about `P1Input`/`P1Output`, not
-where the chunks came from.
+Each `applicable_standards` entry carries **both** the rich fields
+(`is_number`, `title`, `relationship_type`, `status`, `source_url`,
+`curated_confidence`) and older compatibility fields (`standard_title`,
+`relevance`, `mandatory`) kept in sync with the rich ones, since P1's
+schema retains both for backward compatibility with her own earlier code/tests.
 
-## Two questions to Person 1 - still open from last round
+### P1 → P2 (`P1OutputPayload`)
 
-Her `schemas/p1_input.py` is **unchanged** since the last integration - both flagged questions
-are still live:
+`answer`, `evidence[]`, `sources[]`, `confidence_score`,
+`confidence_label`, `evidence_sufficient`, `clarification_needed`,
+`clarification_question` - unchanged shape from earlier integration
+rounds.
 
-1. `matched_product` is still a plain string, not an object. The full object rides along as an
-   additive `matched_product_details` field for now.
-2. `clarification_options` still doesn't exist in her schema at all - additive-only on our side.
+## Two real, still-open questions for P1
 
-**One new thing to flag, discovered while wiring the real data**: her `ApplicableStandard.mandatory`
-is a plain `bool`, but our real data has a genuine third state - `is_mandatory=None` meaning "no
-conformity route on file for this standard yet," which is very different from "confirmed not
-mandatory." The adapter currently collapses `None -> False` to fit her schema, which means her
-`mandatory=False` can now mean either "actually not mandatory" or "we don't know." The full
-tri-state value is preserved on `applicable_standards_full` regardless. Worth asking her whether
-`mandatory` should become `Optional[bool]` on her end too.
+1. **`mandatory` is a plain, non-optional `bool`** in her schema. Our
+   real data has a genuine third state - `is_mandatory=None` means "no
+   conformity route on file for this standard yet," which is different
+   from "confirmed not mandatory." The adapter collapses `None → False`
+   to fit her schema (see `adapter.py`'s docstring). The full tri-state
+   value is only visible in the rich fields, not the compatibility
+   ones. Worth asking whether `mandatory` should become
+   `Optional[bool]`.
 
-## Running it
+2. **`curated_confidence` is a string** in her schema; our real KB
+   stores a raw float (0.0–1.0). The adapter buckets it
+   (high ≥0.75, medium ≥0.45, else low) - reasonable, but the exact
+   thresholds are a judgment call worth confirming, not a spec either
+   side agreed on explicitly.
 
-```bash
-pip install -r product_intelligence/requirements.txt
-pip install chromadb sentence-transformers   # needs real internet for the model itself
+## Bugs found and fixed in P1's delivered code
 
-# One-time setup (sandbox: uses mock embedder; real machine: run her embed.py directly instead)
-python3 -m integration.build_evidence_chunks
-python3 -m integration.generate_mock_embeddings_and_index
+See the root `README.md`'s "Fixes applied to P1's delivered code"
+section - the dual-import-path bug in `evidence_pipeline.py`, the
+missing `google-genai` dependency, and the `.gitignore` path mismatch.
+All three were found by actually booting her service and testing it
+live, not by code review alone.
 
-# Tests
-python3 -m pytest product_intelligence/tests/ tests/ -v    # 17 passing
+## Testing approach
 
-# See it live
-python3 -m integration.run_pipeline
-```
+Both `tests/test_full_integration.py` and `backend/tests/test_backend_api.py`
+boot P1's real service as a live subprocess (`sandbox_mocks.run_mocked_server` -
+only the embedding model and Gemini calls are mocked, everything else, including
+real P4 evidence retrieval, is genuine). This is deliberately a real HTTP
+round-trip against her actual code, not a hand-written stub of what we assume her
+API does.
 
-## On a real machine with internet access
+One thing worth knowing if you extend these tests: running both test files
+together in one pytest invocation used to hang, because both subprocess servers
+open the same ChromaDB SQLite file sequentially, and a hard `SIGKILL` didn't give
+ChromaDB a chance to release its lock before the next process tried to open it.
+Fixed by using a graceful `terminate()` (SIGTERM) with a `kill()` fallback only if
+that doesn't work within 10s. If you add a third test file with its own P1
+subprocess fixture, copy that shutdown pattern, not a bare `kill()`.
 
-1. Skip `generate_mock_embeddings_and_index.py` entirely.
-2. `cd evidence_engine/rag && python3 embeddings/embed.py` (her real code, real model, downloads
-   ~90MB once).
-3. `python3 vectorstore/chroma_store.py` (or however she wires indexing into her own runner).
-4. In `integration/run_pipeline.py`, replace `build_evidence_pipeline()`'s mock-patched
-   construction with a plain `EvidencePipeline()` call.
-5. Everything else - the adapter, the orchestrator, the short-circuit logic for
-   clarification/not_found - is already real and doesn't change.
+## KB sync
+
+`knowledge_base/` (P2's copy) and `p1_service/data/adapter/` (P1's copy)
+were verified byte-for-byte identical across every shared table
+(`products`, `standards`, `product_standard_mapping`,
+`conformity_routes`, `certification_steps`, `tests`, `schemes`, `qcos`,
+`product_attributes`, `documents`) at integration time. There's no
+automated sync between them - if Person 4 updates one, the other needs
+updating manually until/unless a shared single source of truth is set
+up.

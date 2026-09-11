@@ -1,0 +1,38 @@
+span span:after, span span:before {
+position: relative;
+}
+.about_us_area .about_row p {
+font: 200 16px/26px "Abel";
+font-weight: bold;
+color: #000 !important;
+padding: 10px 10px 10px 20px;
+padding-bottom: 10px;
+padding-bottom: 0;
+}
+.accordion {
+background-color: #eee;
+color: #444;
+cursor: pointer;
+padding: 0 0 0 0;
+width: 100%;
+border: none;
+text-align: left;
+outline: none;
+font-size: 15px;
+font-weight: bold;
+transition: 0.4s;
+font-family: Abel !important;
+margin: 0;
+}
+
+.accordion::after {
+content: '\002B';
+color: #777;
+font-weight: bold;
+float: right;
+margin-right:20px;
+font-family: Abel;
+margin-top: -25px;
+}
+.panel a{color:#9D0B12 !important;}
+.attachment-full{width:100% !important;height:auto !important;}

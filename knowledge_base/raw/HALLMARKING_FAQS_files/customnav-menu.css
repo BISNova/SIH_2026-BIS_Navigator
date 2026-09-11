@@ -1,0 +1,164 @@
+/* Base styles */
+.menu-item-new,
+.menu-item2 {
+    list-style: none;
+    position: relative;
+    font-family: Arial, sans-serif;
+    margin-bottom: 5px;
+}
+
+/* Link styling */
+.menu-item-new a,
+.menu-item2 a {
+    text-decoration: none;
+    color: #000;
+    padding: 6px 12px;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+/* Hover effect for desktop */
+.menu-item2 a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Submenu styling */
+.menu-new {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+	background-color:#fff;
+    min-width: 220px;
+    border: 0;
+    z-index: 999;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0;
+}
+
+/* Submenu items */
+.menu-new li {
+    width: 100%;
+}
+
+.menu-new a {
+    display: block;
+    padding: 10px;
+    white-space: nowrap;
+}
+
+/* Show submenu on hover */
+.menu-item2:hover .menu-new {
+    display: block;
+}
+
+/* Fix nested dropdowns visibility */
+header#header .menu li .menu li {
+    overflow: visible !important;
+}
+ul.menu-new.open {
+    background-color: #2957a3;
+}
+
+/* -----------------------------------
+   ✅ Responsive Behavior for Mobile
+------------------------------------ */
+@media (max-width: 768px) {
+    /* Stack layout for small screens */
+    .menu-new {
+        position: static;
+        box-shadow: none;
+        min-width: 100%;
+        display: block;
+        padding-left: 15px;
+        margin-top: 10px;
+    }
+
+    .menu-item2:hover .menu-new {
+        display: block;
+    }
+
+    .menu-item2,
+    .menu-item-new {
+        margin-bottom: 10px;
+    }
+
+    .menu-item-new a,
+    .menu-item2 a,
+    .menu-new a {
+        width: 100%;
+        box-sizing: border-box;
+		
+    }
+	ul.menu-new li a {
+    color: #000000 !important;
+}
+
+    .menu-item2 > a::after {
+        content: ' ▼';
+        font-size: 12px;
+        float: right;
+    }
+}
+
+/* Search page css */
+#post-169510 .main .mainright p:nth-of-type(1) {
+  font-weight:bold !important;
+}
+#post-169510 .main .mainright p:nth-of-type(3) {
+  display: none !important;
+}
+
+.list-bis-lab ul.mscd li::before {
+    content: "";
+    border-color: transparent #111;
+    border-style: solid;
+    border-width: 0.35em 0 0.35em 0.45em;
+    display: block;
+    height: 0;
+    width: 0;
+    left: -1em;
+    top: 0.9em;
+    position: relative;
+}
+
+.list-bis-lab ul.mscd li {
+    display: inline-flex;
+}
+
+/*.productsCC ul.mscd li::before {
+    content: "";
+    border-color: transparent #111;
+    border-style: solid;
+    border-width: 0.35em 0 0.35em 0.45em;
+    display: block;
+    height: 0;
+    width: 0;
+    left: -1em;
+    top: 0.1em;
+    position: relative;
+}*/
+
+/* .productsCC ul.mscd li {
+    display: ruby;
+}
+ */
+.products-specific-info ul.mscd li {
+    display: inline-block;
+}
+.otr-sec {
+    padding-top: 30px;
+}
+.otr-sec ol li {
+    list-style-type: decimal;
+}
+.otr-sec ol li::marker {
+    font-size: 15px !important;
+    font-weight: bold;
+}
+.page-id-170914 .subtittle {
+    display: none;
+}
+.PSI-cls h2 {
+    padding-bottom: 15px;
+}

@@ -181,5 +181,779 @@
         "source_document_id": "DOC-007",
         "confidence": 0.98,
         "active": true
+    },
+    {
+        "mapping_id": "MAP-008",
+        "product_id": "PROD-004",
+        "standard_id": "STD-008",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to electric irons covered by IS 366:1991 and intended for household use.",
+        "variant_condition": {
+            "Iron Type": "Dry Iron",
+            "Rated Power": "Applicable rated values",
+            "Rated Voltage": "Applicable rated values"
+        },
+        "matching_keywords": [
+            "electric iron",
+            "clothes iron",
+            "dry iron"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-009",
+        "confidence": 0.96,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-009",
+        "product_id": "PROD-004",
+        "standard_id": "STD-009",
+        "relationship_type": "secondary",
+        "scope_condition": "General electrical safety requirements applicable to electric irons together with the applicable particular requirements standard.",
+        "variant_condition": {
+            "Electrical Appliance": true
+        },
+        "matching_keywords": [
+            "electric iron",
+            "electrical appliance",
+            "household electrical appliance",
+            "electrical safety"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-009",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-010",
+        "product_id": "PROD-004",
+        "standard_id": "STD-010",
+        "relationship_type": "secondary",
+        "scope_condition": "Particular electrical safety requirements for electric irons under IS 302 (Part 2/Sec 3):2024.",
+        "variant_condition": {
+            "Iron Type": [
+                "Dry Iron",
+                "Steam Iron"
+            ]
+        },
+        "matching_keywords": [
+            "electric iron",
+            "dry iron",
+            "steam iron",
+            "electric iron safety"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-009",
+        "confidence": 1.0,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-011",
+        "product_id": "PROD-005",
+        "standard_id": "STD-011",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to electric motor-driven food-mixers, including liquidizers and grinders, and centrifugal juicers intended for household and similar use and designed for operation at voltages not exceeding 250 V a.c.",
+        "variant_condition": {
+            "Product Type": [
+                "Food Mixer",
+                "Liquidizer",
+                "Grinder",
+                "Mixer Grinder",
+                "Centrifugal Juicer"
+            ],
+            "Rated Voltage": "Not exceeding 250 V AC"
+        },
+        "matching_keywords": [
+            "electric food mixer",
+            "liquidizer",
+            "grinder",
+            "mixer grinder",
+            "centrifugal juicer"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-013",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-012",
+        "product_id": "PROD-005",
+        "standard_id": "STD-012",
+        "relationship_type": "secondary",
+        "scope_condition": "General electrical safety requirements applicable to the appliance together with the relevant particular requirements standard.",
+        "variant_condition": {
+            "Electrical Appliance": true
+        },
+        "matching_keywords": [
+            "electric food mixer",
+            "liquidizer",
+            "grinder",
+            "mixer grinder",
+            "centrifugal juicer",
+            "electrical appliance",
+            "electrical safety"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-013",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-013",
+        "product_id": "PROD-005",
+        "standard_id": "STD-013",
+        "relationship_type": "secondary",
+        "scope_condition": "Particular electrical safety requirements applicable to electric kitchen machines together with the general requirements of IS 302 Part 1.",
+        "variant_condition": {
+            "Product Type": [
+                "Food Mixer",
+                "Liquidizer",
+                "Grinder",
+                "Mixer Grinder",
+                "Centrifugal Juicer"
+            ]
+        },
+        "matching_keywords": [
+            "electric kitchen machine",
+            "food mixer",
+            "liquidizer",
+            "grinder",
+            "mixer grinder",
+            "centrifugal juicer"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-013",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-014",
+        "product_id": "PROD-006",
+        "standard_id": "STD-014",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to domestic gas stoves and built-in hobs intended for use with LPG and covered by IS 4246:2025.",
+        "variant_condition": {
+            "Appliance Type": [
+                "Domestic Gas Stove",
+                "Built-in Hob"
+            ],
+            "Built-in": [
+                true,
+                false
+            ]
+        },
+        "matching_keywords": [
+            "LPG stove",
+            "domestic gas stove",
+            "gas stove",
+            "built-in hob",
+            "gas hob"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-017",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-015",
+        "product_id": "PROD-006",
+        "standard_id": "STD-015",
+        "relationship_type": "secondary",
+        "scope_condition": "Supporting general requirements relevant to LPG-using gas appliances and their applicable materials or construction.",
+        "variant_condition": {
+            "Gas Type": "LPG"
+        },
+        "matching_keywords": [
+            "LPG stove",
+            "domestic gas stove",
+            "built-in hob",
+            "LPG appliance",
+            "gas appliance"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-017",
+        "confidence": 0.9,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-016",
+        "product_id": "PROD-007",
+        "standard_id": "STD-016",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to protective helmets intended for riders of two-wheeled motor vehicles and covered by IS 4151:2015.",
+        "variant_condition": {
+            "Helmet Type": "Applicable helmet variety",
+            "Lower Face Cover": "With or without lower face cover",
+            "Visor": "With or without visor",
+            "Size": "Each applicable size"
+        },
+        "matching_keywords": [
+            "protective helmet",
+            "two-wheeler helmet",
+            "motorcycle helmet",
+            "motorbike helmet",
+            "rider helmet",
+            "safety helmet"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-021",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-017",
+        "product_id": "PROD-008",
+        "standard_id": "STD-017",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to packaged drinking water other than packaged natural mineral water covered by IS 14543:2024.",
+        "variant_condition": {
+            "Packaging Type": "Applicable packaged drinking water formats",
+            "Package Size": "Any applicable package size",
+            "Packaging Material": "Applicable food-grade packaging"
+        },
+        "matching_keywords": [
+            "packaged drinking water",
+            "bottled drinking water",
+            "packaged water",
+            "bottled water"
+        ],
+        "clarification_required": false,
+        "source_document_id": "DOC-025",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-018",
+        "product_id": "PROD-009",
+        "standard_id": "STD-018",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to Ordinary Portland Cement covered by IS 269:2015.",
+        "variant_condition": {
+            "Grade": [
+                "OPC 33 Grade",
+                "OPC 43 Grade",
+                "OPC 53 Grade",
+                "OPC 43S Grade",
+                "OPC 53S Grade"
+            ]
+        },
+        "matching_keywords": [
+            "ordinary portland cement",
+            "OPC",
+            "portland cement",
+            "cement"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-030",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-019",
+        "product_id": "PROD-010",
+        "standard_id": "STD-019",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to pneumatic tyres for two- and three-wheeled motorcycles, quadricycles and e-rickshaw/e-carts covered by IS 15627:2022.",
+        "variant_condition": {
+            "Vehicle Type": [
+                "Two-Wheeler",
+                "Three-Wheeler"
+            ]
+        },
+        "matching_keywords": [
+            "two-wheeler tyre",
+            "motorcycle tyre",
+            "scooter tyre",
+            "three-wheeler tyre",
+            "e-rickshaw tyre",
+            "e-cart tyre",
+            "IS 15627"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-033",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-020",
+        "product_id": "PROD-010",
+        "standard_id": "STD-020",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to pneumatic tyres for passenger car vehicles, including diagonal and radial-ply tyres, covered by IS 15633:2022.",
+        "variant_condition": {
+            "Vehicle Type": [
+                "Passenger Car"
+            ]
+        },
+        "matching_keywords": [
+            "passenger car tyre",
+            "car tyre",
+            "car tire",
+            "radial car tyre",
+            "diagonal car tyre",
+            "IS 15633"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-034",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-021",
+        "product_id": "PROD-010",
+        "standard_id": "STD-021",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to pneumatic tyres for commercial vehicles, including diagonal and radial-ply tyres, covered by IS 15636:2022.",
+        "variant_condition": {
+            "Vehicle Type": [
+                "Commercial Vehicle"
+            ]
+        },
+        "matching_keywords": [
+            "commercial vehicle tyre",
+            "truck tyre",
+            "bus tyre",
+            "lorry tyre",
+            "radial commercial tyre",
+            "diagonal commercial tyre",
+            "IS 15636"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-035",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-022",
+        "product_id": "PROD-011",
+        "standard_id": "STD-022",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to switches for domestic and similar purposes covered by IS 3854:2023.",
+        "variant_condition": "Applicable requirements can vary by rated current, rated voltage, number of poles, switch construction and special load characteristics.",
+        "matching_keywords": [
+            "electrical switch",
+            "electric switch",
+            "domestic switch",
+            "household switch",
+            "wall switch",
+            "switches for domestic and similar purposes"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-039",
+        "confidence": 0.96,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-023",
+        "product_id": "PROD-012",
+        "standard_id": "STD-023",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to self-ballasted LED lamps for general lighting services covered by IS 16102 (Part 1):2026.",
+        "variant_condition": "Applicable requirements may vary with lamp type, cap type, rated voltage, rated power, dimmability and other construction or operating characteristics.",
+        "matching_keywords": [
+            "LED lamp",
+            "LED bulb",
+            "self-ballasted LED lamp",
+            "self-ballasted LED bulb",
+            "general lighting LED lamp",
+            "IS 16102 Part 1"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-043",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-024",
+        "product_id": "PROD-012",
+        "standard_id": "STD-024",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies to self-ballasted LED lamps for general lighting services covered by IS 16102 (Part 2):2017 performance requirements.",
+        "variant_condition": "Applicable performance requirements may vary with rated power, rated voltage, lamp type, colour characteristics, luminous output and whether the lamp is dimmable.",
+        "matching_keywords": [
+            "LED lamp",
+            "LED bulb",
+            "self-ballasted LED lamp",
+            "LED performance",
+            "LED lamp performance",
+            "IS 16102 Part 2"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-044",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-025",
+        "product_id": "PROD-013",
+        "standard_id": "STD-025",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to toys within the scope of IS 9873 (Part 1):2025 concerning mechanical and physical safety.",
+        "variant_condition": "Applicable requirements depend on toy construction, intended age group, small parts, moving parts, sharp points or edges, cords, accessibility and reasonably foreseeable use or abuse.",
+        "matching_keywords": [
+            "toy",
+            "toys",
+            "children's toy",
+            "toy safety",
+            "IS 9873 Part 1",
+            "mechanical safety",
+            "physical safety"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-054",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-026",
+        "product_id": "PROD-013",
+        "standard_id": "STD-026",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies where the toy or toy material falls within the flammability categories covered by IS 9873 (Part 2):2025.",
+        "variant_condition": "Relevant for toys worn on the head, disguise costumes, toys intended to be worn or entered by children, soft-filled toys and other materials or constructions specifically covered by the standard.",
+        "matching_keywords": [
+            "toy flammability",
+            "flammable toy",
+            "soft toy",
+            "costume toy",
+            "wearable toy",
+            "toy disguise",
+            "IS 9873 Part 2"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-054",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-027",
+        "product_id": "PROD-013",
+        "standard_id": "STD-027",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies where accessible toy materials or components are subject to the migration-of-elements requirements of IS 9873 (Part 3):2020.",
+        "variant_condition": "Applicability depends on accessible material/component type and the child's potential exposure to the material under the conditions specified by the standard.",
+        "matching_keywords": [
+            "toy migration",
+            "migration of elements",
+            "lead in toys",
+            "cadmium in toys",
+            "heavy metals toy",
+            "IS 9873 Part 3"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-054",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-028",
+        "product_id": "PROD-013",
+        "standard_id": "STD-028",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies to swings, slides and similar activity toys intended for indoor and outdoor family domestic use.",
+        "variant_condition": "Applicable only when the product is an activity toy within the scope of IS 9873 (Part 4):2017; stability, strength and construction requirements depend on the activity-toy configuration.",
+        "matching_keywords": [
+            "activity toy",
+            "swing",
+            "slide",
+            "playground toy",
+            "climbing toy",
+            "IS 9873 Part 4"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-054",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-029",
+        "product_id": "PROD-013",
+        "standard_id": "STD-029",
+        "relationship_type": "secondary",
+        "scope_condition": "Applies to toys and children's products containing materials or components within the phthalate restrictions covered by IS 9873 (Part 9):2017.",
+        "variant_condition": "Applicability depends on material composition, component type, intended age and conditions such as mouthing or other potential exposure covered by the standard.",
+        "matching_keywords": [
+            "toy phthalates",
+            "phthalates in toys",
+            "PVC toy",
+            "plastic toy",
+            "mouthing toy",
+            "IS 9873 Part 9"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-054",
+        "confidence": 0.96,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-030",
+        "product_id": "PROD-014",
+        "standard_id": "STD-030",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to welded low carbon steel LPG cylinders exceeding 5 litre water capacity and within the capacity and construction scope of IS 3196 (Part 1):2013.",
+        "variant_condition": "Applicability and certification scope may depend on water capacity, nominal capacity, cylinder construction, manufacturing method, material, valve arrangement and intended gas.",
+        "matching_keywords": [
+            "LPG cylinder",
+            "gas cylinder",
+            "LPG gas cylinder",
+            "liquefied petroleum gas cylinder",
+            "welded steel cylinder",
+            "IS 3196",
+            "cylinder for LPG"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-061",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-031",
+        "product_id": "PROD-014",
+        "standard_id": "STD-031",
+        "relationship_type": "supporting",
+        "scope_condition": "Provides applicable methods of test for cylinders covered by the IS 3196 series.",
+        "variant_condition": "Applicable test methods depend on cylinder design, material, construction and the specific conformity test being performed.",
+        "matching_keywords": [
+            "LPG cylinder test",
+            "cylinder testing",
+            "hydrostatic test",
+            "burst test",
+            "tensile test",
+            "bend test",
+            "IS 3196 Part 3"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-062",
+        "confidence": 0.95,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-032",
+        "product_id": "PROD-014",
+        "standard_id": "STD-032",
+        "relationship_type": "lifecycle",
+        "scope_condition": "Applies to periodic inspection and testing of LPG cylinders during their service life after initial manufacture and certification.",
+        "variant_condition": "Applicability depends on cylinder service status, inspection interval, cylinder condition and the applicable statutory requirements for periodic examination and testing.",
+        "matching_keywords": [
+            "LPG cylinder periodic inspection",
+            "cylinder retesting",
+            "cylinder inspection",
+            "periodic testing",
+            "in-service LPG cylinder",
+            "IS 16054"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-063",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-033",
+        "product_id": "PROD-015",
+        "standard_id": "STD-033",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to high strength deformed steel bars and wires for concrete reinforcement covered by IS 1786:2008 and applicable amendments.",
+        "variant_condition": "Certification and applicable requirements depend on strength grade, nominal diameter/size and whether the product is supplied as a bar or wire; additional requirements may depend on manufacturing process and product characteristics.",
+        "matching_keywords": [
+            "TMT bar",
+            "TMT bars",
+            "reinforcement steel",
+            "reinforcement bar",
+            "rebar",
+            "deformed steel bar",
+            "high strength deformed steel",
+            "Fe 415",
+            "Fe 500",
+            "Fe 500D",
+            "Fe 550",
+            "Fe 600",
+            "IS 1786"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-067",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-034",
+        "product_id": "PROD-016",
+        "standard_id": "STD-034",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to electric ceiling type fans covered by IS 374:2019 and its applicable amendments.",
+        "variant_condition": "Certification scope may vary by motor type, sweep size, rated voltage and frequency, and whether the fan uses an external regulator, integrated control or remote-control arrangement.",
+        "matching_keywords": [
+            "ceiling fan",
+            "electric ceiling fan",
+            "electric ceiling type fan",
+            "household ceiling fan",
+            "ceiling type fan",
+            "IS 374"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-074",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-035",
+        "product_id": "PROD-017",
+        "standard_id": "STD-035",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to valve fittings for LPG cylinders up to and including 13 litre water capacity within the scope of IS 8776:2024.",
+        "variant_condition": "Applicability depends on cylinder water capacity and valve construction/type, including Type A valves with parallel inlet threads and Type B valves with bodies directly welded to the cylinder.",
+        "matching_keywords": [
+            "LPG valve fitting",
+            "LPG cylinder valve",
+            "gas cylinder valve",
+            "IS 8776",
+            "Type A valve",
+            "Type B valve",
+            "valve fitting up to 13 litre"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-079",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-036",
+        "product_id": "PROD-017",
+        "standard_id": "STD-036",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to valve fittings for LPG cylinders within the scope of IS 8737:2017, currently covering LPG cylinders up to 250 litre water capacity under the current BIS Product Manual.",
+        "variant_condition": "Applicability depends on cylinder water capacity, valve type/construction, inlet connection and the specific valve fitting configuration; the overlap with IS 8776:2024 requires product-level clarification.",
+        "matching_keywords": [
+            "LPG valve fitting",
+            "LPG cylinder valve",
+            "gas cylinder valve",
+            "IS 8737",
+            "valve fitting",
+            "LPG valve above 5 litre",
+            "valve fitting up to 250 litre"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-081",
+        "confidence": 0.97,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-037",
+        "product_id": "PROD-018",
+        "standard_id": "STD-037",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to Portland Pozzolana Cement manufactured using fly ash as the pozzolanic constituent and covered by IS 1489 (Part 1):2015.",
+        "variant_condition": "Pozzolanic material must be fly ash; applicable requirements also depend on the declared cement type, manufacturing process and applicable raw-material composition.",
+        "matching_keywords": [
+            "PPC",
+            "Portland Pozzolana Cement",
+            "fly ash based PPC",
+            "fly ash PPC",
+            "IS 1489 Part 1",
+            "Part 1 PPC"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-088",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-038",
+        "product_id": "PROD-018",
+        "standard_id": "STD-038",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to Portland Pozzolana Cement manufactured using calcined clay as the pozzolanic constituent and covered by IS 1489 (Part 2):2015.",
+        "variant_condition": "Pozzolanic material must be calcined clay; applicable requirements also depend on the declared cement type, manufacturing process and applicable raw-material composition.",
+        "matching_keywords": [
+            "PPC",
+            "Portland Pozzolana Cement",
+            "calcined clay based PPC",
+            "calcined clay PPC",
+            "IS 1489 Part 2",
+            "Part 2 PPC"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-089",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-039",
+        "product_id": "PROD-019",
+        "standard_id": "STD-039",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to household refrigerating appliances covered by the general requirements of IS 17550 (Part 1):2024.",
+        "variant_condition": "Applies to the refrigerator construction/type within the scope of the standard; confirm the specific appliance configuration where classification is unclear.",
+        "matching_keywords": [
+            "domestic refrigerator",
+            "household refrigerator",
+            "refrigerator",
+            "fridge",
+            "household refrigerating appliance",
+            "IS 17550 Part 1"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-093",
+        "confidence": 0.99,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-040",
+        "product_id": "PROD-019",
+        "standard_id": "STD-040",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to household refrigerating appliances for the performance requirements covered by IS 17550 (Part 2):2024.",
+        "variant_condition": "Applicable to the refrigerator configuration covered by the performance requirements; confirm appliance type where the product is a specialised refrigerating appliance rather than a conventional domestic refrigerator.",
+        "matching_keywords": [
+            "domestic refrigerator",
+            "household refrigerator",
+            "refrigerator",
+            "fridge",
+            "refrigerator performance",
+            "IS 17550 Part 2"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-094",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-041",
+        "product_id": "PROD-019",
+        "standard_id": "STD-041",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to household refrigerating appliances for determination of energy consumption and volume under IS 17550 (Part 3):2025.",
+        "variant_condition": "Apply where the refrigerator falls within the household refrigerating appliance types covered by the energy-consumption and volume requirements; storage-volume and appliance configuration may affect the applicable test conditions.",
+        "matching_keywords": [
+            "domestic refrigerator",
+            "household refrigerator",
+            "refrigerator",
+            "fridge",
+            "energy consumption refrigerator",
+            "refrigerator volume",
+            "IS 17550 Part 3"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-095",
+        "confidence": 0.98,
+        "active": true
+    },
+    {
+        "mapping_id": "MAP-042",
+        "product_id": "PROD-020",
+        "standard_id": "STD-042",
+        "relationship_type": "primary",
+        "scope_condition": "Applies to safety footwear covered by IS 15298 (Part 2):2024 for general protective use against specified workplace hazards.",
+        "variant_condition": "Confirm footwear class, design and size range; these characteristics determine the applicable grouping and certification coverage.",
+        "matching_keywords": [
+            "safety footwear",
+            "safety shoes",
+            "protective footwear",
+            "safety boots",
+            "industrial safety footwear",
+            "IS 15298 Part 2"
+        ],
+        "clarification_required": true,
+        "source_document_id": "DOC-102",
+        "confidence": 0.99,
+        "active": true
     }
 ]

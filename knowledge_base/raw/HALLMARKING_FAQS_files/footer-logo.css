@@ -1,0 +1,58 @@
+/*-----------------------Logo Slider Css----------------*/
+
+.slick-next-logo, .slick-prev-logo{
+position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1b5fa7;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 20px;
+    z-index: 10;
+}
+
+.slick-next-logo:hover, .slick-prev-logo:hover{
+background:#d40000;
+}
+.slick-prev-logo{
+    left: -40px;
+}
+.slick-next-logo{
+    right: -40px;
+}
+.pause-play-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns to the right as per image */
+    margin-top: 15px;
+}
+
+.pause-play-box {
+    background: #0e2a47; /* Dark blue background */
+    color: #fff;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-radius: 2px;
+}
+
+.pause-play-box span {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.pause-play-box span:hover {
+    opacity: 0.7;
+}
+
+.separators{
+    font-weight: normal;
+    opacity: 0.5;
+    color: #fff;
+}

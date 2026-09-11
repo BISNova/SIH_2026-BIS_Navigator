@@ -1,0 +1,52 @@
+@media (max-width: 768px) {
+ .productsCC {
+    width: 90%;
+	display:block;
+}
+.about_us_area .about_row {
+    margin-top: -40px;
+}
+ul.mscd {
+    padding: 30px !important;
+}
+ul.mscd.process-list {
+    padding: 0px !important;
+}
+.fbc-page .fbc-wrap .fbc-items{
+		font-size: 10px !important;
+	}
+.fbc-page .fbc-wrap .fbc-items {
+        padding: 0 7px !important;
+    }
+	.fbc-page .fbc-wrap .fbc-items li a {
+    font-size: 10px !important;
+}
+.stright1 {
+    float: left !important;
+    padding-top: 25px !important;
+}
+.fifty1 b {
+    font-size: 14px !important;
+}
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 998px) {
+   header#header {
+    z-index: 0 !important;
+}
+}
+
+
+/* Fix for iPhone 14 Pro Max (430px) */
+@media (max-width: 430px) {
+
+}
+
+/* Small mobile screens: 375px - 414px */
+@media (max-width: 414px) {
+}
+
+/* Extra small: under 375px */
+@media (max-width: 360px) {
+}

@@ -1,49 +1,45 @@
 """
-The full request lifecycle, exactly as a real backend would call it.
+Full end-to-end demo, exactly as the backend calls it.
 
-SANDBOX NOTE: constructs EvidencePipeline under the mock embedder patch,
-since this sandbox has no internet access to download the real
-all-MiniLM-L6-v2 model. On any machine with normal internet, delete the
-`mock.patch(...)` block below and just do `EvidencePipeline()` directly
-- nothing else in this file or in orchestrator.py needs to change.
+Requires P1's service to actually be running (real: `uvicorn api.server:app
+--port 8001` from p1_service/, with a real .env GEMINI_API_KEY and real
+internet for the embedding model; sandbox: `uvicorn
+sandbox_mocks.run_mocked_server:app --port 8001` from p1_service/).
 
 Run:  python3 -m integration.run_pipeline
-(requires integration/generate_mock_embeddings_and_index.py to have
-been run once first, to populate ChromaDB)
 """
 
 import sys
 import json
 from pathlib import Path
-from unittest import mock
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-EVIDENCE_ENGINE_RAG = PROJECT_ROOT / "evidence_engine" / "rag"
 sys.path.insert(0, str(PROJECT_ROOT))
-sys.path.insert(0, str(EVIDENCE_ENGINE_RAG))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from mock_embedder import MockSentenceTransformer  # noqa: E402
-from product_intelligence.src.pipeline import ProductIntelligencePipeline  # noqa: E402
-from integration.orchestrator import run_full_pipeline  # noqa: E402
+from product_intelligence.src.pipeline import ProductIntelligencePipeline
+from integration.orchestrator import run_full_pipeline_with_context
+from integration.p1_client import check_p1_health
 
 
-def build_evidence_pipeline():
-    # SANDBOX-ONLY - see module docstring above.
-    with mock.patch("pipeline.evidence_pipeline.SentenceTransformer", MockSentenceTransformer):
-        from pipeline.evidence_pipeline import EvidencePipeline
-        return EvidencePipeline()
-
-
-def run(query, product_pipeline, evidence_pipeline):
+def run(query, product_pipeline, p1_base_url):
     print(f"\n{'='*70}\nQUERY: {query}\n{'='*70}")
-    result = run_full_pipeline(query, product_pipeline, evidence_pipeline)
-    print(json.dumps(json.loads(result.model_dump_json()), indent=2)[:1500])
+    result = run_full_pipeline_with_context(query, product_pipeline, p1_base_url=p1_base_url)
+    p2 = result["p2_result"]
+    p1 = result["p1_output"]
+    print(f"[P2] status={p2.status} confidence={p2.confidence_label}")
+    print(f"[P1] answer: {p1.answer[:300]}")
+    print(f"[P1] evidence_sufficient={p1.evidence_sufficient} sources={p1.sources}")
 
 
 if __name__ == "__main__":
+    P1_BASE_URL = "http://127.0.0.1:8001"
+
+    if not check_p1_health(P1_BASE_URL):
+        print(f"P1 service is not reachable at {P1_BASE_URL}.")
+        print("Start it first - see p1_service/README.md or the root README.md.")
+        sys.exit(1)
+
     product_pipeline = ProductIntelligencePipeline()
-    evidence_pipeline = build_evidence_pipeline()
 
     for q in [
         "I manufacture domestic pressure cookers for household use",
@@ -51,4 +47,4 @@ if __name__ == "__main__":
         "gold jewellery hallmarking",
         "organic vegetables from my farm",
     ]:
-        run(q, product_pipeline, evidence_pipeline)
+        run(q, product_pipeline, P1_BASE_URL)

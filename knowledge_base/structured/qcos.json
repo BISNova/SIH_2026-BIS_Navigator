@@ -33,5 +33,340 @@
         "scheme_id": "SCHEME-I",
         "amendments": [],
         "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/01/Electrical-Appliances-for-domestic-water-heating-QCO-2025.pdf"
+    },
+    {
+        "qco_id": "QCO-003",
+        "qco_name": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Order, 2003",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion (DIPP), Government of India",
+        "notification_number": "S.O. 189(E)",
+        "notification_date": "2003-02-17",
+        "effective_date": "2003-08-17",
+        "status": "current",
+        "product_scope": "Electric Iron",
+        "standard_id": "STD-010",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "name": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Amendment Order, 2010",
+                "notification_number": "S.O. 2604(E)",
+                "notification_date": "2010-10-19",
+                "change": "Amended the export-related provision of the principal QCO."
+            }
+        ],
+        "source_url": "https://www.dpiit.gov.in/static/uploads/2025/07/8a266a07e15c53831c9c8fe8fabace6c.pdf"
+    },
+    {
+        "qco_id": "QCO-004",
+        "qco_name": "Bureau of Indian Standards Kitchen Appliances (Quality Control) Order, 2018",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion (DIPP), Government of India",
+        "notification_number": "S.O. 5243(E)",
+        "notification_date": "2018-10-10",
+        "effective_date": "2019-05-01",
+        "status": "current",
+        "product_scope": "Domestic Electric Food Mixers (Liquidizers and Grinders) and Centrifugal Juicers",
+        "standard_id": "STD-011",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "name": "Implementation of Revised IS 4250:2025",
+                "notification_number": null,
+                "notification_date": "2025-04-04",
+                "change": "IS 4250:1980 was revised to IS 4250:2025. Concurrent running ended on 24 September 2025, after which IS 4250:1980 stood withdrawn."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/MandatoryProducts/QCOrder/QCO_dated_10th_Oct2018.pdf"
+    },
+    {
+        "qco_id": "QCO-005",
+        "qco_name": "Domestic Gas Stoves for use with Liquefied Petroleum Gases (Quality Control) Order, 2019",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade (DPIIT), Government of India",
+        "notification_number": "S.O. 4345(E)",
+        "notification_date": "2019-12-03",
+        "effective_date": "2020-06-01",
+        "status": "current",
+        "product_scope": "Domestic Gas Stoves for use with Liquefied Petroleum Gases, including products covered by the currently applicable version of IS 4246.",
+        "standard_id": "STD-014",
+        "scheme_id": "SCHEME-I",
+        "amendments": [],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2019/12/QCO-LPG-Stoves.pdf"
+    },
+    {
+        "qco_id": "QCO-006",
+        "qco_name": "Helmet for riders of Two Wheeler Motor Vehicles (Quality Control) Order, 2020",
+        "issuing_ministry": "Ministry of Road Transport and Highways, Government of India",
+        "notification_number": "S.O. 4252(E)",
+        "notification_date": "2020-11-26",
+        "effective_date": "2021-06-01",
+        "status": "current",
+        "product_scope": "Helmet for riders of Two Wheeler Motor Vehicles",
+        "standard_id": "STD-016",
+        "scheme_id": "SCHEME-I",
+        "amendments": [],
+        "source_url": "https://bis.gov.in/wp-content/uploads/2020/12/Helmet-for-riders-of-Two-Wheeler-Motor-Vehicles-Quality-Control-Order-2020.pdf"
+    },
+    {
+        "qco_id": "QCO-008",
+        "qco_name": "Cement (Quality Control) Order, 2003",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion (DIPP), Government of India",
+        "notification_number": "S.O. 191(E)",
+        "notification_date": "2003-02-17",
+        "effective_date": "2003-02-17",
+        "status": "current",
+        "product_scope": "Cement, including Ordinary Portland Cement",
+        "standard_id": "STD-018",
+        "scheme_id": "SCHEME-I",
+        "amendments": [],
+        "source_url": "https://www.dpiit.gov.in/static/uploads/2025/07/fecf53d22eccd196b89088df86c81ab1.pdf"
+    },
+    {
+        "qco_id": "QCO-009",
+        "qco_name": "Pneumatic Tyres and Tubes for Automotive Vehicles (Quality Control) Order, 2009",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion (DIPP), Government of India",
+        "notification_number": "S.O. 2953(E)",
+        "notification_date": "2009-11-19",
+        "effective_date": "2010-05-18",
+        "status": "current",
+        "product_scope": "Pneumatic tyres and tubes for automotive vehicles",
+        "standard_id": null,
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "name": "Pneumatic Tyres and Tubes for Automotive Vehicles (Quality Control) Amendment",
+                "notification_number": "S.O. 1057(E)",
+                "notification_date": "2010-05-11",
+                "change": "Amendment to the principal QCO."
+            },
+            {
+                "name": "Pneumatic Tyres and Tubes for Automotive Vehicles (Quality Control) Amendment",
+                "notification_number": "S.O. 2758(E)",
+                "notification_date": "2010-11-09",
+                "change": "Amendment to the principal QCO."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/MandatoryProducts/QCOrder/SO%20No.%202953%20%28E%29.pdf"
+    },
+    {
+        "qco_id": "QCO-010",
+        "qco_name": "Electrical Wires, Cables, Appliances and Protection Devices and Accessories (Quality Control) Order, 2003",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion",
+        "notification_number": "S.O. 189(E)",
+        "notification_date": "2003-02-17",
+        "effective_date": "2003-08-17",
+        "status": "current",
+        "product_scope": "Switches for domestic and similar purposes covered under IS 3854",
+        "standard_id": "STD-022",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 165(E)",
+                "notification_date": "2004-02-05",
+                "change": "Amendment to the principal QCO."
+            },
+            {
+                "notification_number": "S.O. 1172(E)",
+                "notification_date": "2005-08-22",
+                "change": "Amendment to the principal QCO."
+            },
+            {
+                "notification_number": "S.O. 512(E)",
+                "notification_date": "2009-02-19",
+                "change": "Amendment to the principal QCO."
+            },
+            {
+                "notification_number": "S.O. 2058(E)",
+                "notification_date": "2009-08-07",
+                "change": "Amendment to the principal QCO."
+            },
+            {
+                "notification_number": "S.O. 2604(E)",
+                "notification_date": "2010-10-19",
+                "change": "Amendment to the principal QCO."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+    },
+    {
+        "qco_id": "QCO-011",
+        "qco_name": "Electronics and Information Technology Goods (Requirement of Compulsory Registration) Order, 2021",
+        "issuing_ministry": "Ministry of Electronics and Information Technology, Government of India",
+        "notification_number": "S.O. 1248(E)",
+        "notification_date": "2021-03-18",
+        "effective_date": null,
+        "status": "current",
+        "product_scope": "Self-Ballasted LED Lamps for General Lighting Services",
+        "standard_id": "STD-023",
+        "scheme_id": "SCHEME-II",
+        "amendments": [
+            {
+                "notification_number": "S.O. 1353(E)",
+                "notification_date": "2021-03-25",
+                "change": "Amendment to the Electronics and Information Technology Goods (Requirement of Compulsory Registration) Order, 2021."
+            },
+            {
+                "notification_number": "S.O. 2844(E)",
+                "notification_date": "2021-07-01",
+                "change": "Further amendment to the compulsory registration framework, including deferred application provisions for eligible new manufacturing locations."
+            },
+            {
+                "notification_number": "S.O. 1929(E)",
+                "notification_date": "2023-04-26",
+                "change": "Amendment to the CRO schedule and implementation framework."
+            }
+        ],
+        "source_url": "https://www.meity.gov.in/writereaddata/files/CRO2021.pdf"
+    },
+    {
+        "qco_id": "QCO-012",
+        "qco_name": "Toys (Quality Control) Order, 2020",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade",
+        "notification_number": "S.O. 853(E)",
+        "notification_date": "2020-02-25",
+        "effective_date": "2020-09-01",
+        "status": "current",
+        "product_scope": "Toys intended for children under 14 years of age and other toys/products covered by the order; includes non-electric toys covered by the IS 9873 series and electric toys covered by IS 15644.",
+        "standard_id": null,
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 3146(E)",
+                "notification_date": "2020-09-15",
+                "change": "Amendment to the Toys (Quality Control) Order, 2020."
+            },
+            {
+                "notification_number": "S.O. 4514(E)",
+                "notification_date": "2020-12-11",
+                "change": "Further amendment to the Toys (Quality Control) Order, 2020."
+            },
+            {
+                "notification_number": "S.O. 4277(E)",
+                "notification_date": "2024-09-30",
+                "change": "2024 amendment providing an exemption for limited imports of toy samples/components for research and development, subject to specified conditions."
+            },
+            {
+                "notification_number": "S.O. 3417(E)",
+                "notification_date": "2026-06-25",
+                "change": "Transition Facilitation (Quality Control) Order, 2026, providing the current transition framework for revised toy standards."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2020/03/Toy_QC_order.pdf"
+    },
+    {
+        "qco_id": "QCO-013",
+        "qco_name": "Steel and Steel Products (Quality Control) Order, 2024",
+        "issuing_ministry": "Ministry of Steel, Government of India",
+        "notification_number": "S.O. 3716(E)",
+        "notification_date": "2024-08-29",
+        "effective_date": "2024-08-30",
+        "status": "current",
+        "product_scope": "High Strength Deformed Steel Bars and Wires for Concrete Reinforcement covered by IS 1786:2008, including the applicable grade and size scope under the current Schedule.",
+        "standard_id": "STD-033",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 5134(E)",
+                "notification_date": "2025-11-20",
+                "change": "Amendment to the Steel and Steel Products (Quality Control) Order, 2024."
+            },
+            {
+                "notification_number": "S.O. 3300(E)",
+                "notification_date": "2026-06-20",
+                "change": "Further amendment to the Steel and Steel Products (Quality Control) Order, 2024."
+            }
+        ],
+        "source_url": "https://steel.gov.in/sites/default/files/QCO%202024.pdf"
+    },
+    {
+        "qco_id": "QCO-014",
+        "qco_name": "Electric Ceiling Type Fans (Quality Control) Order, 2023",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade",
+        "notification_number": "S.O. 3641(E)",
+        "notification_date": "2023-08-09",
+        "effective_date": "2024-02-09",
+        "status": "current",
+        "product_scope": "Electric Ceiling Type Fans conforming to IS 374:2019.",
+        "standard_id": "STD-034",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 777(E)",
+                "notification_date": "2026-02-13",
+                "change": "Amended the exemption threshold for eligible enterprises registered on the Udyam Portal."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2023/08/Electric-Ceiling-Type-Fans-QCO-2023.pdf"
+    },
+    {
+        "qco_id": "QCO-015",
+        "qco_name": "Cement (Quality Control) Order, 2003",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department of Industrial Policy and Promotion",
+        "notification_number": "S.O. 191(E)",
+        "notification_date": "2003-02-17",
+        "effective_date": "2003-02-17",
+        "status": "active",
+        "product_scope": "Cement, including Portland Pozzolana Cement covered by IS 1489 (Part 1) and IS 1489 (Part 2)",
+        "standard_id": null,
+        "scheme_id": "SCHEME-I",
+        "amendments": [],
+        "source_url": "https://www.bis.gov.in/product-certification/products-under-compulsory-certification/scheme-i-mark-scheme/?lang=en"
+    },
+    {
+        "qco_id": "QCO-016",
+        "qco_name": "Refrigerating Appliances (Quality Control) Order, 2020",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade",
+        "notification_number": "S.O. 4489(E)",
+        "notification_date": "2020-12-10",
+        "effective_date": "2024-01-01",
+        "status": "active",
+        "product_scope": "Household Refrigerating Appliances and Freezers covered by the notified Indian Standards, including household refrigerating appliances under IS 17550 and freezers under IS 7872.",
+        "standard_id": null,
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 5339(E)",
+                "notification_date": "2021-12-22",
+                "description": "Revised the notified table and extended the commencement date."
+            },
+            {
+                "notification_number": "S.O. 5850(E)",
+                "notification_date": "2022-12-14",
+                "description": "Further extended the commencement date to 01.01.2024."
+            },
+            {
+                "notification_number": "S.O. 358(E)",
+                "notification_date": "2025-01-16",
+                "description": "Added exemptions concerning specified imports of refrigerating-appliance components for certified/applicant manufacturers and limited R&D imports."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2025/01/Refrigerating-Appliances-QCO-2025.pdf"
+    },
+    {
+        "qco_id": "QCO-017",
+        "qco_name": "Personal Protective Equipment-Footwear (Quality Control) Order, 2020",
+        "issuing_ministry": "Ministry of Commerce and Industry, Department for Promotion of Industry and Internal Trade",
+        "notification_number": "S.O. 3857(E)",
+        "notification_date": "2020-10-27",
+        "effective_date": "2022-01-01",
+        "status": "active",
+        "product_scope": "Personal Protective Equipment - Footwear covered by IS 15298 (Part 2), including Safety Footwear, with the latest version of the applicable Indian Standard as notified by BIS.",
+        "standard_id": "STD-042",
+        "scheme_id": "SCHEME-I",
+        "amendments": [
+            {
+                "notification_number": "S.O. 4377(E)",
+                "notification_date": "2020-12-04",
+                "description": "Extended commencement of the principal QCO to 1 July 2021."
+            },
+            {
+                "notification_number": "S.O. 2647(E)",
+                "notification_date": "2021-06-30",
+                "description": "Further revised the commencement date to 1 January 2022."
+            },
+            {
+                "notification_number": "S.O. 3417(E)",
+                "notification_date": "2026-06-25",
+                "description": "Transition Facilitation (Quality Control) Order, 2026 listed by BIS in the current PPE-footwear QCO lineage."
+            }
+        ],
+        "source_url": "https://www.bis.gov.in/wp-content/uploads/2020/11/PersonalProtective-FootwearQualityControlOrder2020-29October2020.pdf"
     }
 ]

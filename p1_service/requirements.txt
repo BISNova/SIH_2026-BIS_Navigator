@@ -1,0 +1,21 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+
+pymupdf
+beautifulsoup4
+python-docx
+
+sentence-transformers
+chromadb
+
+# Required for rag/service/gemini_service.py's `from google import genai` -
+# missing from the original requirements.txt (found during integration
+# testing; the import fails without it).
+google-genai
+
+numpy
+scikit-learn
+
+pytest

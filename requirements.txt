@@ -1,0 +1,22 @@
+# Requirements for P2 (product_intelligence + integration + backend).
+# P1's dependencies are separate - see p1_service/requirements.txt and
+# install those in P1's own environment (they need internet access for
+# the embedding model and a real GEMINI_API_KEY - see root README.md).
+#
+# Install with:  pip install -r requirements.txt
+# Frontend is separate - see frontend/package.json (npm install there).
+
+# --- Web framework ---
+fastapi
+uvicorn[standard]
+
+# --- Product Intelligence ---
+pandas>=2.0
+scikit-learn>=1.3
+pydantic>=2.0
+
+# --- P2 -> P1 HTTP client ---
+httpx
+
+# --- Testing ---
+pytest>=7.0

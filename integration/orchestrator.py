@@ -1,59 +1,36 @@
 """
-The complete request lifecycle, matching the orchestration logic the
-master plan always specified: run Product Intelligence first; if it's
+The complete request lifecycle: run Product Intelligence first; if it's
 not confident, short-circuit with a clarification/not-found response
-and never call the (expensive) RAG engine; only call RAG once a product
-is confidently matched.
+and skip the network call to P1 entirely; only call P1's HTTP API once
+a product is confidently matched.
 
-evidence_pipeline is passed in (dependency injection) rather than
-constructed here, so:
-  - production code does: EvidencePipeline() (her real class, needs
-    real internet access for the embedding model)
-  - sandbox tests do: EvidencePipeline() constructed under the mock
-    SentenceTransformer patch (see tests/test_full_integration.py)
-
-Nothing in this file needs to know or care which one it got.
+Note: P1's own service (rag/service/p1_service.py) ALSO safely handles
+clarification_needed/not_found internally, so sending her an
+unconfident result wouldn't actually break anything - the short-circuit
+here is purely to avoid a wasted network round-trip, not a correctness
+requirement.
 """
 
 import sys
 from pathlib import Path
+from typing import Optional
+
+import httpx
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
-_EVIDENCE_ENGINE_RAG = _PROJECT_ROOT / "evidence_engine" / "rag"
-for p in (_PROJECT_ROOT, _EVIDENCE_ENGINE_RAG):
-    if str(p) not in sys.path:
-        sys.path.insert(0, str(p))
-
-from schemas.p1_output import P1Output  # noqa: E402
-from schemas.evidence import EvidenceRecord  # noqa: E402
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 from product_intelligence.src.pipeline import ProductIntelligencePipeline  # noqa: E402
-from .adapter import adapt_to_p1_input  # noqa: E402
 
-EVIDENCE_RECORD_FIELDS = [
-    "chunk_id", "standard_id", "document_id", "document_title",
-    "document_type", "section", "section_header", "page_number",
-    "text", "source_url", "version", "authority_level",
-]
+from .adapter import adapt_to_p1_input
+from .p1_client import call_p1_api, P1ClientError
+from .p1_contract import P1OutputPayload
 
 
-def _confidence_label(score: float) -> str:
-    """Matches her own test_contracts.py bucketing exactly - this is
-    evidence/answer confidence, a DIFFERENT number from Product
-    Intelligence's product-match confidence_label."""
-    if score >= 0.70:
-        return "high"
-    if score >= 0.50:
-        return "medium"
-    return "low"
-
-
-def run_full_pipeline(query: str, product_pipeline: ProductIntelligencePipeline, evidence_pipeline) -> P1Output:
-    p2_result = product_pipeline.process(query)
-    p1_input = adapt_to_p1_input(p2_result)
-
+def _short_circuit_output(p1_input) -> P1OutputPayload:
     if p1_input.needs_clarification:
-        return P1Output(
+        return P1OutputPayload(
             answer="",
             evidence=[],
             sources=[],
@@ -63,10 +40,44 @@ def run_full_pipeline(query: str, product_pipeline: ProductIntelligencePipeline,
             clarification_needed=True,
             clarification_question=p1_input.clarification_question,
         )
+    # status == "not_found"
+    return P1OutputPayload(
+        answer="We don't have this product in our curated knowledge base yet.",
+        evidence=[],
+        sources=[],
+        confidence_score=0.0,
+        confidence_label="low",
+        evidence_sufficient=False,
+        clarification_needed=False,
+    )
 
-    if p1_input.status == "not_found":
-        return P1Output(
-            answer="We don't have this product in our curated knowledge base yet.",
+
+def run_full_pipeline_with_context(
+    query: str,
+    product_pipeline: ProductIntelligencePipeline,
+    p1_base_url: str = "http://127.0.0.1:8001",
+    p1_http_client: Optional[httpx.Client] = None,
+) -> dict:
+    """
+    Returns {"p2_result": ProductMatchResult, "p1_output": P1OutputPayload}.
+
+    p1_http_client can be injected for testing (an httpx.Client built
+    with app=<her FastAPI app> for ASGI-transport testing, no real
+    network needed) - production code leaves it as None and a real
+    client is created against p1_base_url.
+    """
+    p2_result = product_pipeline.process(query)
+    p1_input = adapt_to_p1_input(p2_result)
+
+    if p1_input.needs_clarification or p1_input.status == "not_found":
+        return {"p2_result": p2_result, "p1_output": _short_circuit_output(p1_input)}
+
+    # status == "matched" - safe to call P1 now
+    try:
+        p1_output = call_p1_api(p1_input, base_url=p1_base_url, client=p1_http_client)
+    except P1ClientError as exc:
+        p1_output = P1OutputPayload(
+            answer=f"Sorry, I couldn't reach the evidence service right now ({exc}).",
             evidence=[],
             sources=[],
             confidence_score=0.0,
@@ -75,29 +86,4 @@ def run_full_pipeline(query: str, product_pipeline: ProductIntelligencePipeline,
             clarification_needed=False,
         )
 
-    # status == "matched" - safe to call the (real) RAG engine now
-    standard_ids = p1_input.get_standard_ids()
-    raw = evidence_pipeline.run(
-        query=p1_input.normalized_query or p1_input.query,
-        standard_ids=standard_ids,
-    )
-
-    evidence_records = [
-        EvidenceRecord(**{field: ev[field] for field in EVIDENCE_RECORD_FIELDS})
-        for ev in raw["evidence"]
-    ]
-
-    # dedup while preserving order
-    sources = list(dict.fromkeys(
-        r.source_url for r in evidence_records if r.source_url
-    ))
-
-    return P1Output(
-        answer=raw["answer"],
-        evidence=evidence_records,
-        sources=sources,
-        confidence_score=raw["confidence_score"],
-        confidence_label=_confidence_label(raw["confidence_score"]),
-        evidence_sufficient=raw["evidence_sufficient"],
-        clarification_needed=False,
-    )
+    return {"p2_result": p2_result, "p1_output": p1_output}
