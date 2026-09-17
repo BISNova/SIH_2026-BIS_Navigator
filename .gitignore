@@ -41,3 +41,4 @@ backend/data/kb_change_staging.json
 # --- OS noise ---
 .DS_Store
 Thumbs.db
+frontend/node_modules/
