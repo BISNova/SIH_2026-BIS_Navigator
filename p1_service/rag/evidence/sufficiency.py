@@ -144,10 +144,7 @@ class EvidenceSufficiencyChecker:
 
         if standard_ids:
 
-            standards_covered = (
-                len(matched_standard_ids)
-                == len(set(standard_ids))
-            )
+            standards_covered = len(matched_standard_ids) >= 1
 
             evidence_sufficient = (
                 enough_evidence

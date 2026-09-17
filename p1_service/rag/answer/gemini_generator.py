@@ -150,24 +150,24 @@ Evidence:
         language = self._normalize_language(language)
 
         prompt = f"""
-    You are a helpful assistant for BIS-related questions.
+        You are a helpful assistant for BIS-related questions.
 
-    Answer the user's question using general knowledge when reliable BIS
-    retrieval evidence is unavailable.
+        Answer the user's question using general knowledge when reliable BIS
+        retrieval evidence is unavailable.
 
-    Important rules:
-    - Do NOT invent BIS standard numbers.
-    - Do NOT invent clauses, requirements, test values, fees, dates, or
-    certification details.
-    - If the question specifically requires an exact BIS requirement and you
-    do not know it reliably, say so clearly.
-    - Do not pretend that a general-knowledge answer is sourced from BIS.
-    - Keep the answer concise and useful.
-    - Answer in {"Hindi" if language == "hi" else "English"}.
+        Important rules:
+        - Do NOT invent BIS standard numbers.
+        - Do NOT invent clauses, requirements, test values, fees, dates, or
+        certification details.
+        - If the question specifically requires an exact BIS requirement and you
+        do not know it reliably, say so clearly.
+        - Do not pretend that a general-knowledge answer is sourced from BIS.
+        - Keep the answer concise and useful.
+        - Answer in {"Hindi" if language == "hi" else "English"}.
 
-    User question:
-    {query.strip()}
-    """
+        User question:
+        {query.strip()}
+        """.strip()
 
         answer = self.gemini.generate(prompt)
 
