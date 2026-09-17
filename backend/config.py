@@ -5,8 +5,9 @@ Backend settings.
 import os
 
 CORS_ORIGINS = [
-    "http://localhost:5173",   # Vite dev server default
+    "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://sih-2026-bis-navigator.vercel.app",
 ]
 
 # P1's service base URL. Defaults to her documented local address; override
