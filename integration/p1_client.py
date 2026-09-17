@@ -14,7 +14,7 @@ import httpx
 
 from .p1_contract import P1InputPayload, P1OutputPayload
 
-DEFAULT_TIMEOUT = 90.0
+DEFAULT_TIMEOUT = 30.0
 
 
 class P1ClientError(Exception):
