@@ -921,16 +921,18 @@ class EvidencePipeline:
         # Gemini answer generation
         # ----------------------------------------------------
 
-        answer_result = (
-            self.answer_generator.generate(
+        if not evidence_sufficient and not standard_ids:
+            answer_result = self.answer_generator.generate_general_fallback(
                 query=query,
-                evidence=selected_evidence,
-                evidence_sufficient=(
-                    evidence_sufficient
-                ),
                 language=language,
             )
-        )
+        else:
+            answer_result = self.answer_generator.generate(
+                query=query,
+                evidence=selected_evidence,
+                evidence_sufficient=evidence_sufficient,
+                language=language,
+            )
 
         # ----------------------------------------------------
         # Citations

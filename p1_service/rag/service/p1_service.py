@@ -50,20 +50,20 @@ class P1Service:
         # 2. Handle P2 not-found status
         # --------------------------------------------------
 
-        if p1_input.status == "not_found":
-            return P1Output(
-                answer=(
-                    "I could not identify an applicable "
-                    "BIS standard for this query."
-                ),
-                evidence=[],
-                sources=[],
-                confidence_score=0.0,
-                confidence_label="low",
-                evidence_sufficient=False,
-                clarification_needed=False,
-                clarification_question=None,
-            )
+        # if p1_input.status == "not_found":
+        #     return P1Output(
+        #         answer=(
+        #             "I could not identify an applicable "
+        #             "BIS standard for this query."
+        #         ),
+        #         evidence=[],
+        #         sources=[],
+        #         confidence_score=0.0,
+        #         confidence_label="low",
+        #         evidence_sufficient=False,
+        #         clarification_needed=False,
+        #         clarification_question=None,
+        #     )
 
         # --------------------------------------------------
         # 3. Determine the query used for retrieval

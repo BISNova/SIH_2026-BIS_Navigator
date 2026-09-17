@@ -1,8 +1,8 @@
 """
 POST /api/chat - the one endpoint the frontend's chat UI needs.
 
-Converts the rich internal result (ProductMatchResult + P1Output) into
-the external ChatResponse contract (backend/models.py). Also wires in:
+Converts the rich internal result (ProductMatchResult + P1Output)
+into the external ChatResponse contract (backend/models.py). Also wires in:
   - conversation memory (session_store.py) - resolves follow-up queries
     against the last matched product in this session
   - exact-match query caching (query_cache.py)
@@ -58,17 +58,24 @@ def chat(request: ChatRequest):
 
     normalized_for_cache = request.query.strip().lower()
 
-    # --- List/aggregate query short-circuit (no cache, no P1 call - the
-    #     catalog data itself is the answer, and it's already fast) ---
+    # --- List/aggregate query short-circuit ---
+    # No cache and no P1 call. Catalog data itself is the answer.
     list_intent = detect_list_intent(request.query)
     if list_intent.is_list_query:
         catalog = [s.model_dump() for s in get_catalog_standards()]
         list_result = build_list_answer(list_intent, catalog)
+
         return ChatResponse(
             status="matched",
             answer=list_result["answer"],
             standards=[
-                StandardOut(**{k: v for k, v in s.items() if k in StandardOut.model_fields})
+                StandardOut(
+                    **{
+                        k: v
+                        for k, v in s.items()
+                        if k in StandardOut.model_fields
+                    }
+                )
                 for s in list_result["standards"]
             ],
             confidence_score=list_result["confidence_score"],
@@ -76,29 +83,40 @@ def chat(request: ChatRequest):
             evidence_sufficient=list_result["evidence_sufficient"],
         )
 
-    # --- Exact-match cache ---
-    cached = query_cache.get_or_none(normalized_for_cache)
-    if cached is not None:
-        cached_response = ChatResponse(**cached)
-        cached_response.from_cache = True
-        return cached_response
-
-    # --- Conversation memory: resolve follow-ups against the last
-    #     matched product in this session, if the query alone isn't enough ---
+    # --- Conversation memory ---
+    # Resolve the session context BEFORE checking the global query cache.
+    # This prevents a context-dependent query from accidentally receiving
+    # a context-free cached answer.
     context_hint = session_store.get_context_hint(request.session_id)
 
+    # --- Exact-match cache ---
+    # Only context-free queries are allowed to use this cache.
+    if context_hint is None:
+        cached = query_cache.get_or_none(normalized_for_cache)
+
+        if cached is not None:
+            cached_response = ChatResponse(**cached)
+            cached_response.from_cache = True
+            return cached_response
+
     product_pipeline = get_product_pipeline()
+
     result = run_full_pipeline_with_context(
         request.query,
         product_pipeline,
         p1_base_url=P1_API_BASE_URL,
         context_hint=context_hint,
     )
+
     p2_result = result["p2_result"]
     p1_output = result["p1_output"]
+    p1_success = result["p1_success"]
 
     if p2_result.matched_product:
-        session_store.update(request.session_id, p2_result.matched_product.canonical_name)
+        session_store.update(
+            request.session_id,
+            p2_result.matched_product.canonical_name,
+        )
 
     clarification_options = [
         ClarificationOptionOut(
@@ -122,7 +140,11 @@ def chat(request: ChatRequest):
     response = ChatResponse(
         status=p2_result.status,
         answer=p1_output.answer,
-        matched_product_name=p2_result.matched_product.canonical_name if p2_result.matched_product else None,
+        matched_product_name=(
+            p2_result.matched_product.canonical_name
+            if p2_result.matched_product
+            else None
+        ),
         standards=_standards_out(p2_result.applicable_standards),
         confidence_score=p1_output.confidence_score,
         confidence_label=p1_output.confidence_label,
@@ -135,15 +157,26 @@ def chat(request: ChatRequest):
         detected_language=p2_result.detected_language,
     )
 
-    # Only cache confident, complete answers - and only when the answer
-    # didn't depend on this session's conversation memory. A query cache
-    # keyed on literal query text is unsafe to reuse across sessions when
-    # the result depended on context_hint (e.g. "what tests are needed"
-    # resolves differently, or not at all, depending on what was asked
-    # earlier in THAT session) - caching it here would leak one user's
-    # conversation context into a different user's unrelated session.
-    # This was a real bug caught by test_chat_conversation_memory_resolves_followup.
-    if p2_result.status == "matched" and context_hint is None:
-        query_cache.set(normalized_for_cache, response.model_dump())
+    # --- Cache only genuinely successful P1 responses ---
+    #
+    # p2_result.status can still be "matched" when P1 fails because the
+    # product was successfully identified by P2. Therefore status alone
+    # must NOT decide whether the result is cacheable.
+    #
+    # p1_success means:
+    #   - P1 was actually called
+    #   - HTTP request succeeded
+    #   - P1 returned a valid P1OutputPayload
+    #
+    # Context-dependent requests are never stored in the global cache.
+    if (
+        p1_success
+        and p2_result.status == "matched"
+        and context_hint is None
+    ):
+        query_cache.set(
+            normalized_for_cache,
+            response.model_dump(),
+        )
 
     return response

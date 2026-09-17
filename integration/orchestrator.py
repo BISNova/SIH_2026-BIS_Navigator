@@ -1,14 +1,9 @@
 """
-The complete request lifecycle: run Product Intelligence first; if it's
-not confident, short-circuit with a clarification/not-found response
-and skip the network call to P1 entirely; only call P1's HTTP API once
-a product is confidently matched.
+P2 -> P1 integration orchestrator.
 
-Note: P1's own service (rag/service/p1_service.py) ALSO safely handles
-clarification_needed/not_found internally, so sending her an
-unconfident result wouldn't actually break anything - the short-circuit
-here is purely to avoid a wasted network round-trip, not a correctness
-requirement.
+The complete request lifecycle: run Product Intelligence first.
+Only genuine ambiguity is short-circuited. A "not_found" result is
+still sent to P1 because P1 supports general BIS retrieval.
 """
 
 import sys
@@ -29,32 +24,15 @@ from .p1_contract import P1OutputPayload
 
 
 def _short_circuit_output(p1_input) -> P1OutputPayload:
-    if p1_input.needs_clarification:
-        return P1OutputPayload(
-            answer="",
-            evidence=[],
-            sources=[],
-            confidence_score=p1_input.confidence_score,
-            confidence_label=p1_input.confidence_label,
-            evidence_sufficient=False,
-            clarification_needed=True,
-            clarification_question=p1_input.clarification_question,
-        )
-    # status == "not_found" - graceful, explicit-about-scope decline
-    # (judges' feedback: "out-of-scope detection with graceful decline")
     return P1OutputPayload(
-        answer=(
-            "I'm focused specifically on Indian Standards and BIS compliance "
-            "questions, and I don't have this product in my curated knowledge "
-            "base yet. I can't give a reliable answer outside what I actually "
-            "have data for - try rephrasing, or ask about a different product."
-        ),
+        answer="",
         evidence=[],
         sources=[],
-        confidence_score=0.0,
-        confidence_label="low",
+        confidence_score=p1_input.confidence_score,
+        confidence_label=p1_input.confidence_label,
         evidence_sufficient=False,
-        clarification_needed=False,
+        clarification_needed=True,
+        clarification_question=p1_input.clarification_question,
     )
 
 
@@ -66,25 +44,45 @@ def run_full_pipeline_with_context(
     context_hint: Optional[str] = None,
 ) -> dict:
     """
-    Returns {"p2_result": ProductMatchResult, "p1_output": P1OutputPayload}.
+    Returns:
+        {
+            "p2_result": ProductMatchResult,
+            "p1_output": P1OutputPayload,
+            "p1_success": bool,
+        }
 
-    p1_http_client can be injected for testing (an httpx.Client built
-    with app=<her FastAPI app> for ASGI-transport testing, no real
-    network needed) - production code leaves it as None and a real
-    client is created against p1_base_url.
+    P2 performs product intelligence first.
 
-    context_hint: see product_intelligence/src/pipeline.py's process()
-    docstring - the conversation-memory fallback for follow-up queries.
+    Genuine ambiguity is short-circuited because clarification is needed
+    before useful retrieval can happen.
+
+    A "not_found" result is still sent to P1 because P1 supports general
+    BIS/Indian Standards retrieval even when no product was matched.
     """
-    p2_result = product_pipeline.process(query, context_hint=context_hint)
+
+    p2_result = product_pipeline.process(
+        query,
+        context_hint=context_hint,
+    )
+
     p1_input = adapt_to_p1_input(p2_result)
 
-    if p1_input.needs_clarification or p1_input.status == "not_found":
-        return {"p2_result": p2_result, "p1_output": _short_circuit_output(p1_input)}
+    # Only genuine ambiguity is short-circuited.
+    if p1_input.needs_clarification:
+        return {
+            "p2_result": p2_result,
+            "p1_output": _short_circuit_output(p1_input),
+            "p1_success": False,
+        }
 
-    # status == "matched" - safe to call P1 now
+    # Both "matched" and "not_found" go to P1.
     try:
-        p1_output = call_p1_api(p1_input, base_url=p1_base_url, client=p1_http_client)
+        p1_output = call_p1_api(
+            p1_input,
+            base_url=p1_base_url,
+            client=p1_http_client,
+        )
+
     except P1ClientError as exc:
         p1_output = P1OutputPayload(
             answer=f"Sorry, I couldn't reach the evidence service right now ({exc}).",
@@ -96,4 +94,16 @@ def run_full_pipeline_with_context(
             clarification_needed=False,
         )
 
-    return {"p2_result": p2_result, "p1_output": p1_output}
+        # P1 failed, therefore this response must NOT be cached.
+        return {
+            "p2_result": p2_result,
+            "p1_output": p1_output,
+            "p1_success": False,
+        }
+
+    # P1 successfully returned a valid response.
+    return {
+        "p2_result": p2_result,
+        "p1_output": p1_output,
+        "p1_success": True,
+    }

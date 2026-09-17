@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
-
+from typing import Any, Dict, List
 from rag.service.gemini_service import GeminiService
 
 
@@ -137,6 +136,48 @@ User question:
 Evidence:
 {joined_evidence}
 """.strip()
+
+    def generate_general_fallback(
+        self,
+        query: str,
+        language: str = "en",
+    ) -> Dict[str, Any]:
+        """Generate a general-knowledge answer when BIS evidence is insufficient."""
+
+        if not query or not query.strip():
+            raise ValueError("Query cannot be empty.")
+
+        language = self._normalize_language(language)
+
+        prompt = f"""
+    You are a helpful assistant for BIS-related questions.
+
+    Answer the user's question using general knowledge when reliable BIS
+    retrieval evidence is unavailable.
+
+    Important rules:
+    - Do NOT invent BIS standard numbers.
+    - Do NOT invent clauses, requirements, test values, fees, dates, or
+    certification details.
+    - If the question specifically requires an exact BIS requirement and you
+    do not know it reliably, say so clearly.
+    - Do not pretend that a general-knowledge answer is sourced from BIS.
+    - Keep the answer concise and useful.
+    - Answer in {"Hindi" if language == "hi" else "English"}.
+
+    User question:
+    {query.strip()}
+    """
+
+        answer = self.gemini.generate(prompt)
+
+        return {
+            "answer": answer,
+            "evidence_used": [],
+            "grounded": False,
+            "general_knowledge": True,
+            "language": language,
+        }
 
     def generate(
         self,
