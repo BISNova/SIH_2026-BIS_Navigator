@@ -51,6 +51,7 @@ class ApplicableStandard(BaseModel):
     source_document_id: Optional[str] = None
     source_url: Optional[str] = None
     confidence: Optional[float] = None  # Person 4's curated mapping confidence (0-1), NOT a match score
+    last_verified: Optional[str] = None  # "data as of" date - see pipeline.py's _last_verified()
 
 
 class ClarificationOption(BaseModel):
@@ -74,6 +75,7 @@ class ProductMatchResult(BaseModel):
     """
     query: str
     normalized_query: str
+    detected_language: str = "en"  # ISO 639-1 code; "en" if no translation was needed
 
     status: str  # "matched" | "clarification_needed" | "not_found"
 

@@ -25,10 +25,11 @@ class StandardOut(BaseModel):
     is_number: str
     title: str
     status: str                        # "current" | "withdrawn"
-    relationship_type: str             # "primary" | "secondary"
+    relationship_type: Optional[str] = None  # "primary" | "secondary" - None for catalog/list-driven answers with no single product context
     is_mandatory: Optional[bool] = None  # None = no conformity route on file yet, NOT "not mandatory"
     source_url: Optional[str] = None
     confidence: Optional[float] = None
+    last_verified: Optional[str] = None  # "data as of" - see product_intelligence/src/pipeline.py
 
 
 class ClarificationOptionOut(BaseModel):
@@ -63,9 +64,57 @@ class ChatResponse(BaseModel):
     clarification_question: Optional[str] = None
     clarification_options: List[ClarificationOptionOut] = []
 
+    detected_language: str = "en"       # ISO 639-1; "en" if no translation happened
+    from_cache: bool = False             # true if this exact query was served from cache
+    disclaimer: str = (
+        "Informational guidance only - not a substitute for official BIS "
+        "certification advice. Always confirm with BIS or a licensed "
+        "consultant before making compliance decisions."
+    )
+
+
+class FeedbackRequest(BaseModel):
+    query: str
+    answer: str
+    rating: str   # "up" | "down"
+    session_id: Optional[str] = None
+    comment: Optional[str] = None
+
+
+class FeedbackResponse(BaseModel):
+    status: str
+    total_feedback_count: int
+
 
 class HealthResponse(BaseModel):
     status: str
     products_loaded: int
     standards_loaded: int
     p1_service_reachable: bool
+
+
+class CatalogStandardOut(BaseModel):
+    """One row in the Explore Standards catalog - broader than
+    ChatResponse's StandardOut since there's no single matched product
+    to scope it to here (this lists EVERY standard in the KB)."""
+    standard_id: str
+    is_number: str
+    title: str
+    status: str                          # "current" | "withdrawn"
+    scope_summary: Optional[str] = None
+    product_category: Optional[str] = None
+    is_mandatory: Optional[bool] = None    # None = no conformity route on file yet
+    source_url: Optional[str] = None
+    ask_query: str                        # ready-to-send chat query for "ask about this standard"
+
+class CatalogLabOut(BaseModel):
+    lab_id: str
+    lab_name: str
+    lab_type: Optional[str] = None
+    city: Optional[str] = None
+    district: Optional[str] = None
+    state: Optional[str] = None
+    contact: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    source_url: Optional[str] = None

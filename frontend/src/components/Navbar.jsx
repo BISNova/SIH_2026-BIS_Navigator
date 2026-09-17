@@ -1,78 +1,16 @@
 import React from 'react';
 
-export default function Navbar({
-  onOpenChatbot,
-  onNavigateSection,
-  activeSection
-}) {
-
-  // ============================================================
-  // NAVIGATION HANDLER
-  // ============================================================
-
-  const navigate = (event, destination) => {
-    event.preventDefault();
-
-    if (onNavigateSection) {
-      onNavigateSection(destination);
-    }
-  };
-
-
-  // ============================================================
-  // HOME
-  // ============================================================
-
-  const handleHome = (event) => {
-    navigate(event, 'home');
-  };
-
-
-  // ============================================================
-  // STANDARDS
-  // ============================================================
-
-  const handleStandards = (event) => {
-    navigate(event, 'standards');
-  };
-
-
-  // ============================================================
-  // FAQ
-  // ============================================================
-
-  const handleFAQs = (event) => {
-    navigate(event, 'faq');
-  };
-
-
-  // ============================================================
-  // DASHBOARD / CHATBOT
-  // ============================================================
-
-  const handleDashboard = (event) => {
-    event.preventDefault();
-
-    if (onOpenChatbot) {
-      onOpenChatbot();
-    }
-  };
-
+export default function Navbar({ onOpenChatbot, onNavigateSection, viewMode }) {
+  const navClass = (section) => `nav-link${viewMode === section ? ' active' : ''}`;
 
   return (
     <header className="landing-navbar">
-
       <div className="navbar-container">
-
-        {/* ======================================================
-            LOGO
-            ====================================================== */}
-
+        {/* Logo */}
         <a
-          href="#home"
+          href="#"
           className="navbar-logo-wrap"
-          onClick={handleHome}
-          aria-label="BISNova Home"
+          onClick={(e) => { e.preventDefault(); onNavigateSection('hero'); }}
         >
           <img
             src="/assets/bisnova_logo.png"
@@ -81,112 +19,53 @@ export default function Navbar({
           />
         </a>
 
-
-        {/* ======================================================
-            CENTER NAVIGATION
-            ====================================================== */}
-
-        <nav
-          className="navbar-links"
-          aria-label="Main navigation"
-        >
-
-          {/* ----------------------------------------------------
-              HOME
-              ---------------------------------------------------- */}
-
+        {/* Center Nav Links */}
+        <nav className="navbar-links" aria-label="Main navigation">
           <a
             href="#home"
-            className={`nav-link ${
-              activeSection === 'home' ||
-              activeSection === 'hero'
-                ? 'active'
-                : ''
-            }`}
-            onClick={handleHome}
+            className={navClass('landing')}
+            onClick={(e) => { e.preventDefault(); onNavigateSection('hero'); }}
           >
             Home
           </a>
-
-
-          {/* ----------------------------------------------------
-              STANDARDS
-              ---------------------------------------------------- */}
-
           <a
             href="#standards"
-            className={`nav-link ${
-              activeSection === 'standards' ||
-              activeSection === 'how-bisnova-helps'
-                ? 'active'
-                : ''
-            }`}
-            onClick={handleStandards}
+            className={navClass('explore-standards')}
+            onClick={(e) => { e.preventDefault(); onNavigateSection('explore-standards'); }}
           >
             Standards
           </a>
-
-
-          {/* ----------------------------------------------------
-              FAQs
-              ---------------------------------------------------- */}
-
           <a
             href="#faqs"
-            className={`nav-link ${
-              activeSection === 'faq' ||
-              activeSection === 'faq-page'
-                ? 'active'
-                : ''
-            }`}
-            onClick={handleFAQs}
+            className={navClass('faq')}
+            onClick={(e) => {
+            e.preventDefault();
+            onNavigateSection('faq-page');
+            }}
           >
             FAQs
           </a>
-
-
-          {/* ----------------------------------------------------
-              DASHBOARD
-              ---------------------------------------------------- */}
-
           <a
             href="#dashboard"
-            className={`nav-link ${
-              activeSection === 'dashboard'
-                ? 'active'
-                : ''
-            }`}
-            onClick={handleDashboard}
+            className="nav-link"
+            onClick={(e) => { e.preventDefault(); onOpenChatbot(); }}
           >
             Dashboard
           </a>
-
         </nav>
 
-
-        {/* ======================================================
-            CHATBOT CTA
-            ====================================================== */}
-
+        {/* Right CTA: Chat with BISNova pill button */}
         <div className="navbar-actions">
-
           <button
             type="button"
             className="nav-chatbot-btn"
-            onClick={handleDashboard}
+            onClick={onOpenChatbot}
             title="Open BISNova Chatbot"
           >
-            <span className="btn-chat-icon">
-              💬
-            </span>
-
-            Chat with BISNova
+            <span className="btn-chat-icon">💬</span> Chat with BISNova
           </button>
-
         </div>
-
       </div>
-
     </header>
   );
 }

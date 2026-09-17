@@ -1,8 +1,8 @@
 from pathlib import Path
 import sys
 
-from sentence_transformers import SentenceTransformer
-
+# from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 # ---------------------------------------------------------
 # Project path
@@ -97,7 +97,8 @@ print("=" * 70)
 
 print("\nLoading embedding model...")
 
-model = SentenceTransformer(MODEL_NAME)
+# model = SentenceTransformer(MODEL_NAME)
+model = TextEmbedding(model_name=f"sentence-transformers/{MODEL_NAME}")
 
 print(f"Model loaded: {MODEL_NAME}")
 

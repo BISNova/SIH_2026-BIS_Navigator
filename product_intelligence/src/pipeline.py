@@ -27,6 +27,7 @@ from .matcher import ProductMatcher
 from .normalize import normalize
 from .confidence import decide
 from .clarification import get_clarification
+from .language import normalize_query_to_english
 from .schemas import (
     ProductMatchResult,
     ProductCandidate,
@@ -80,6 +81,26 @@ class ProductIntelligencePipeline:
             return None
         return bool(match.iloc[0]["mandatory"])
 
+    def _last_verified(self, document_row) -> Optional[str]:
+        """
+        'Data as of' date for a standard's evidence, per the judges'
+        feedback that the schema already has last_updated/retrieved_at/
+        content_hash fields sitting unused. Falls back through the most
+        specific-to-least-specific date field available, since the
+        current KB has last_updated/retrieved_at as null for every
+        document (not yet populated by Person 4) - this fallback chain
+        means the UI still shows something honest today, and will
+        automatically start showing the more precise date the moment
+        those fields get real values, with no code change needed.
+        """
+        if document_row is None or document_row.empty:
+            return None
+        for field in ("last_updated", "retrieved_at", "publication_date"):
+            value = document_row.get(field)
+            if value is not None and str(value) != "nan" and str(value).strip():
+                return str(value)
+        return None
+
     def _lookup_standards(self, product_id: str) -> List[ApplicableStandard]:
         rows = self.mapping_df[self.mapping_df["product_id"] == product_id]
 
@@ -92,10 +113,11 @@ class ProductIntelligencePipeline:
                 continue  # mapping points to a standard_id not yet in standards.json
             std_row = std_row.iloc[0]
 
-            doc_row = self.documents_df[
+            doc_matches = self.documents_df[
                 self.documents_df["document_id"] == map_row["source_document_id"]
             ]
-            source_url = doc_row.iloc[0]["source_url"] if not doc_row.empty else std_row.get("source_url")
+            doc_row = doc_matches.iloc[0] if not doc_matches.empty else None
+            source_url = doc_row["source_url"] if doc_row is not None else std_row.get("source_url")
 
             results.append(ApplicableStandard(
                 standard_id=std_row["standard_id"],
@@ -109,13 +131,37 @@ class ProductIntelligencePipeline:
                 source_document_id=map_row["source_document_id"],
                 source_url=source_url,
                 confidence=map_row.get("confidence"),
+                last_verified=self._last_verified(doc_row),
             ))
 
         # primary standards first - that's what the user needs to see first
         results.sort(key=lambda s: 0 if s.relationship_type == "primary" else 1)
         return results
 
-    def process(self, query: str) -> ProductMatchResult:
+    def process(self, query: str, context_hint: Optional[str] = None) -> ProductMatchResult:
+        """
+        context_hint: optional text from a prior turn in the same
+        conversation (e.g. the last matched product's name), used ONLY
+        as a fallback if the query alone doesn't confidently match
+        anything. This is what lets "what tests does it need" resolve
+        correctly right after "I make pressure cookers" - see
+        backend/session_store.py for where context_hint comes from.
+        """
+        english_query, detected_language = normalize_query_to_english(query)
+
+        result = self._process_english(english_query, original_query=query)
+        result.detected_language = detected_language
+
+        if result.status == "not_found" and context_hint:
+            augmented = f"{english_query} {context_hint}".strip()
+            augmented_result = self._process_english(augmented, original_query=query)
+            if augmented_result.status != "not_found":
+                augmented_result.detected_language = detected_language
+                return augmented_result
+
+        return result
+
+    def _process_english(self, query: str, original_query: str) -> ProductMatchResult:
         ranked = self.matcher.rank(query)  # [(row_index, score), ...] all rows
 
         top_candidates: List[ProductCandidate] = [
@@ -129,7 +175,7 @@ class ProductIntelligencePipeline:
         decision = decide(top1_score, top2_score)
 
         result = ProductMatchResult(
-            query=query,
+            query=original_query,
             normalized_query=normalize(query),
             status=decision.status,
             product_candidates=top_candidates,

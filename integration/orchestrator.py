@@ -40,9 +40,15 @@ def _short_circuit_output(p1_input) -> P1OutputPayload:
             clarification_needed=True,
             clarification_question=p1_input.clarification_question,
         )
-    # status == "not_found"
+    # status == "not_found" - graceful, explicit-about-scope decline
+    # (judges' feedback: "out-of-scope detection with graceful decline")
     return P1OutputPayload(
-        answer="We don't have this product in our curated knowledge base yet.",
+        answer=(
+            "I'm focused specifically on Indian Standards and BIS compliance "
+            "questions, and I don't have this product in my curated knowledge "
+            "base yet. I can't give a reliable answer outside what I actually "
+            "have data for - try rephrasing, or ask about a different product."
+        ),
         evidence=[],
         sources=[],
         confidence_score=0.0,
@@ -57,6 +63,7 @@ def run_full_pipeline_with_context(
     product_pipeline: ProductIntelligencePipeline,
     p1_base_url: str = "http://127.0.0.1:8001",
     p1_http_client: Optional[httpx.Client] = None,
+    context_hint: Optional[str] = None,
 ) -> dict:
     """
     Returns {"p2_result": ProductMatchResult, "p1_output": P1OutputPayload}.
@@ -65,8 +72,11 @@ def run_full_pipeline_with_context(
     with app=<her FastAPI app> for ASGI-transport testing, no real
     network needed) - production code leaves it as None and a real
     client is created against p1_base_url.
+
+    context_hint: see product_intelligence/src/pipeline.py's process()
+    docstring - the conversation-memory fallback for follow-up queries.
     """
-    p2_result = product_pipeline.process(query)
+    p2_result = product_pipeline.process(query, context_hint=context_hint)
     p1_input = adapt_to_p1_input(p2_result)
 
     if p1_input.needs_clarification or p1_input.status == "not_found":

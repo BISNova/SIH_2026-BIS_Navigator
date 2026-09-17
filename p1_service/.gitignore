@@ -20,3 +20,17 @@ data/embeddings/*
 data/vectorstore/*
 !data/adapter/
 !data/adapter/*.json
+
+# real_kb_chunks.json is worth keeping - it's real extracted text from
+# knowledge_base/raw/ (see integration/ingest_real_documents.py), not a
+# throwaway artifact. Only the embeddings/vectorstore built FROM it are
+# regenerable/excluded above (and depend on which embedding model
+# generated them).
+!data/processed/real_kb_chunks.json
+
+# Old synthetic test fixtures, kept for isolated unit testing only -
+# not part of the live knowledge base, but worth versioning since
+# they're small and P1's own tests may still reference them.
+!data/synthetic_test_data_backup/
+!data/synthetic_test_data_backup/*.json
+!data/synthetic_test_data_backup/README.md

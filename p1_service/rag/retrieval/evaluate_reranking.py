@@ -3,7 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 
@@ -189,7 +190,8 @@ def main():
 
     print("\nLoading embedding model...")
 
-    model = SentenceTransformer(MODEL_NAME)
+    # model = SentenceTransformer(MODEL_NAME)
+    model = TextEmbedding(model_name=f"sentence-transformers/{MODEL_NAME}")
 
     print("Model loaded.")
 

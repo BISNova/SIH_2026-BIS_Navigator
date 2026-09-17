@@ -1,34 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchCatalogLabs, BISNovaAPIError } from '../api';
 
-export default function StandardsAndLabs({ onOpenChatbotWithQuery }) {
+export default function StandardsAndLabs({ onOpenChatbotWithQuery, onExploreStandards }) {
   const [searchCity, setSearchCity] = useState('');
+  const [labs, setLabs] = useState([]);
+  const [labsLoading, setLabsLoading] = useState(true);
+  const [labsError, setLabsError] = useState(null);
 
-  const laboratories = [
-    {
-      name: 'BIS Central Laboratory',
-      location: 'New Delhi, Delhi',
-      scope: 'Metals, Mechanical, General Engineering',
-      distance: '2.3 km'
-    },
-    {
-      name: 'NABL Accredited Lab',
-      location: 'Noida, UP',
-      scope: 'Chemical, Polymer, Packaging',
-      distance: '12.6 km'
-    },
-    {
-      name: 'BIS Recognized Lab',
-      location: 'Gurugram, Haryana',
-      scope: 'Electrical, Electronics, IT Equipment',
-      distance: '28.4 km'
-    }
-  ];
+  useEffect(() => {
+    let cancelled = false;
 
-  const filteredLabs = laboratories.filter(lab =>
-    lab.location.toLowerCase().includes(searchCity.toLowerCase()) ||
-    lab.name.toLowerCase().includes(searchCity.toLowerCase()) ||
-    lab.scope.toLowerCase().includes(searchCity.toLowerCase())
-  );
+    fetchCatalogLabs()
+      .then(data => {
+        if (!cancelled) {
+          setLabs(data);
+          setLabsLoading(false);
+        }
+      })
+      .catch(err => {
+        if (!cancelled) {
+          setLabsError(
+            err instanceof BISNovaAPIError
+              ? err.message
+              : 'Could not load laboratories right now.'
+          );
+          setLabsLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, []);
+
+  const term = searchCity.trim().toLowerCase();
+  const filteredLabs = term === ''
+    ? labs
+    : labs.filter(lab =>
+        (lab.city || '').toLowerCase().includes(term) ||
+        (lab.state || '').toLowerCase().includes(term) ||
+        (lab.district || '').toLowerCase().includes(term) ||
+        lab.lab_name.toLowerCase().includes(term) ||
+        (lab.lab_type || '').toLowerCase().includes(term)
+      );
 
   return (
     <section className="standards-labs-section" id="standards-labs">
@@ -45,7 +57,7 @@ export default function StandardsAndLabs({ onOpenChatbotWithQuery }) {
           <button
             type="button"
             className="explore-standards-cta"
-            onClick={() => onOpenChatbotWithQuery('Search all Indian Standards by product category')}
+            onClick={onExploreStandards}
           >
             Explore Standards →
           </button>
@@ -105,48 +117,71 @@ export default function StandardsAndLabs({ onOpenChatbotWithQuery }) {
             <input
               type="text"
               className="lab-search-input"
-              placeholder="Enter your city or allow location access..."
+              placeholder="Search by city, state, or lab name..."
               value={searchCity}
               onChange={(e) => setSearchCity(e.target.value)}
             />
-            <button
-              type="button"
-              className="lab-search-submit-btn"
-              onClick={() => onOpenChatbotWithQuery(`Find testing laboratories in ${searchCity || 'Delhi NCR'}`)}
-              title="Search Laboratories"
-            >
-              🔍
-            </button>
+            {searchCity && (
+              <button
+                type="button"
+                className="lab-search-submit-btn"
+                onClick={() => setSearchCity('')}
+                title="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {/* Laboratory List */}
           <div className="lab-results-header">
-            <span className="lab-results-title">Recognized laboratories near you</span>
-            <button
-              type="button"
-              className="view-all-labs-btn"
-              onClick={() => onOpenChatbotWithQuery('List all BIS recognized testing laboratories in India')}
-            >
-              View all
-            </button>
+            <span className="lab-results-title">
+              {labsLoading ? 'Loading laboratories…' : `${filteredLabs.length} recognized laboratories`}
+            </span>
+            {searchCity && (
+              <button
+                type="button"
+                className="view-all-labs-btn"
+                onClick={() => setSearchCity('')}
+              >
+                View all
+              </button>
+            )}
           </div>
 
-          <div className="lab-items-list">
-            {filteredLabs.map((lab, idx) => (
-              <div
-                key={idx}
-                className="lab-item-row"
-                onClick={() => onOpenChatbotWithQuery(`Give details and contact for ${lab.name} in ${lab.location}`)}
-              >
-                <div className="lab-item-icon">📍</div>
-                <div className="lab-item-info">
-                  <strong>{lab.name}</strong>
-                  <span className="lab-location-scope">{lab.location} • {lab.scope}</span>
+          {labsError && (
+            <div className="lab-slogan-note">
+              <span>{labsError}</span>
+            </div>
+          )}
+
+          {!labsLoading && !labsError && (
+            <div className="lab-items-list">
+              {filteredLabs.slice(0, 6).map((lab) => (
+                <div
+                  key={lab.lab_id}
+                  className="lab-item-row"
+                  onClick={() => onOpenChatbotWithQuery(
+                    `Give details and contact information for ${lab.lab_name} in ${lab.city || lab.state || 'India'}`
+                  )}
+                >
+                  <div className="lab-item-icon">📍</div>
+                  <div className="lab-item-info">
+                    <strong>{lab.lab_name}</strong>
+                    <span className="lab-location-scope">
+                      {[lab.city, lab.state].filter(Boolean).join(', ')}
+                      {lab.lab_type ? ` • ${lab.lab_type}` : ''}
+                    </span>
+                  </div>
                 </div>
-                <span className="lab-distance-badge">{lab.distance}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+              {filteredLabs.length === 0 && (
+                <div className="lab-slogan-note">
+                  <span>No laboratories match "{searchCity}" - try a different city or state.</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Slogan Note */}
           <div className="lab-slogan-note">

@@ -1,18 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 
-export default function MessageList({
-  messages,
-  isThinking,
-  onChipClick
-}) {
+export default function MessageList({ messages, isThinking, onChipClick, onFeedback }) {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: 'smooth'
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -20,21 +12,25 @@ export default function MessageList({
   }, [messages, isThinking]);
 
   return (
-    <section
-      className="chat-stream-viewport"
-      aria-label="Chat Conversation"
-    >
-      {/* Decorative motivational note on right
+    <section className="chat-stream-viewport" aria-label="Chat Conversation">
+      {/* Decorative motivational note on right (matching Image 1)
       <div className="chat-floating-slogan" aria-hidden="true">
-        <span>
-          Same Standards.<br />
-          <em>Brighter Possibilities!</em>
-        </span>
+        <span>Same Standards.<br /><em>Brighter Possibilities!</em></span>
         <div className="slogan-curve-line"></div>
-      </div>
-      */}
+      </div> */}
 
       <div className="chat-messages-inner">
+        {messages.length === 0 && !isThinking && (
+          <div className="chat-empty-state">
+            <img src="/assets/bisnova_logo.png" alt="BISNova" className="chat-empty-logo" />
+            <h2>Namaste! I'm BISNova 👋</h2>
+            <p>
+              Ask me anything about Indian Standards, BIS certification, testing
+              requirements, or hallmarking — I'll find the applicable standard and
+              cite my sources.
+            </p>
+          </div>
+        )}
 
         {messages.map((msg, index) => {
           const isBot = msg.sender === 'bot';
@@ -42,419 +38,155 @@ export default function MessageList({
           return (
             <div
               key={index}
-              className={`message-bubble-row ${
-                isBot ? 'bot-row' : 'user-row'
-              } ${msg.isNew ? 'pop-in' : ''}`}
+              className={`message-bubble-row ${isBot ? 'bot-row' : 'user-row'} ${msg.isNew ? 'pop-in' : ''}`}
             >
-
-              {/* ==========================================================
-                  BOT AVATAR
-                  ========================================================== */}
-
+              {/* Bot Avatar on Left */}
               {isBot && (
                 <div className="msg-avatar-col bot-avatar">
-                  <img
-                    src="/assets/logo.png"
-                    alt="BISNova"
-                    className="msg-avatar-img"
-                  />
+                  <img src="/assets/logo.png" alt="BISNova" className="msg-avatar-img" />
                 </div>
               )}
 
-
-              {/* ==========================================================
-                  MESSAGE BUBBLE
-                  ========================================================== */}
-
+              {/* Bubble Body */}
               <div className="msg-bubble-card">
-
-                {/* --------------------------------------------------------
-                    FILE ATTACHMENT
-                    -------------------------------------------------------- */}
-
+                {/* File Attachment if any */}
                 {msg.file && (
                   <div className="msg-attached-file-badge">
-                    <span>📎</span>
-                    <strong>{msg.file.name}</strong>
+                    <span>📎</span> <strong>{msg.file.name}</strong>
                   </div>
                 )}
 
-
-                {/* --------------------------------------------------------
-                    MESSAGE TEXT
-
-                    IMPORTANT:
-                    ReactMarkdown converts the Markdown returned by
-                    the BISNova backend into proper HTML elements.
-                    -------------------------------------------------------- */}
-
-                <div className="msg-text-content markdown-content">
-
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-
-                      /* Headings */
-
-                      h1: ({ children }) => (
-                        <h1>{children}</h1>
-                      ),
-
-                      h2: ({ children }) => (
-                        <h2>{children}</h2>
-                      ),
-
-                      h3: ({ children }) => (
-                        <h3>{children}</h3>
-                      ),
-
-                      h4: ({ children }) => (
-                        <h4>{children}</h4>
-                      ),
-
-
-                      /* Paragraph */
-
-                      p: ({ children }) => (
-                        <p>{children}</p>
-                      ),
-
-
-                      /* Bold */
-
-                      strong: ({ children }) => (
-                        <strong>{children}</strong>
-                      ),
-
-
-                      /* Italic */
-
-                      em: ({ children }) => (
-                        <em>{children}</em>
-                      ),
-
-
-                      /* Unordered list */
-
-                      ul: ({ children }) => (
-                        <ul>{children}</ul>
-                      ),
-
-
-                      /* Ordered list */
-
-                      ol: ({ children }) => (
-                        <ol>{children}</ol>
-                      ),
-
-
-                      /* List item */
-
-                      li: ({ children }) => (
-                        <li>{children}</li>
-                      ),
-
-
-                      /* Links */
-
-                      a: ({ href, children }) => (
-                        <a
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {children}
-                        </a>
-                      ),
-
-
-                      /* Blockquote */
-
-                      blockquote: ({ children }) => (
-                        <blockquote>{children}</blockquote>
-                      ),
-
-
-                      /* Inline / block code */
-
-                      code: ({ className, children }) => {
-                        const isBlock =
-                          className?.startsWith('language-');
-
-                        if (isBlock) {
-                          return (
-                            <pre>
-                              <code className={className}>
-                                {children}
-                              </code>
-                            </pre>
-                          );
-                        }
-
-                        return (
-                          <code className={className}>
-                            {children}
-                          </code>
-                        );
-                      },
-
-
-                      /* Code block wrapper */
-
-                      pre: ({ children }) => (
-                        <pre>{children}</pre>
-                      ),
-
-
-                      /* Horizontal rule */
-
-                      hr: () => (
-                        <hr />
-                      ),
-
-
-                      /* Tables */
-
-                      table: ({ children }) => (
-                        <div className="markdown-table-wrapper">
-                          <table>{children}</table>
-                        </div>
-                      ),
-
-                      thead: ({ children }) => (
-                        <thead>{children}</thead>
-                      ),
-
-                      tbody: ({ children }) => (
-                        <tbody>{children}</tbody>
-                      ),
-
-                      tr: ({ children }) => (
-                        <tr>{children}</tr>
-                      ),
-
-                      th: ({ children }) => (
-                        <th>{children}</th>
-                      ),
-
-                      td: ({ children }) => (
-                        <td>{children}</td>
-                      )
-                    }}
-                  >
-                    {msg.text || ''}
-                  </ReactMarkdown>
-
+                {/* Message Text */}
+                <div className="msg-text-content">
+                  {msg.text.split('\n').map((line, lIdx) => (
+                    <p key={lIdx}>{line}</p>
+                  ))}
                 </div>
 
-
-                {/* ========================================================
-                    SINGLE STANDARD CARD
-                    ======================================================== */}
-
+                {/* Rich Standard Card (if present) - singular, kept for
+                    backward compatibility with pre-seeded demo chats */}
                 {msg.standardCard && (
                   <div className="msg-standard-feature-card">
-
-                    <div className="std-doc-icon">
-                      📄
-                    </div>
-
+                    <div className="std-doc-icon">📄</div>
                     <div className="std-doc-text">
-
-                      <strong className="std-doc-code">
-                        {msg.standardCard.code}
-                      </strong>
-
-                      <span className="std-doc-title">
-                        {msg.standardCard.title}
-                      </span>
-
+                      <strong className="std-doc-code">{msg.standardCard.code}</strong>
+                      <span className="std-doc-title">{msg.standardCard.title}</span>
                     </div>
-
                   </div>
                 )}
 
+                {/* Multiple Standard Cards (real backend responses - a
+                    product can have more than one applicable standard,
+                    e.g. a mandatory safety standard + a secondary one) */}
+                {msg.standardCards && msg.standardCards.length > 0 && (
+                  <div className="msg-standard-cards-group">
+                    {msg.standardCards.map((std, sIdx) => (
+                      <div key={sIdx} className="msg-standard-feature-card">
+                        <div className="std-doc-icon">📄</div>
+                        <div className="std-doc-text">
+                          <strong className="std-doc-code">
+                            {std.code}
+                            {std.mandatory === true && (
+                              <span className="std-mandatory-badge"> · MANDATORY</span>
+                            )}
+                            {std.relationship_type === 'secondary' && (
+                              <span className="std-secondary-badge"> · related</span>
+                            )}
+                          </strong>
+                          <span className="std-doc-title">{std.title}</span>
+                          {std.lastVerified && (
+                            <span className="std-last-verified">Data as of: {std.lastVerified}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                {/* ========================================================
-                    MULTIPLE STANDARD CARDS
-                    ======================================================== */}
+                {/* Confidence badge - judges' feedback: "answer confidence
+                    score shown in UI" */}
+                {isBot && msg.confidenceLabel && (
+                  <div className={`msg-confidence-badge confidence-${msg.confidenceLabel}`}>
+                    Confidence: {msg.confidenceLabel}
+                  </div>
+                )}
 
-                {msg.standardCards &&
-                  msg.standardCards.length > 0 && (
+                {/* Attached Quick Action Chips (matching Image 1) */}
+                {isBot && msg.actionChips && (
+                  <div className="msg-attached-chips-row">
+                    {msg.actionChips.map((chip, cIdx) => (
+                      <button
+                        key={cIdx}
+                        type="button"
+                        className="msg-action-chip"
+                        onClick={() => onChipClick(chip.query)}
+                      >
+                        <span className="chip-icon">{chip.icon}</span>
+                        <span>{chip.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-                    <div className="msg-standard-cards-group">
-
-                      {msg.standardCards.map(
-                        (std, sIdx) => (
-
-                          <div
-                            key={sIdx}
-                            className="msg-standard-feature-card"
-                          >
-
-                            <div className="std-doc-icon">
-                              📄
-                            </div>
-
-                            <div className="std-doc-text">
-
-                              <strong className="std-doc-code">
-
-                                {std.code}
-
-                                {std.mandatory === true && (
-                                  <span className="std-mandatory-badge">
-                                    {' · MANDATORY'}
-                                  </span>
-                                )}
-
-                                {std.relationship_type ===
-                                  'secondary' && (
-                                  <span className="std-secondary-badge">
-                                    {' · related'}
-                                  </span>
-                                )}
-
-                              </strong>
-
-                              <span className="std-doc-title">
-                                {std.title}
-                              </span>
-
-                            </div>
-
-                          </div>
-
-                        )
-                      )}
-
-                    </div>
-
-                  )}
-
-
-                {/* ========================================================
-                    ACTION CHIPS
-                    ======================================================== */}
-
-                {isBot &&
-                  msg.actionChips &&
-                  msg.actionChips.length > 0 && (
-
-                    <div className="msg-attached-chips-row">
-
-                      {msg.actionChips.map(
-                        (chip, cIdx) => (
-
-                          <button
-                            key={cIdx}
-                            type="button"
-                            className="msg-action-chip"
-                            onClick={() =>
-                              onChipClick(chip.query)
-                            }
-                          >
-
-                            <span className="chip-icon">
-                              {chip.icon}
-                            </span>
-
-                            <span>
-                              {chip.label}
-                            </span>
-
-                          </button>
-
-                        )
-                      )}
-
-                    </div>
-
-                  )}
-
-
-                {/* ========================================================
-                    MESSAGE FOOTER
-                    ======================================================== */}
-
+                {/* Footer: Timestamp & Read Status */}
                 <div className="msg-meta-row">
-
-                  <span className="msg-timestamp">
-                    {msg.time || '10:24 AM'}
-                  </span>
-
-                  {!isBot && (
-                    <span className="read-receipt-ticks">
-                      ✓✓
-                    </span>
+                  <span className="msg-timestamp">{msg.time || '10:24 AM'}</span>
+                  {!isBot && <span className="read-receipt-ticks">✓✓</span>}
+                  {isBot && msg.feedbackQuery && (
+                    <div className="msg-feedback-buttons">
+                      <button
+                        type="button"
+                        className={`feedback-btn ${msg.feedbackGiven === 'up' ? 'active' : ''}`}
+                        onClick={() => onFeedback(index, 'up')}
+                        disabled={!!msg.feedbackGiven}
+                        title="This answer was helpful"
+                      >
+                        👍
+                      </button>
+                      <button
+                        type="button"
+                        className={`feedback-btn ${msg.feedbackGiven === 'down' ? 'active' : ''}`}
+                        onClick={() => onFeedback(index, 'down')}
+                        disabled={!!msg.feedbackGiven}
+                        title="This answer was not helpful"
+                      >
+                        👎
+                      </button>
+                      {msg.feedbackGiven && <span className="feedback-thanks">Thanks for the feedback!</span>}
+                    </div>
                   )}
-
                 </div>
-
               </div>
 
-
-              {/* ==========================================================
-                  USER AVATAR
-                  ========================================================== */}
-
+              {/* User Avatar on Right */}
               {!isBot && (
                 <div className="msg-avatar-col user-avatar">
-                  <span className="user-initial">
-                    A
-                  </span>
+                  <span className="user-initial">A</span>
                 </div>
               )}
-
             </div>
           );
         })}
 
-
-        {/* ================================================================
-            THINKING INDICATOR
-            ================================================================ */}
-
+        {/* Thinking Indicator */}
         {isThinking && (
-
           <div className="message-bubble-row bot-row pop-in">
-
             <div className="msg-avatar-col bot-avatar">
-
-              <img
-                src="/assets/logo.png"
-                alt="BISNova"
-                className="msg-avatar-img"
-              />
-
+              <img src="/assets/logo.png" alt="BISNova" className="msg-avatar-img" />
             </div>
 
-
             <div className="msg-bubble-card typing-bubble">
-
               <div className="typing-dots-group">
-
                 <span className="dot d1"></span>
                 <span className="dot d2"></span>
                 <span className="dot d3"></span>
-
               </div>
-
-              <span className="typing-label">
-                BISNova is finding verified standards...
-              </span>
-
+              <span className="typing-label">BISNova is finding verified standards...</span>
             </div>
-
           </div>
-
         )}
 
-
-        {/* Scroll anchor */}
-
         <div ref={messagesEndRef} />
-
       </div>
     </section>
   );

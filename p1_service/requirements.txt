@@ -7,12 +7,13 @@ pymupdf
 beautifulsoup4
 python-docx
 
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.11.0+cpu
-sentence-transformers
+# sentence-transformers
+fastembed
 chromadb
 
-# Required for rag/service/gemini_service.py's `from google import genai`
+# Required for rag/service/gemini_service.py's `from google import genai` -
+# missing from the original requirements.txt (found during integration
+# testing; the import fails without it).
 google-genai
 
 numpy

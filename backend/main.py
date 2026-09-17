@@ -23,7 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import CORS_ORIGINS
 from .dependencies import get_product_pipeline
-from . import routers_chat, routers_debug
+from . import routers_chat, routers_debug, routers_catalog, routers_feedback, routers_admin
 
 
 @asynccontextmanager
@@ -46,6 +46,9 @@ app.add_middleware(
 
 app.include_router(routers_chat.router, prefix="/api")
 app.include_router(routers_debug.router, prefix="/api")
+app.include_router(routers_catalog.router, prefix="/api")
+app.include_router(routers_feedback.router, prefix="/api")
+app.include_router(routers_admin.router, prefix="/api")
 
 
 @app.get("/")

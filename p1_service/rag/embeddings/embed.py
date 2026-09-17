@@ -1,8 +1,8 @@
 from pathlib import Path
 import json
 
-from sentence_transformers import SentenceTransformer
-
+# from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 # ============================================================
 # PATHS
@@ -118,9 +118,11 @@ def generate_embeddings(chunks: list[dict]):
     print("\nLoading embedding model:")
     print(f"  {MODEL_NAME}")
 
-    model = SentenceTransformer(
-        MODEL_NAME
-    )
+    # model = SentenceTransformer(
+    #     MODEL_NAME
+    # )
+
+    model = TextEmbedding(model_name=f"sentence-transformers/{MODEL_NAME}")
 
     embedding_texts = [
         build_embedding_text(chunk)
@@ -132,11 +134,12 @@ def generate_embeddings(chunks: list[dict]):
         f"{len(embedding_texts)} chunks..."
     )
 
-    embeddings = model.encode(
-        embedding_texts,
-        normalize_embeddings=True,
-        show_progress_bar=True
-    )
+    # embeddings = model.encode(
+    #     embedding_texts,
+    #     normalize_embeddings=True,
+    #     show_progress_bar=True
+    # )
+    embeddings = list(model.embed(embedding_texts))
 
     return embeddings
 

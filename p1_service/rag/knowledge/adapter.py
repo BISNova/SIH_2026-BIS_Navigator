@@ -8,42 +8,51 @@ from typing import Any, Dict, List, Optional
 
 class P4KnowledgeAdapter:
     """
-    Read-only adapter for the structured BIS knowledge prepared for P4.
+    Read-only adapter for the structured BIS knowledge base.
 
-    Expected data location:
+    Reads directly from the project's shared knowledge base - no
+    separate copy is kept inside p1_service/. Whatever P2/P4 write to
+    these files is what P1 sees on its next restart:
 
-        project_root/
-        └── data/
-            └── adapter/
-                ├── products.json
-                ├── standards.json
-                ├── product_standard_mapping.json
-                ├── product_attributes.json
-                ├── tests.json
-                ├── labs.json
-                ├── lab_scope.json
-                ├── qcos.json
-                ├── schemes.json
-                ├── conformity_routes.json
-                ├── certification_steps.json
-                ├── documents.json
-                ├── ah_centres.json
-                ├── inspection_requirements.json
-                └── manifest.csv
+        repo_root/
+        └── knowledge_base/
+            ├── structured/
+            │   ├── products.json
+            │   ├── standards.json
+            │   ├── product_standard_mapping.json
+            │   ├── product_attributes.json
+            │   ├── tests.json
+            │   ├── labs.json
+            │   ├── lab_scope.json
+            │   ├── qcos.json
+            │   ├── schemes.json
+            │   ├── conformity_routes.json
+            │   ├── certification_steps.json
+            │   ├── ah_centres.json
+            │   └── inspection_requirements.json
+            ├── documents/
+            │   └── documents.json
+            └── manifest.csv
     """
 
     def __init__(self, data_dir: Optional[str | Path] = None):
         if data_dir is None:
-            # adapter.py -> knowledge -> rag -> project root
-            project_root = Path(__file__).resolve().parents[2]
-            data_dir = project_root / "data" / "adapter"
+            # adapter.py -> knowledge -> rag -> p1_service -> repo root
+            project_root = Path(__file__).resolve().parents[3]
+            data_dir = project_root / "knowledge_base" / "structured"
 
         self.data_dir = Path(data_dir)
 
         if not self.data_dir.exists():
             raise FileNotFoundError(
-                f"P4 adapter data directory not found: {self.data_dir}"
+                f"knowledge_base/structured not found: {self.data_dir}"
             )
+
+        project_root = Path(__file__).resolve().parents[3]
+        self.documents_path = (
+            project_root / "knowledge_base" / "documents" / "documents.json"
+        )
+        self.manifest_path = project_root / "knowledge_base" / "manifest.csv"
 
         # Raw structured datasets
         self.products = self._load_json("products.json")
@@ -63,7 +72,7 @@ class P4KnowledgeAdapter:
         self.certification_steps = self._load_json(
             "certification_steps.json"
         )
-        self.documents = self._load_json("documents.json")
+        self.documents = self._load_json_at(self.documents_path)
         self.ah_centres = self._load_json("ah_centres.json")
 
         # This file is currently empty. Empty is a valid state.
@@ -71,7 +80,7 @@ class P4KnowledgeAdapter:
             "inspection_requirements.json"
         )
 
-        self.manifest = self._load_csv("manifest.csv")
+        self.manifest = self._load_csv_at(self.manifest_path)
 
         # Build indexes for fast lookup.
         self._build_indexes()
@@ -81,11 +90,12 @@ class P4KnowledgeAdapter:
     # ------------------------------------------------------------------
 
     def _load_json(self, filename: str) -> List[Dict[str, Any]]:
-        path = self.data_dir / filename
+        return self._load_json_at(self.data_dir / filename)
 
+    def _load_json_at(self, path: Path) -> List[Dict[str, Any]]:
         if not path.exists():
             raise FileNotFoundError(
-                f"Required P4 data file not found: {path}"
+                f"Required knowledge base file not found: {path}"
             )
 
         # inspection_requirements.json is currently empty.
@@ -107,11 +117,12 @@ class P4KnowledgeAdapter:
         return data
 
     def _load_csv(self, filename: str) -> List[Dict[str, Any]]:
-        path = self.data_dir / filename
+        return self._load_csv_at(self.data_dir / filename)
 
+    def _load_csv_at(self, path: Path) -> List[Dict[str, Any]]:
         if not path.exists():
             raise FileNotFoundError(
-                f"Required P4 data file not found: {path}"
+                f"Required knowledge base file not found: {path}"
             )
 
         with path.open("r", encoding="utf-8-sig", newline="") as file:

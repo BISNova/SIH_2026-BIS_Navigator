@@ -1,19 +1,43 @@
-# Python
+# --- Python ---
 __pycache__/
 *.pyc
+*.pyo
 .pytest_cache/
-
-# Virtual environment
+*.egg-info/
 .venv/
 venv/
 
-# Environment variables
-.env
+# --- Node / frontend ---
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
 
-# Generated RAG data
-rag/data/raw/*
-rag/data/cleaned/*
-rag/data/chunks/*
-rag/data/embeddings/*
-rag/data/processed/*
-rag/data/vectorstore/*
+# --- P1 service generated data (regenerate, don't commit) ---
+# Large, binary, machine-specific. p1_service/ has its own .gitignore
+# covering this too (belt and suspenders, in case it's ever git-added
+# from a different root). See root README.md for how to regenerate.
+p1_service/data/raw/*
+p1_service/data/processed/*
+p1_service/data/embeddings/*
+p1_service/data/vectorstore/*
+!p1_service/data/adapter/
+!p1_service/data/embeddings/all_embeddings.json
+!p1_service/data/vectorstore/chroma/
+!p1_service/data/adapter/*.json
+!p1_service/data/processed/real_kb_chunks.json
+!p1_service/data/synthetic_test_data_backup/
+!p1_service/data/synthetic_test_data_backup/*.json
+!p1_service/data/synthetic_test_data_backup/README.md
+
+# --- Environment / secrets ---
+.env
+.env.local
+p1_service/.env
+
+# --- Runtime-generated data (not code) ---
+backend/data/feedback.jsonl
+backend/data/kb_change_staging.json
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db

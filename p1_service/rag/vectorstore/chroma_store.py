@@ -201,44 +201,43 @@ class ChromaEvidenceStore:
         """
         Search evidence from ChromaDB.
 
-        P1/P4 use canonical BIS Navigator standard IDs
-        such as STD-001, while the current synthetic RAG
-        corpus uses SYN-STD-* IDs.
+        FIX (found during P2/frontend integration testing, then
+        confirmed directly by inspecting data/embeddings/all_embeddings.json):
+        this previously translated real canonical IDs (STD-001 etc.) to
+        a hardcoded synthetic-corpus alias (SYN-STD-101 etc.) before
+        querying. That made sense while the only embedded content was
+        P1's synthetic test fixtures - but it silently meant every
+        semantic-retrieval answer was grounded in fake placeholder text
+        ("Sample BIS Product Standard A... Not an official BIS
+        document"), never real BIS content, even though the API
+        contract with P2 always used real STD-IDs.
 
-        Translate canonical IDs to the corresponding
-        synthetic IDs only at the Chroma retrieval boundary.
-        This keeps the P1/P4 contract unchanged.
+        Real content now exists (see
+        integration/ingest_real_documents.py, which produced
+        data/processed/real_kb_chunks.json from actual BIS PDFs/HTML)
+        and is embedded under its OWN real standard_id - no alias
+        needed anymore. Querying by the canonical ID directly is now
+        correct.
+
+        The synthetic fixtures are preserved (not deleted) at
+        data/synthetic_test_data_backup/ for isolated unit testing of
+        this retrieval/reranking pipeline - they're just no longer part
+        of the live knowledge base.
         """
 
         where = None
 
         if standard_ids:
-
-            # Canonical P1/P4 ID -> synthetic RAG corpus ID
-            standard_id_map = {
-                "STD-001": "SYN-STD-101",
-                "STD-002": "SYN-STD-202",
-                "STD-003": "SYN-STD-303",
-            }
-
-            normalized_ids = [
-                standard_id_map.get(
-                    standard_id,
-                    standard_id
-                )
-                for standard_id in standard_ids
-            ]
-
-            if len(normalized_ids) == 1:
+            if len(standard_ids) == 1:
                 where = {
-                    "standard_id": normalized_ids[0]
+                    "standard_id": standard_ids[0]
                 }
 
             else:
                 where = {
                     "$or": [
                         {"standard_id": standard_id}
-                        for standard_id in normalized_ids
+                        for standard_id in standard_ids
                     ]
                 }
 

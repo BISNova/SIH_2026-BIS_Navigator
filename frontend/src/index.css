@@ -46,207 +46,6 @@ html, body, #root {
 /* ==========================================================================
    App Layout Shell for Chatbot View
    ========================================================================== */
-
-/* ==========================================================================
-   BISNova Markdown Messages
-   ========================================================================== */
-
-.markdown-content {
-  line-height: 1.65;
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
-}
-
-
-/* Paragraphs */
-
-.markdown-content p {
-  margin: 0 0 12px;
-}
-
-.markdown-content p:last-child {
-  margin-bottom: 0;
-}
-
-
-/* Headings */
-
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3,
-.markdown-content h4 {
-  margin-top: 18px;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.markdown-content h1:first-child,
-.markdown-content h2:first-child,
-.markdown-content h3:first-child,
-.markdown-content h4:first-child {
-  margin-top: 0;
-}
-
-.markdown-content h1 {
-  font-size: 1.35rem;
-}
-
-.markdown-content h2 {
-  font-size: 1.2rem;
-}
-
-.markdown-content h3 {
-  font-size: 1.08rem;
-}
-
-.markdown-content h4 {
-  font-size: 1rem;
-}
-
-
-/* Bold */
-
-.markdown-content strong {
-  font-weight: 700;
-}
-
-
-/* Italic */
-
-.markdown-content em {
-  font-style: italic;
-}
-
-
-/* Lists */
-
-.markdown-content ul,
-.markdown-content ol {
-  margin: 8px 0 14px;
-  padding-left: 24px;
-}
-
-.markdown-content ul {
-  list-style-type: disc;
-}
-
-.markdown-content ol {
-  list-style-type: decimal;
-}
-
-.markdown-content li {
-  margin: 5px 0;
-  padding-left: 2px;
-}
-
-.markdown-content li > p {
-  margin-bottom: 4px;
-}
-
-
-/* Nested lists */
-
-.markdown-content ul ul,
-.markdown-content ol ol,
-.markdown-content ul ol,
-.markdown-content ol ul {
-  margin-top: 4px;
-  margin-bottom: 4px;
-}
-
-
-/* Links */
-
-.markdown-content a {
-  text-decoration: underline;
-  font-weight: 500;
-}
-
-.markdown-content a:hover {
-  opacity: 0.8;
-}
-
-
-/* Blockquotes */
-
-.markdown-content blockquote {
-  margin: 12px 0;
-  padding: 8px 14px;
-  border-left: 3px solid currentColor;
-  opacity: 0.85;
-}
-
-.markdown-content blockquote p {
-  margin: 0;
-}
-
-
-/* Inline code */
-
-.markdown-content code {
-  padding: 2px 6px;
-  border-radius: 5px;
-  font-family: monospace;
-  font-size: 0.9em;
-}
-
-
-/* Code blocks */
-
-.markdown-content pre {
-  margin: 12px 0;
-  padding: 12px 14px;
-  border-radius: 8px;
-  overflow-x: auto;
-  font-family: monospace;
-  font-size: 0.88rem;
-}
-
-.markdown-content pre code {
-  padding: 0;
-  background: none;
-}
-
-
-/* Horizontal line */
-
-.markdown-content hr {
-  margin: 18px 0;
-  border: 0;
-  border-top: 1px solid currentColor;
-  opacity: 0.2;
-}
-
-
-/* Tables */
-
-.markdown-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  margin: 14px 0;
-}
-
-.markdown-content table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.92rem;
-}
-
-.markdown-content th,
-.markdown-content td {
-  padding: 8px 10px;
-  border: 1px solid currentColor;
-  text-align: left;
-}
-
-.markdown-content th {
-  font-weight: 700;
-}
-
-.markdown-content tr {
-  vertical-align: top;
-}
-
 .app-container {
   display: flex;
   height: 100vh;
@@ -1376,7 +1175,7 @@ html, body, #root {
 }
 
 .navbar-logo {
-  height: 42px;
+  height: 80px;
   width: auto;
   object-fit: contain;
 }
@@ -3401,4 +3200,380 @@ html, body, #root {
     width: 100%;
     min-height: 180px;
   }
+}
+/* =========================================================================
+   Explore Standards Page
+   ========================================================================= */
+
+.explore-standards-page {
+  min-height: 70vh;
+  padding-bottom: 60px;
+}
+
+.explore-standards-hero {
+  background: var(--secondary-blue);
+  padding: 64px 24px 40px;
+  text-align: center;
+}
+
+.explore-kicker {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-blue);
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+
+.explore-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 5vw, 46px);
+  color: var(--primary-black);
+  margin: 0 0 12px 0;
+}
+
+.explore-hero-description {
+  max-width: 620px;
+  margin: 0 auto 28px;
+  color: #4b5563;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+.explore-search-wrapper {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.explore-search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.explore-search-input {
+  width: 100%;
+  padding: 14px 44px;
+  border-radius: 999px;
+  border: 1px solid var(--border-muted);
+  font-size: 15px;
+  font-family: var(--font-family);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.explore-search-input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(26, 101, 229, 0.12);
+}
+
+.explore-clear-search {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: #e5e7eb;
+  color: #4b5563;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.explore-standards-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 24px 0;
+}
+
+.explore-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.explore-pill {
+  border: 1px solid var(--border-muted);
+  background: #fff;
+  color: #4b5563;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.explore-pill:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.explore-pill.active {
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
+  color: #fff;
+}
+
+.explore-state-message {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.explore-state-error {
+  color: var(--primary-red);
+}
+
+.explore-standards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.explore-standard-card {
+  background: #fff;
+  border: 1px solid var(--border-muted);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.explore-standard-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.explore-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.explore-card-is-number {
+  font-weight: 800;
+  color: var(--primary-blue);
+  font-size: 14px;
+}
+
+.explore-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.explore-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.explore-badge-mandatory {
+  background: #FEECEC;
+  color: var(--primary-red);
+}
+
+.explore-badge-withdrawn {
+  background: #F3F4F6;
+  color: #6b7280;
+}
+
+.explore-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-black);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.explore-card-category {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-orange);
+  background: var(--bg-secondary);
+  padding: 3px 10px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.explore-card-scope {
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.explore-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.explore-card-ask-btn {
+  border: none;
+  background: var(--primary-blue);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.explore-card-ask-btn:hover {
+  opacity: 0.88;
+}
+
+.explore-card-source-link {
+  font-size: 12.5px;
+  color: #6b7280;
+  text-decoration: underline;
+}
+
+/* Chat empty state - shown before the user's first message, matching
+   the "always start with a blank composer, no fake pre-seeded chats"
+   pattern used by Claude/ChatGPT. */
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 50vh;
+  padding: 40px 20px;
+  gap: 14px;
+}
+
+.chat-empty-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  opacity: 0.9;
+}
+
+.chat-empty-state h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--primary-black);
+  margin: 0;
+}
+
+.chat-empty-state p {
+  max-width: 420px;
+  color: #6b7280;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Confidence badge, last-verified, feedback buttons, disclaimer */
+.std-last-verified {
+  display: block;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+.msg-confidence-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin: 8px 0 0 0;
+  width: fit-content;
+}
+
+.msg-confidence-badge.confidence-high {
+  background: #E8F7EE;
+  color: #1E8A4C;
+}
+
+.msg-confidence-badge.confidence-medium {
+  background: #FFF6E5;
+  color: #B8860B;
+}
+
+.msg-confidence-badge.confidence-low,
+.msg-confidence-badge.confidence-none {
+  background: #FEECEC;
+  color: var(--primary-red);
+}
+
+.msg-feedback-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.feedback-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.feedback-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: #f3f4f6;
+}
+
+.feedback-btn.active {
+  opacity: 1;
+}
+
+.feedback-btn:disabled {
+  cursor: default;
+}
+
+.feedback-thanks {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+.chat-disclaimer-footer {
+  text-align: center;
+  font-size: 11.5px;
+  color: #9ca3af;
+  padding: 6px 16px 10px;
+  margin: 0;
 }

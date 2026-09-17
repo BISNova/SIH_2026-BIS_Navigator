@@ -132,3 +132,125 @@ def test_clarification_options_carry_ready_to_send_queries(client):
     for opt in body["clarification_options"]:
         assert opt["label"]
         assert opt["query"]
+
+
+def test_catalog_standards_returns_all_kb_standards(client):
+    r = client.get("/api/catalog/standards")
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body) == 7
+    for std in body:
+        assert std["standard_id"]
+        assert std["is_number"]
+        assert std["ask_query"]  # ready-to-send chat query
+
+
+def test_catalog_standards_distinguishes_shared_is_numbers(client):
+    """IS 302 Part 1 and Part 2/Section 21 share an is_number+year -
+    the catalog must still show them as distinct entries."""
+    r = client.get("/api/catalog/standards")
+    displays = [s["is_number"] for s in r.json()]
+    assert len(displays) == len(set(displays))
+
+
+def test_catalog_labs_returns_real_data_not_placeholders(client):
+    r = client.get("/api/catalog/labs")
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body) == 15
+    for lab in body:
+        assert lab["lab_id"]
+        assert lab["lab_name"]
+        # no fabricated distance/geolocation field should ever appear here
+        assert "distance" not in lab
+
+
+def test_chat_conversation_memory_resolves_followup(client):
+    """A follow-up like 'what tests are needed' has no product info of
+    its own - it should resolve against the last matched product in the
+    same session, but NOT in a different session."""
+    session_id = "test-session-memory-1"
+    r1 = client.post("/api/chat", json={
+        "query": "I manufacture domestic pressure cookers",
+        "session_id": session_id,
+    })
+    assert r1.json()["status"] == "matched"
+
+    r2 = client.post("/api/chat", json={
+        "query": "what tests are needed",
+        "session_id": session_id,
+    })
+    assert r2.json()["status"] == "matched"
+    assert r2.json()["matched_product_name"] == "Domestic Pressure Cooker"
+
+    # A different session has no memory of the first session's product
+    r3 = client.post("/api/chat", json={
+        "query": "what tests are needed",
+        "session_id": "a-completely-different-session",
+    })
+    assert r3.json()["status"] == "not_found"
+
+
+def test_chat_repeat_query_served_from_cache(client):
+    r1 = client.post("/api/chat", json={"query": "gold jewellery hallmarking unique cache test"})
+    assert r1.json()["from_cache"] is False
+
+    r2 = client.post("/api/chat", json={"query": "gold jewellery hallmarking unique cache test"})
+    assert r2.json()["from_cache"] is True
+    assert r2.json()["answer"] == r1.json()["answer"]
+
+
+def test_chat_list_query_short_circuits_to_structured_answer(client):
+    r = client.post("/api/chat", json={"query": "list all mandatory standards"})
+    body = r.json()
+    assert body["status"] == "matched"
+    assert body["evidence_sufficient"] is True
+    assert len(body["standards"]) > 0
+    assert all(s["is_mandatory"] is True for s in body["standards"])
+
+
+def test_chat_response_disclaimer_present(client):
+    r = client.post("/api/chat", json={"query": "domestic pressure cooker"})
+    assert "informational guidance" in r.json()["disclaimer"].lower()
+
+
+def test_hindi_query_end_to_end(client):
+    """Real end-to-end proof the language pipeline is wired into the
+    actual HTTP endpoint, not just unit-tested in isolation. Translation
+    itself is mocked (see product_intelligence/src/language.py for why
+    this sandbox can't reach the real translation endpoint), but
+    everything else - detection, routing into Product Intelligence,
+    the real P1 call - is genuine."""
+    from unittest import mock
+    with mock.patch("deep_translator.GoogleTranslator") as MockTranslator:
+        MockTranslator.return_value.translate.return_value = "domestic pressure cooker"
+        r = client.post("/api/chat", json={"query": "घरेलू प्रेशर कुकर"})
+        body = r.json()
+        assert body["detected_language"] == "hi"
+        assert body["status"] == "matched"
+
+
+def test_feedback_submission_and_stats(client):
+    r = client.post("/api/feedback", json={
+        "query": "domestic pressure cooker",
+        "answer": "IS 2347 applies",
+        "rating": "up",
+        "session_id": "test-session",
+    })
+    assert r.status_code == 200
+    assert r.json()["status"] == "recorded"
+
+    stats = client.get("/api/feedback/stats")
+    assert stats.json()["total"] >= 1
+
+
+def test_admin_staged_changes_empty_by_default(client):
+    r = client.get("/api/admin/staged-changes")
+    assert r.status_code == 200
+    assert isinstance(r.json(), list)
+
+
+def test_admin_review_unknown_document_reports_not_found(client):
+    r = client.post("/api/admin/review", json={"document_id": "DOES-NOT-EXIST", "approve": True})
+    assert r.status_code == 200
+    assert r.json()["found"] is False

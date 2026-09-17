@@ -196,7 +196,7 @@ def test_orchestrator_clarification_skips_p1_entirely():
     from product_intelligence.src.schemas import ProductMatchResult
 
     class ForcedClarificationPipeline:
-        def process(self, query):
+        def process(self, query, context_hint=None):
             return ProductMatchResult(
                 query=query,
                 normalized_query=query,

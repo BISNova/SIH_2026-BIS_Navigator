@@ -18,5 +18,16 @@ pydantic>=2.0
 # --- P2 -> P1 HTTP client ---
 httpx
 
+# --- Language detection/translation (free, no API key - see
+#     product_intelligence/src/language.py) ---
+langdetect
+deep-translator
+
+# --- Knowledge base auto-update scraper (see backend/kb_updater/) and
+#     real document ingestion (see integration/ingest_real_documents.py) ---
+requests
+beautifulsoup4
+pymupdf
+
 # --- Testing ---
 pytest>=7.0

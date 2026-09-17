@@ -97,3 +97,37 @@ def test_source_url_prefers_document_over_standard_generic_page():
     primary = result.applicable_standards[0]
     assert primary.source_url is not None
     assert primary.source_url.startswith("https://")
+
+
+def test_context_hint_resolves_followup_queries_that_would_otherwise_fail():
+    """Conversation memory building block: a followup like 'what tests
+    are needed' has no product info of its own - context_hint (the
+    previous turn's matched product, supplied by the caller) lets it
+    resolve correctly instead of returning not_found."""
+    pipeline = get_pipeline()
+    without_context = pipeline.process("what tests are needed")
+    assert without_context.status == "not_found"
+
+    with_context = pipeline.process("what tests are needed", context_hint="domestic pressure cooker")
+    assert with_context.status == "matched"
+    assert with_context.matched_product.product_id == "PROD-001"
+
+
+def test_last_verified_falls_back_to_publication_date_when_unpopulated():
+    """last_updated/retrieved_at are null in the current KB (not yet
+    populated by Person 4) - last_verified must still return something
+    honest by falling back to publication_date, not silently omit it."""
+    pipeline = get_pipeline()
+    result = pipeline.process("domestic pressure cooker")
+    assert result.applicable_standards[0].last_verified is not None
+
+
+def test_hindi_query_detected_and_matched_after_translation():
+    from unittest import mock
+    pipeline = get_pipeline()
+    with mock.patch("deep_translator.GoogleTranslator") as MockTranslator:
+        MockTranslator.return_value.translate.return_value = "domestic pressure cooker"
+        result = pipeline.process("घरेलू प्रेशर कुकर")
+        assert result.detected_language == "hi"
+        assert result.status == "matched"
+        assert result.matched_product.product_id == "PROD-001"

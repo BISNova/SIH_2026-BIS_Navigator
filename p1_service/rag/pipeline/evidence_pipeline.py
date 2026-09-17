@@ -1,8 +1,12 @@
+
 from __future__ import annotations
 
 from pathlib import Path
 import sys
 from typing import Any
+from fastembed import TextEmbedding
+# 
+# from sentence_transformers import SentenceTransformer
 
 
 # ============================================================
@@ -118,11 +122,6 @@ class EvidencePipeline:
     records are preserved in full. Reranking determines their
     order, but the normal semantic-score threshold is not used
     to discard an authoritative P4 test record.
-
-    The embedding model is loaded lazily. This prevents the
-    SentenceTransformer model from being loaded during API
-    startup, which reduces startup memory usage on constrained
-    deployment environments.
     """
 
     # ========================================================
@@ -135,16 +134,12 @@ class EvidencePipeline:
         retrieval_top_k: int = 10,
         rerank_top_k: int = 5,
     ):
-        # ----------------------------------------------------
-        # Lazy embedding model initialization
-        #
-        # The model is intentionally NOT loaded here.
-        # It will be loaded only when an embedding is actually
-        # required by the pipeline.
-        # ----------------------------------------------------
+        print("Loading embedding model...")
 
-        self.model_name = model_name
-        self.model = None
+        # self.model = SentenceTransformer(model_name)
+        self.model = TextEmbedding(model_name=f"sentence-transformers/{model_name}")
+
+        print("Embedding model loaded.")
 
         self.retriever = EvidenceRetriever()
 
@@ -179,43 +174,17 @@ class EvidencePipeline:
         )
 
     # ========================================================
-    # Lazy embedding model loader
-    # ========================================================
-
-    def _get_model(self):
-        """
-        Load SentenceTransformer only when actually required.
-        """
-        if self.model is None:
-            from sentence_transformers import SentenceTransformer
-
-            print("Loading embedding model...")
-
-            self.model = SentenceTransformer(
-                self.model_name,
-                device="cpu",
-            )
-
-            self.model.eval()
-
-            print("Embedding model loaded.")
-
-        return self.model
-
-    # ========================================================
     # Query embedding
     # ========================================================
 
     def _embed_query(self, query: str) -> list[float]:
-        model = self._get_model()
-
-        embedding = model.encode(
-            query,
-            normalize_embeddings=True,
-        )
-
+        # embedding = self.model.encode(
+        #     query,
+        #     normalize_embeddings=True,
+        # )
+        embedding = next(self.model.embed([query]))
         return embedding.tolist()
-
+        
     # ========================================================
     # Similarity
     # ========================================================
@@ -225,16 +194,14 @@ class EvidencePipeline:
         query_embedding: list[float],
         text: str,
     ) -> float:
-
         if not text or not text.strip():
             return 0.0
 
-        model = self._get_model()
-
-        evidence_embedding = model.encode(
-            text,
-            normalize_embeddings=True,
-        )
+        # evidence_embedding = self.model.encode(
+        #     text,
+        #     normalize_embeddings=True,
+        # )
+        evidence_embedding = next(self.model.embed([text]))
 
         similarity = float(
             sum(
@@ -259,7 +226,6 @@ class EvidencePipeline:
         self,
         query: str,
     ) -> bool:
-
         if not query:
             return False
 
@@ -309,7 +275,6 @@ class EvidencePipeline:
         self,
         query: str,
     ) -> bool:
-
         if not query:
             return False
 
@@ -365,14 +330,12 @@ class EvidencePipeline:
         query_embedding: list[float],
         standard_ids: list[str],
     ) -> list[dict[str, Any]]:
-
         if not standard_ids:
             return []
 
         p4_records: list[Any] = []
 
         for standard_id in standard_ids:
-
             records = (
                 self.p4_evidence_builder.build_for_standard(
                     standard_id

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Footer({ onOpenChatbot }) {
+export default function Footer({ onOpenChatbot, onNavigateSection }) {
   return (
     <footer className="landing-footer">
       <div className="footer-container">
@@ -18,9 +18,21 @@ export default function Footer({ onOpenChatbot }) {
         <div className="footer-links-col">
           <h4 className="footer-col-title">Explore</h4>
           <ul className="footer-nav-list">
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#standards-labs">Standards</a></li>
-            <li><a href="#how-bisnova-helps">FAQs</a></li>
+            <li>
+              <a href="#hero" onClick={(e) => { e.preventDefault(); onNavigateSection('hero'); }}>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#standards" onClick={(e) => { e.preventDefault(); onNavigateSection('explore-standards'); }}>
+                Standards
+              </a>
+            </li>
+            <li>
+              <a href="#faqs" onClick={(e) => { e.preventDefault(); onNavigateSection('faq-page'); }}>
+                FAQs
+              </a>
+            </li>
             <li><a href="#" onClick={(e) => { e.preventDefault(); onOpenChatbot(); }}>Dashboard</a></li>
           </ul>
         </div>
