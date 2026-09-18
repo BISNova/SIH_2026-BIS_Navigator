@@ -8,12 +8,21 @@ class RegisterRequest(BaseModel):
     role: str = "general"
 
 
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: EmailStr
+    role: str
+    status: str
+
+
 class RegisterResponse(BaseModel):
     id: str
     name: str
     email: EmailStr
     role: str
     status: str
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
