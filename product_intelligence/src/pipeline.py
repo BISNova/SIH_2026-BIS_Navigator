@@ -36,6 +36,22 @@ from .schemas import (
 )
 from .config import TOP_K_CANDIDATES
 
+# Words that signal a query is REFERRING to something already discussed
+# ("what tests does it need", "is that mandatory", "same for water heaters")
+# rather than a brand-new, unrelated topic. Used to gate the context_hint
+# fallback below so that an unrelated not_found query (e.g. "banana",
+# "flying car") never gets silently reinterpreted as a follow-up to the
+# previous turn's matched product - see process() for why this matters.
+FOLLOWUP_CUES = frozenset({
+    "it", "its", "this", "that", "these", "those",
+    "same", "also", "further", "more", "again", "too",
+})
+
+
+def _looks_like_followup(normalized_query: str) -> bool:
+    tokens = set(normalized_query.split())
+    return bool(tokens & FOLLOWUP_CUES)
+
 
 class ProductIntelligencePipeline:
     def __init__(self):
@@ -152,7 +168,11 @@ class ProductIntelligencePipeline:
         result = self._process_english(english_query, original_query=query)
         result.detected_language = detected_language
 
-        if result.status == "not_found" and context_hint:
+        if (
+            result.status == "not_found"
+            and context_hint
+            and _looks_like_followup(normalize(english_query))
+        ):
             augmented = f"{english_query} {context_hint}".strip()
             augmented_result = self._process_english(augmented, original_query=query)
             if augmented_result.status != "not_found":

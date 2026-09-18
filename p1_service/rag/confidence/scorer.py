@@ -93,6 +93,19 @@ class ConfidenceScorer:
             if not isinstance(item, dict):
                 continue
 
+            # Document-metadata-only chunks (whole-document summary
+            # records, no real clause content) consistently score low
+            # on keyword/section relevance even for a well-matched
+            # standard, which drags the average down for every query -
+            # e.g. observed 0.4978 on a query with otherwise strong
+            # evidence. They stay in the evidence/citations list for
+            # context; they just don't count toward the confidence
+            # average, since they were never meant to be scored as
+            # answer-supporting evidence in the first place.
+            chunk_id = str(item.get("chunk_id", ""))
+            if chunk_id.startswith("P4-DOC-"):
+                continue
+
             score = item.get("rerank_score")
 
             if score is None:

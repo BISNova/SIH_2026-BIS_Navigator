@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -260,6 +259,29 @@ class EvidencePipeline:
             "what are the certification steps",
             "list all certification steps",
             "all certification steps",
+            # Licence/certification process & steps phrasing - added after
+            # observing "what are the steps involved in granting a BIS
+            # licence under IS 2082:2018?" only return 4 of 9 real steps
+            # because it matched none of the phrases above and fell back
+            # to plain top-5 semantic reranking instead of full P4 coverage.
+            "what are the steps",
+            "steps involved",
+            "steps required",
+            "steps to obtain",
+            "steps for",
+            "list all steps",
+            "all steps",
+            "licence steps",
+            "license steps",
+            "certification process",
+            "how to obtain a licence",
+            "how to obtain a license",
+            "how to get a bis licence",
+            "how to get a bis license",
+            "process for obtaining",
+            "procedure for obtaining",
+            "grant of licence",
+            "grant of license",
         )
 
         return any(
