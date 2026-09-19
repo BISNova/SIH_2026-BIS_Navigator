@@ -78,7 +78,7 @@ export default function MessageList({ messages, isThinking, onChipClick, onFeedb
                 {/* Multiple Standard Cards (real backend responses - a
                     product can have more than one applicable standard,
                     e.g. a mandatory safety standard + a secondary one) */}
-                {msg.standardCards && msg.standardCards.length > 0 && (
+                 {/* {msg.standardCards && msg.standardCards.length > 0 && (
                   <div className="msg-standard-cards-group">
                     {msg.standardCards.map((std, sIdx) => (
                       <div key={sIdx} className="msg-standard-feature-card">
@@ -101,15 +101,39 @@ export default function MessageList({ messages, isThinking, onChipClick, onFeedb
                       </div>
                     ))}
                   </div>
+                )}  */}
+                {msg.standardCards && msg.standardCards.length > 0 && (
+                  <div className="msg-citation-pills-row">
+                    {msg.standardCards.map((std, sIdx) => {
+                      const Tag = std.sourceUrl ? 'a' : 'span';
+                      const linkProps = std.sourceUrl
+                        ? { href: std.sourceUrl, target: '_blank', rel: 'noopener noreferrer' }
+                        : {};
+                      return (
+                        <Tag
+                          key={sIdx}
+                          className={`std-citation-pill${std.sourceUrl ? '' : ' no-link'}`}
+                          title={std.title}
+                          {...linkProps}
+                        >
+                          <span className="std-pill-icon">📄</span>
+                          <span className="std-pill-code">{std.code}</span>
+                          {std.mandatory === true && <span className="std-pill-tag mandatory">Mandatory</span>}
+                          {std.relationship_type === 'secondary' && <span className="std-pill-tag related">Related</span>}
+                        </Tag>
+                      );
+                    })}
+                  </div>
                 )}
+
 
                 {/* Confidence badge - judges' feedback: "answer confidence
                     score shown in UI" */}
-                {isBot && msg.confidenceLabel && (
+                {/* {isBot && msg.confidenceLabel && (
                   <div className={`msg-confidence-badge confidence-${msg.confidenceLabel}`}>
                     Confidence: {msg.confidenceLabel}
                   </div>
-                )}
+                )} */}
 
                 {/* Attached Quick Action Chips (matching Image 1) */}
                 {isBot && msg.actionChips && (

@@ -1,6 +1,16 @@
 import React from 'react';
 
-export default function Navbar({ onOpenChatbot, onNavigateSection, viewMode }) {
+export default function Navbar({
+  onOpenChatbot,
+  onNavigateSection,
+  viewMode,
+  user,
+  isAdmin,
+  onLogout,
+  onGoToLogin,
+  onGoToRegister,
+  onGoToAdmin,
+}) {
   const navClass = (section) => `nav-link${viewMode === section ? ' active' : ''}`;
 
   return (
@@ -64,6 +74,52 @@ export default function Navbar({ onOpenChatbot, onNavigateSection, viewMode }) {
           >
             <span className="btn-chat-icon">💬</span> Chat with BISNova
           </button>
+
+          <div className="navbar-auth">
+            {user ? (
+              <>
+                {isAdmin && (
+                  <button
+                    type="button"
+                    className="navbar-auth-btn navbar-auth-register-btn"
+                    onClick={onGoToAdmin}
+                  >
+                    Admin Dashboard
+                  </button>
+                )}
+                <span className="navbar-user-chip">
+                  {user.name}
+                  <span className="navbar-user-role">
+                    ({user.role})
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  className="navbar-auth-btn"
+                  onClick={onLogout}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="navbar-auth-btn"
+                  onClick={onGoToLogin}
+                >
+                  Log In
+                </button>
+                <button
+                  type="button"
+                  className="navbar-auth-btn"
+                  onClick={onGoToRegister}
+                >
+                  Register
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

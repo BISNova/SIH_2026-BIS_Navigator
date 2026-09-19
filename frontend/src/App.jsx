@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import HowBisNovaHelps from './components/HowBisNovaHelps';
@@ -11,6 +11,10 @@ import MessageList from './components/MessageList';
 import ChatInput from './components/ChatInput';
 import FAQPage from './components/FAQPage';
 import ExploreStandardsPage from './components/ExploreStandardsPage';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import AdminDashboard from './components/AdminDashboard';
+import { useAuth } from './AuthContext';
 import { sendChatMessage, sendFeedback, BISNovaAPIError } from './api';
 import { generateChatTitle } from './chatNaming';
 import { markdownToPlainText } from './markdownToPlainText';
@@ -29,6 +33,16 @@ export default function App() {
   const [isSmiling, setIsSmiling] = useState(false);
   const [activeNav, setActiveNav] = useState('new-chat');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { user, isAdmin, logout, sessionExpired, clearSessionExpired } = useAuth();
+
+  // Any protected call (admin dashboard) that gets a 401 sets this -
+  // bounce to login and clear the flag so it doesn't fire again.
+  useEffect(() => {
+    if (sessionExpired) {
+      setViewMode('login');
+      clearSessionExpired();
+    }
+  }, [sessionExpired, clearSessionExpired]);
 
   let mascotState = 'idle';
   if (isSmiling) {
@@ -45,15 +59,21 @@ export default function App() {
     setIsSidebarOpen(prev => !prev);
   }
 
+  function cleanStandardCode(rawCode) {
+    if (!rawCode) return rawCode;
+    return rawCode.replace(/^(IS\s+)+/i, 'IS ');
+  }
+
   // --- Maps a BISNova backend /api/chat response into the message shape
   //     MessageList already knows how to render ---
   function buildBotMessageFromResponse(apiResponse, userQuery) {
     const standardCards = (apiResponse.standards || []).map(std => ({
-      code: std.is_number,
+      code: cleanStandardCode(std.is_number),
       title: std.title,
       mandatory: std.is_mandatory,
       relationship_type: std.relationship_type,
       lastVerified: std.last_verified,
+      sourceUrl: std.source_url,
     }));
 
     // Clarification options come back as ready-to-send follow-up queries -
@@ -310,6 +330,11 @@ export default function App() {
     handleOpenChatbotWithQuery(`Tell me about ${name}`);
   }
 
+  function handleLogout() {
+    logout();
+    setViewMode('landing');
+  }
+
   function handleMascotClick() {
     setIsSmiling(true);
     setTimeout(() => setIsSmiling(false), 1200);
@@ -374,6 +399,12 @@ if (viewMode === 'faq') {
         onOpenChatbot={() => setViewMode('chatbot')}
         onNavigateSection={handleNavigateSection}
         viewMode={viewMode}
+        user={user}
+        isAdmin={isAdmin}
+        onLogout={handleLogout}
+        onGoToLogin={() => setViewMode('login')}
+        onGoToRegister={() => setViewMode('register')}
+        onGoToAdmin={() => setViewMode('admin')}
       />
 
       <FAQPage
@@ -398,6 +429,12 @@ if (viewMode === 'explore-standards') {
         onOpenChatbot={() => setViewMode('chatbot')}
         onNavigateSection={handleNavigateSection}
         viewMode={viewMode}
+        user={user}
+        isAdmin={isAdmin}
+        onLogout={handleLogout}
+        onGoToLogin={() => setViewMode('login')}
+        onGoToRegister={() => setViewMode('register')}
+        onGoToAdmin={() => setViewMode('admin')}
       />
 
       <ExploreStandardsPage
@@ -412,6 +449,47 @@ if (viewMode === 'explore-standards') {
   );
 }
 
+// =========================================================================
+// Render Login Page View
+// =========================================================================
+if (viewMode === 'login') {
+  return (
+    <LoginPage
+      onLoginSuccess={() => setViewMode('landing')}
+      onGoToRegister={() => setViewMode('register')}
+      onBack={() => setViewMode('landing')}
+    />
+  );
+}
+
+// =========================================================================
+// Render Register Page View
+// =========================================================================
+if (viewMode === 'register') {
+  return (
+    <RegisterPage
+      onGoToLogin={() => setViewMode('login')}
+      onBack={() => setViewMode('landing')}
+    />
+  );
+}
+
+// =========================================================================
+// Render Admin Dashboard View
+// =========================================================================
+if (viewMode === 'admin') {
+  if (!isAdmin) {
+    setViewMode('landing');
+    return null;
+  }
+
+  return (
+    <AdminDashboard
+      onBack={() => setViewMode('landing')}
+    />
+  );
+}
+
   // =========================================================================
   // Render Landing Page View
   // =========================================================================
@@ -421,7 +499,13 @@ if (viewMode === 'explore-standards') {
         <Navbar
           onOpenChatbot={() => setViewMode('chatbot')}
           onNavigateSection={handleNavigateSection}
-        viewMode={viewMode}
+          viewMode={viewMode}
+          user={user}
+          isAdmin={isAdmin}
+          onLogout={handleLogout}
+          onGoToLogin={() => setViewMode('login')}
+          onGoToRegister={() => setViewMode('register')}
+          onGoToAdmin={() => setViewMode('admin')}
         />
 
         <main className="landing-main-content">

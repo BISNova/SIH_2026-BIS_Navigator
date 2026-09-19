@@ -932,6 +932,57 @@ html, body, #root {
   letter-spacing: 0.02em;
 }
 
+.msg-citation-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 10px 0;
+}
+
+.std-citation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E9F0;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.std-citation-pill:hover {
+  border-color: var(--primary-red);
+  box-shadow: 0 2px 8px rgba(184, 63, 74, 0.12);
+}
+
+.std-citation-pill.no-link {
+  cursor: default;
+}
+
+.std-citation-pill.no-link:hover {
+  border-color: #E5E9F0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.std-pill-icon { font-size: 13px; }
+.std-pill-code { font-weight: 800; color: var(--primary-red); }
+
+.std-pill-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.std-pill-tag.mandatory { background: #FDEBEC; color: #B83F4A; }
+.std-pill-tag.related { background: #F0F1F3; color: #777; }
+
 /* Attached Action Chips (matching Image 1) */
 .msg-attached-chips-row {
   display: flex;
