@@ -84,6 +84,31 @@
   box-sizing: border-box;
 }
 
+.password-field {
+  position: relative;
+}
+
+.password-field .auth-input {
+  padding-right: 60px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  border: none;
+  background: transparent;
+  color: #b4791f;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.password-toggle:hover {
+  color: #8f5d12;
+}
+
 .auth-hint {
   font-size: 0.8rem;
   color: #92400e;

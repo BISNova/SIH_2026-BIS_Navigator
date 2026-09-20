@@ -20,6 +20,7 @@ export default function RegisterPage({ onGoToLogin, onBack }) {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -97,16 +98,23 @@ export default function RegisterPage({ onGoToLogin, onBack }) {
               />
             </label>
 
-            <label className="auth-label">
+            <label className="auth-label password-field">
               Password
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 className="auth-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="new-password"
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
             </label>
 
             <label className="auth-label">
