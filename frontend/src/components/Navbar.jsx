@@ -46,11 +46,21 @@ export default function Navbar({
             Standards
           </a>
           <a
+            href="#testing-labs"
+            className={navClass('testing-labs')}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateSection('testing-labs');
+            }}
+          >
+            Testing &amp; Labs
+          </a>
+          <a
             href="#faqs"
             className={navClass('faq')}
             onClick={(e) => {
-            e.preventDefault();
-            onNavigateSection('faq-page');
+              e.preventDefault();
+              onNavigateSection('faq-page');
             }}
           >
             FAQs

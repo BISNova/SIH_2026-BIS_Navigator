@@ -8,7 +8,7 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
 
-export class BISNovaAPIError extends Error {}
+export class BISNovaAPIError extends Error { }
 
 /**
  * Sends a query to the chat endpoint and returns the parsed response.
@@ -91,5 +91,20 @@ export async function fetchCatalogLabs() {
   if (!response.ok) {
     throw new BISNovaAPIError(`BISNova server returned an error (${response.status}).`);
   }
+  return response.json();
+}
+
+// Hallmarking centres are fetched separately from labs because they are a
+// different type of entity in the knowledge base, and may have different
+// attributes or filtering criteria in the future.
+export async function fetchHallmarkingCentres() {
+  const response = await fetch(`${API_BASE_URL}/catalog/hallmarking-centres`);
+
+  if (!response.ok) {
+    throw new BISNovaAPIError(
+      `Failed to load hallmarking centres (${response.status}).`
+    );
+  }
+
   return response.json();
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import HowBisNovaHelps from './components/HowBisNovaHelps';
@@ -11,10 +11,7 @@ import MessageList from './components/MessageList';
 import ChatInput from './components/ChatInput';
 import FAQPage from './components/FAQPage';
 import ExploreStandardsPage from './components/ExploreStandardsPage';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
-import AdminDashboard from './components/AdminDashboard';
-import { useAuth } from './AuthContext';
+import TestingLabsPage from './components/TestingLabsPage';
 import { sendChatMessage, sendFeedback, BISNovaAPIError } from './api';
 import { generateChatTitle } from './chatNaming';
 import { markdownToPlainText } from './markdownToPlainText';
@@ -33,16 +30,6 @@ export default function App() {
   const [isSmiling, setIsSmiling] = useState(false);
   const [activeNav, setActiveNav] = useState('new-chat');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { user, isAdmin, logout, sessionExpired, clearSessionExpired } = useAuth();
-
-  // Any protected call (admin dashboard) that gets a 401 sets this -
-  // bounce to login and clear the flag so it doesn't fire again.
-  useEffect(() => {
-    if (sessionExpired) {
-      setViewMode('login');
-      clearSessionExpired();
-    }
-  }, [sessionExpired, clearSessionExpired]);
 
   let mascotState = 'idle';
   if (isSmiling) {
@@ -59,21 +46,15 @@ export default function App() {
     setIsSidebarOpen(prev => !prev);
   }
 
-  function cleanStandardCode(rawCode) {
-    if (!rawCode) return rawCode;
-    return rawCode.replace(/^(IS\s+)+/i, 'IS ');
-  }
-
   // --- Maps a BISNova backend /api/chat response into the message shape
   //     MessageList already knows how to render ---
   function buildBotMessageFromResponse(apiResponse, userQuery) {
     const standardCards = (apiResponse.standards || []).map(std => ({
-      code: cleanStandardCode(std.is_number),
+      code: std.is_number,
       title: std.title,
       mandatory: std.is_mandatory,
       relationship_type: std.relationship_type,
       lastVerified: std.last_verified,
-      sourceUrl: std.source_url,
     }));
 
     // Clarification options come back as ready-to-send follow-up queries -
@@ -81,10 +62,10 @@ export default function App() {
     // UI needed.
     const actionChips = apiResponse.needs_clarification
       ? (apiResponse.clarification_options || []).map(opt => ({
-          label: opt.label,
-          icon: '❓',
-          query: opt.query,
-        }))
+        label: opt.label,
+        icon: '❓',
+        query: opt.query,
+      }))
       : null;
 
     const text = apiResponse.needs_clarification
@@ -213,11 +194,11 @@ export default function App() {
       prevChats.map(c =>
         c.id === chatId
           ? {
-              ...c,
-              messages: c.messages.map((m, i) =>
-                i === messageIndex ? { ...m, feedbackGiven: rating } : m
-              ),
-            }
+            ...c,
+            messages: c.messages.map((m, i) =>
+              i === messageIndex ? { ...m, feedbackGiven: rating } : m
+            ),
+          }
           : c
       )
     );
@@ -254,15 +235,15 @@ export default function App() {
         prev.map(c =>
           c.id === activeChatId
             ? {
-                ...c,
-                messages: [
-                  {
-                    sender: 'bot',
-                    text: "Conversation cleared. Ask me anything about Indian Standards, testing, or BIS certification!",
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                  }
-                ]
-              }
+              ...c,
+              messages: [
+                {
+                  sender: 'bot',
+                  text: "Conversation cleared. Ask me anything about Indian Standards, testing, or BIS certification!",
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                }
+              ]
+            }
             : c
         )
       );
@@ -316,7 +297,7 @@ export default function App() {
     }
 
     if (name === 'Testing and Labs') {
-      handleOpenChatbotWithQuery('Where can I get my product tested?');
+      setViewMode('testing-labs');
       return;
     }
 
@@ -328,11 +309,6 @@ export default function App() {
     }
 
     handleOpenChatbotWithQuery(`Tell me about ${name}`);
-  }
-
-  function handleLogout() {
-    logout();
-    setViewMode('landing');
   }
 
   function handleMascotClick() {
@@ -350,6 +326,10 @@ export default function App() {
     // Explore Standards is a dedicated page, not a landing-page section
     if (sectionId === 'explore-standards') {
       setViewMode('explore-standards');
+      return;
+    }
+    if (sectionId === 'testing-labs') {
+      setViewMode('testing-labs');
       return;
     }
 
@@ -389,106 +369,80 @@ export default function App() {
     }
   }
 
-// =========================================================================
-// Render FAQ Page View
-// =========================================================================
-if (viewMode === 'faq') {
-  return (
-    <div className="landing-page-root">
-      <Navbar
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-        viewMode={viewMode}
-        user={user}
-        isAdmin={isAdmin}
-        onLogout={handleLogout}
-        onGoToLogin={() => setViewMode('login')}
-        onGoToRegister={() => setViewMode('register')}
-        onGoToAdmin={() => setViewMode('admin')}
-      />
+  // =========================================================================
+  // Render FAQ Page View
+  // =========================================================================
+  if (viewMode === 'faq') {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+          viewMode={viewMode}
+        />
 
-      <FAQPage
-        onOpenChatbot={() => setViewMode('chatbot')}
-      />
+        <FAQPage
+          onOpenChatbot={() => setViewMode('chatbot')}
+        />
 
-      <Footer
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-      />
-    </div>
-  );
-}
-
-// =========================================================================
-// Render Explore Standards Page View
-// =========================================================================
-if (viewMode === 'explore-standards') {
-  return (
-    <div className="landing-page-root">
-      <Navbar
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-        viewMode={viewMode}
-        user={user}
-        isAdmin={isAdmin}
-        onLogout={handleLogout}
-        onGoToLogin={() => setViewMode('login')}
-        onGoToRegister={() => setViewMode('register')}
-        onGoToAdmin={() => setViewMode('admin')}
-      />
-
-      <ExploreStandardsPage
-        onAskAboutStandard={handleOpenChatbotWithQuery}
-      />
-
-      <Footer
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-      />
-    </div>
-  );
-}
-
-// =========================================================================
-// Render Login Page View
-// =========================================================================
-if (viewMode === 'login') {
-  return (
-    <LoginPage
-      onLoginSuccess={() => setViewMode('landing')}
-      onGoToRegister={() => setViewMode('register')}
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
-
-// =========================================================================
-// Render Register Page View
-// =========================================================================
-if (viewMode === 'register') {
-  return (
-    <RegisterPage
-      onGoToLogin={() => setViewMode('login')}
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
-
-// =========================================================================
-// Render Admin Dashboard View
-// =========================================================================
-if (viewMode === 'admin') {
-  if (!isAdmin) {
-    setViewMode('landing');
-    return null;
+        <Footer
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+        />
+      </div>
+    );
   }
 
-  return (
-    <AdminDashboard
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
+  // =========================================================================
+  // Render Explore Standards Page View
+  // =========================================================================
+  if (viewMode === 'explore-standards') {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+          viewMode={viewMode}
+        />
+
+        <ExploreStandardsPage
+          onAskAboutStandard={handleOpenChatbotWithQuery}
+        />
+
+        <Footer
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+        />
+      </div>
+    );
+  }
+
+  // TODO: Testing and Labs page dalega yaha
+  // =========================================================================
+  // Render Testing & Labs Page View
+  // =========================================================================
+
+  if (viewMode === 'testing-labs') {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+          viewMode={viewMode}
+        />
+
+        <TestingLabsPage
+          onOpenChatbot={handleOpenChatbotWithQuery}
+        />
+
+        <Footer
+          onOpenChatbot={() => setViewMode('chatbot')}
+          onNavigateSection={handleNavigateSection}
+        />
+      </div>
+    );
+
+  }
 
   // =========================================================================
   // Render Landing Page View
@@ -500,12 +454,6 @@ if (viewMode === 'admin') {
           onOpenChatbot={() => setViewMode('chatbot')}
           onNavigateSection={handleNavigateSection}
           viewMode={viewMode}
-          user={user}
-          isAdmin={isAdmin}
-          onLogout={handleLogout}
-          onGoToLogin={() => setViewMode('login')}
-          onGoToRegister={() => setViewMode('register')}
-          onGoToAdmin={() => setViewMode('admin')}
         />
 
         <main className="landing-main-content">
