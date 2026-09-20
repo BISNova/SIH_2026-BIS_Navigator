@@ -13,7 +13,7 @@ import pandas as pd
 from fastapi import APIRouter
 
 from .models import CatalogStandardOut, CatalogLabOut
-from .dependencies import get_product_pipeline, get_labs_df
+from .dependencies import get_product_pipeline, get_labs_df, get_ah_centres_df
 
 router = APIRouter()
 
@@ -76,5 +76,31 @@ def list_labs():
             phone=_safe(row.get("phone")),
             source_url=_safe(row.get("source_url")),
         )
+        for _, row in df.iterrows()
+    ]
+
+@router.get("/catalog/hallmarking-centres")
+def list_hallmarking_centres():
+    df = get_ah_centres_df()
+
+    return [
+        {
+            "ah_centre_id": row["ah_centre_id"],
+            "centre_name": row["centre_name"],
+            "recognition_number": _safe(row.get("recognition_number")),
+            "centre_type": _safe(row.get("centre_type")),
+            "address": _safe(row.get("address")),
+            "state": _safe(row.get("state")),
+            "district": _safe(row.get("district")),
+            "city": _safe(row.get("city")),
+            "contact": _safe(row.get("contact")),
+            "email": _safe(row.get("email")),
+            "phone": _safe(row.get("phone")),
+            "gold_hallmarking": row.get("gold_hallmarking"),
+            "silver_hallmarking": row.get("silver_hallmarking"),
+            "recognition_status": _safe(row.get("recognition_status")),
+            "validity_date": _safe(row.get("validity_date")),
+            "source_url": _safe(row.get("source_url")),
+        }
         for _, row in df.iterrows()
     ]

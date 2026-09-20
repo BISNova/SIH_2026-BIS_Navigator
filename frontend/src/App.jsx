@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import HowBisNovaHelps from './components/HowBisNovaHelps';
@@ -11,9 +12,11 @@ import MessageList from './components/MessageList';
 import ChatInput from './components/ChatInput';
 import FAQPage from './components/FAQPage';
 import ExploreStandardsPage from './components/ExploreStandardsPage';
+import TestingLabsPage from './components/TestingLabsPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import AdminDashboard from './components/AdminDashboard';
+
 import { useAuth } from './AuthContext';
 
 import {
@@ -38,17 +41,14 @@ export default function App() {
   const [isTyping, setIsTyping] = useState(false);
   const [isSmiling, setIsSmiling] = useState(false);
 
-  const [activeNav, setActiveNav] =
-    useState('new-chat');
+  const [activeNav, setActiveNav] = useState('new-chat');
 
-  const [isSidebarOpen, setIsSidebarOpen] =
-    useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // IMPORTANT:
   // Saving to localStorage is disabled until the current
   // user's local + DB history has finished loading.
-  const [hydratedUserId, setHydratedUserId] =
-    useState(null);
+  const [hydratedUserId, setHydratedUserId] = useState(null);
 
   const {
     user,
@@ -73,10 +73,7 @@ export default function App() {
   // MERGE DATABASE HISTORY INTO A LOCAL CHAT
   // ============================================================
 
-  function mergeDatabaseHistoryIntoChat(
-    localChat,
-    history
-  ) {
+  function mergeDatabaseHistoryIntoChat(localChat, history) {
     if (
       !localChat ||
       !Array.isArray(history) ||
@@ -85,61 +82,57 @@ export default function App() {
       return localChat;
     }
 
-    const localMessages =
-      Array.isArray(localChat.messages)
-        ? localChat.messages
-        : [];
+    const localMessages = Array.isArray(localChat.messages)
+      ? localChat.messages
+      : [];
 
-    const mergedMessages =
-      history.map((dbMessage, index) => {
-        const existingMessage =
-          localMessages[index];
+    const mergedMessages = history.map((dbMessage, index) => {
+      const existingMessage = localMessages[index];
 
-        const sender =
-          dbMessage.role === 'user'
-            ? 'user'
-            : 'bot';
+      const sender =
+        dbMessage.role === 'user'
+          ? 'user'
+          : 'bot';
 
-        // Preserve richer locally stored UI data
-        // whenever role/content still match.
-        if (
-          existingMessage &&
-          existingMessage.sender === sender &&
-          (
-            existingMessage.text ===
-              dbMessage.content ||
+      // Preserve richer locally stored UI data
+      // whenever role/content still match.
+      if (
+        existingMessage &&
+        existingMessage.sender === sender &&
+        (
+          existingMessage.text === dbMessage.content ||
+          markdownToPlainText(
+            existingMessage.text || ''
+          ) ===
             markdownToPlainText(
-              existingMessage.text || ''
-            ) ===
-              markdownToPlainText(
-                dbMessage.content || ''
-              )
-          )
-        ) {
-          return {
-            ...existingMessage,
-            sender,
-            text:
-              existingMessage.text ||
-              dbMessage.content,
-          };
-        }
-
-        // DB-only message.
+              dbMessage.content || ''
+            )
+        )
+      ) {
         return {
+          ...existingMessage,
           sender,
-          text: dbMessage.content,
-          time: dbMessage.created_at
-            ? new Date(
-                dbMessage.created_at
-              ).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-            : '',
-          isNew: false,
+          text:
+            existingMessage.text ||
+            dbMessage.content,
         };
-      });
+      }
+
+      // DB-only message.
+      return {
+        sender,
+        text: dbMessage.content,
+        time: dbMessage.created_at
+          ? new Date(
+              dbMessage.created_at
+            ).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : '',
+        isNew: false,
+      };
+    });
 
     return {
       ...localChat,
@@ -154,10 +147,7 @@ export default function App() {
   // localStorage. This enables cross-device recovery.
   // ============================================================
 
-  function createChatFromDatabaseHistory(
-    session,
-    history
-  ) {
+  function createChatFromDatabaseHistory(session, history) {
     if (
       !session?.session_id ||
       !Array.isArray(history) ||
@@ -166,44 +156,38 @@ export default function App() {
       return null;
     }
 
-    const firstUserMessage =
-      history.find(
-        (message) =>
-          message.role === 'user'
-      );
+    const firstUserMessage = history.find(
+      (message) => message.role === 'user'
+    );
 
     const titleSource =
       firstUserMessage?.content ||
       'New Chat';
 
-    const messages =
-      history.map((dbMessage) => ({
-        sender:
-          dbMessage.role === 'user'
-            ? 'user'
-            : 'bot',
+    const messages = history.map((dbMessage) => ({
+      sender:
+        dbMessage.role === 'user'
+          ? 'user'
+          : 'bot',
 
-        text: dbMessage.content,
+      text: dbMessage.content,
 
-        time: dbMessage.created_at
-          ? new Date(
-              dbMessage.created_at
-            ).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          : '',
+      time: dbMessage.created_at
+        ? new Date(
+            dbMessage.created_at
+          ).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : '',
 
-        isNew: false,
-      }));
+      isNew: false,
+    }));
 
     return {
       id: session.session_id,
 
-      title:
-        generateChatTitle(
-          titleSource
-        ),
+      title: generateChatTitle(titleSource),
 
       pinned: false,
 
@@ -231,8 +215,7 @@ export default function App() {
       return;
     }
 
-    const storageKey =
-      getChatStorageKey(user.id);
+    const storageKey = getChatStorageKey(user.id);
 
     // Disable localStorage saving while loading.
     setHydratedUserId(null);
@@ -247,8 +230,7 @@ export default function App() {
       // --------------------------------------------------------
 
       try {
-        const raw =
-          localStorage.getItem(storageKey);
+        const raw = localStorage.getItem(storageKey);
 
         if (raw) {
           const parsed = JSON.parse(raw);
@@ -280,8 +262,7 @@ export default function App() {
 
       if (token) {
         try {
-          dbSessions =
-            await fetchChatSessions(token);
+          dbSessions = await fetchChatSessions(token);
         } catch (error) {
           console.warn(
             'Could not retrieve DB chat sessions:',
@@ -298,27 +279,22 @@ export default function App() {
       // STEP 3: BUILD UNIQUE SESSION ID LIST
       // --------------------------------------------------------
 
-      const sessionMap =
-        new Map();
+      const sessionMap = new Map();
 
       // Local sessions first so rich UI data remains available.
       storedChats.forEach((chat) => {
-        sessionMap.set(
-          chat.id,
-          {
-            session_id: chat.id,
-            localChat: chat,
-            dbSession: null,
-          }
-        );
+        sessionMap.set(chat.id, {
+          session_id: chat.id,
+          localChat: chat,
+          dbSession: null,
+        });
       });
 
       // Add DB-only sessions.
       dbSessions.forEach((session) => {
-        const existing =
-          sessionMap.get(
-            session.session_id
-          );
+        const existing = sessionMap.get(
+          session.session_id
+        );
 
         if (existing) {
           existing.dbSession = session;
@@ -335,10 +311,9 @@ export default function App() {
         }
       });
 
-      const discoveredSessions =
-        Array.from(
-          sessionMap.values()
-        );
+      const discoveredSessions = Array.from(
+        sessionMap.values()
+      );
 
       // --------------------------------------------------------
       // STEP 4: FETCH DB HISTORY FOR EVERY SESSION
@@ -350,35 +325,34 @@ export default function App() {
         token &&
         discoveredSessions.length > 0
       ) {
-        const results =
-          await Promise.all(
-            discoveredSessions.map(
-              async (sessionInfo) => {
-                try {
-                  const history =
-                    await fetchChatHistory(
-                      sessionInfo.session_id,
-                      token
-                    );
-
-                  return {
-                    ...sessionInfo,
-                    history,
-                  };
-                } catch (error) {
-                  console.warn(
-                    `Could not restore DB history for chat ${sessionInfo.session_id}:`,
-                    error
+        const results = await Promise.all(
+          discoveredSessions.map(
+            async (sessionInfo) => {
+              try {
+                const history =
+                  await fetchChatHistory(
+                    sessionInfo.session_id,
+                    token
                   );
 
-                  return {
-                    ...sessionInfo,
-                    history: null,
-                  };
-                }
+                return {
+                  ...sessionInfo,
+                  history,
+                };
+              } catch (error) {
+                console.warn(
+                  `Could not restore DB history for chat ${sessionInfo.session_id}:`,
+                  error
+                );
+
+                return {
+                  ...sessionInfo,
+                  history: null,
+                };
               }
-            )
-          );
+            }
+          )
+        );
 
         if (cancelled) return;
 
@@ -386,49 +360,47 @@ export default function App() {
         // STEP 5: MERGE LOCAL + DB
         // ------------------------------------------------------
 
-        restoredChats =
-          results
-            .map(
-              ({
-                session_id,
-                localChat,
-                dbSession,
-                history,
-              }) => {
-                // Local + DB history.
-                if (
-                  localChat &&
-                  Array.isArray(history) &&
-                  history.length > 0
-                ) {
-                  return mergeDatabaseHistoryIntoChat(
-                    localChat,
-                    history
-                  );
-                }
-
-                // DB-only session.
-                if (
-                  !localChat &&
-                  dbSession &&
-                  Array.isArray(history) &&
-                  history.length > 0
-                ) {
-                  return createChatFromDatabaseHistory(
-                    dbSession,
-                    history
-                  );
-                }
-
-                // Local-only chat.
-                if (localChat) {
-                  return localChat;
-                }
-
-                return null;
+        restoredChats = results
+          .map(
+            ({
+              localChat,
+              dbSession,
+              history,
+            }) => {
+              // Local + DB history.
+              if (
+                localChat &&
+                Array.isArray(history) &&
+                history.length > 0
+              ) {
+                return mergeDatabaseHistoryIntoChat(
+                  localChat,
+                  history
+                );
               }
-            )
-            .filter(Boolean);
+
+              // DB-only session.
+              if (
+                !localChat &&
+                dbSession &&
+                Array.isArray(history) &&
+                history.length > 0
+              ) {
+                return createChatFromDatabaseHistory(
+                  dbSession,
+                  history
+                );
+              }
+
+              // Local-only chat.
+              if (localChat) {
+                return localChat;
+              }
+
+              return null;
+            }
+          )
+          .filter(Boolean);
       } else {
         // No token / DB unavailable.
         // Preserve local chats.
@@ -471,8 +443,7 @@ export default function App() {
       return;
     }
 
-    const storageKey =
-      getChatStorageKey(user.id);
+    const storageKey = getChatStorageKey(user.id);
 
     try {
       localStorage.setItem(
@@ -616,14 +587,13 @@ export default function App() {
 
       feedbackGiven: null,
 
-      time:
-        new Date().toLocaleTimeString(
-          [],
-          {
-            hour: '2-digit',
-            minute: '2-digit',
-          }
-        ),
+      time: new Date().toLocaleTimeString(
+        [],
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+      ),
 
       isNew: true,
     };
@@ -676,8 +646,7 @@ export default function App() {
     // CREATE NEW CHAT ONLY WHEN FIRST MESSAGE IS SENT
     // ==========================================================
 
-    let targetChatId =
-      activeChatId;
+    let targetChatId = activeChatId;
 
     if (!targetChatId) {
       targetChatId =
@@ -812,9 +781,7 @@ export default function App() {
   // OPEN CHAT WITH QUERY
   // ============================================================
 
-  function handleOpenChatbotWithQuery(
-    query
-  ) {
+  function handleOpenChatbotWithQuery(query) {
     setViewMode('chatbot');
 
     setTimeout(() => {
@@ -1005,9 +972,7 @@ export default function App() {
   // 2. Frontend/localStorage
   // ============================================================
 
-  async function handleDeleteChat(
-    chatId
-  ) {
+  async function handleDeleteChat(chatId) {
     if (!chatId) {
       return;
     }
@@ -1108,13 +1073,12 @@ export default function App() {
       return;
     }
 
+    // Testing & Labs now opens the dedicated page.
     if (
       name ===
       'Testing and Labs'
     ) {
-      handleOpenChatbotWithQuery(
-        'Where can I get my product tested?'
-      );
+      setViewMode('testing-labs');
       return;
     }
 
@@ -1168,9 +1132,7 @@ export default function App() {
   // NAVIGATION
   // ============================================================
 
-  function handleNavigateSection(
-    sectionId
-  ) {
+  function handleNavigateSection(sectionId) {
     if (
       sectionId === 'faq-page'
     ) {
@@ -1185,6 +1147,14 @@ export default function App() {
       setViewMode(
         'explore-standards'
       );
+      return;
+    }
+
+    // Dedicated Testing & Labs page.
+    if (
+      sectionId === 'testing-labs'
+    ) {
+      setViewMode('testing-labs');
       return;
     }
 
@@ -1324,6 +1294,53 @@ export default function App() {
 
         <ExploreStandardsPage
           onAskAboutStandard={
+            handleOpenChatbotWithQuery
+          }
+        />
+
+        <Footer
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+        />
+      </div>
+    );
+  }
+
+  // ============================================================
+  // TESTING & LABS
+  // ============================================================
+
+  if (viewMode === 'testing-labs') {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+          viewMode={viewMode}
+          user={user}
+          isAdmin={isAdmin}
+          onLogout={handleLogout}
+          onGoToLogin={() =>
+            setViewMode('login')
+          }
+          onGoToRegister={() =>
+            setViewMode('register')
+          }
+          onGoToAdmin={() =>
+            setViewMode('admin')
+          }
+        />
+
+        <TestingLabsPage
+          onOpenChatbot={
             handleOpenChatbotWithQuery
           }
         />

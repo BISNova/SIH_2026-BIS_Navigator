@@ -1,5 +1,6 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://localhost:8000/api';
 
 
 export class BISNovaAPIError extends Error {
@@ -70,17 +71,20 @@ export async function sendChatMessage(
   let response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/chat`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders(token),
-      },
-      body: JSON.stringify({
-        query,
-        session_id: sessionId,
-      }),
-    });
+    response = await fetch(
+      `${API_BASE_URL}/chat`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders(token),
+        },
+        body: JSON.stringify({
+          query,
+          session_id: sessionId,
+        }),
+      }
+    );
   } catch {
     throw new BISNovaAPIError(
       'Could not reach the BISNova server. Please check your connection and try again.'
@@ -104,19 +108,22 @@ export async function sendFeedback(
   let response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/feedback`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query,
-        answer,
-        rating,
-        session_id: sessionId,
-        comment,
-      }),
-    });
+    response = await fetch(
+      `${API_BASE_URL}/feedback`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query,
+          answer,
+          rating,
+          session_id: sessionId,
+          comment,
+        }),
+      }
+    );
   } catch {
     throw new BISNovaAPIError(
       'Could not reach the BISNova server. Please check your connection and try again.'
@@ -198,7 +205,10 @@ export async function fetchChatSessions(token) {
  * The backend identifies the user from the JWT.
  * The frontend never sends user_id.
  */
-export async function deleteChatHistory(sessionId, token) {
+export async function deleteChatHistory(
+  sessionId,
+  token
+) {
   if (!sessionId) {
     return;
   }
@@ -254,6 +264,30 @@ export async function fetchCatalogLabs() {
   try {
     response = await fetch(
       `${API_BASE_URL}/catalog/labs`
+    );
+  } catch {
+    throw new BISNovaAPIError(
+      'Could not reach the BISNova server. Please check your connection and try again.'
+    );
+  }
+
+  return handleResponse(response);
+}
+
+
+/**
+ * Fetch BIS hallmarking centres.
+ *
+ * Hallmarking centres are fetched separately from laboratories
+ * because the backend exposes them through a dedicated catalog
+ * endpoint.
+ */
+export async function fetchHallmarkingCentres() {
+  let response;
+
+  try {
+    response = await fetch(
+      `${API_BASE_URL}/catalog/hallmarking-centres`
     );
   } catch {
     throw new BISNovaAPIError(
