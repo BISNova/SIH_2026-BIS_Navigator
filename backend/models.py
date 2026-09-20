@@ -1,40 +1,29 @@
-"""
-External API contract. Deliberately its own set of models, separate
-from product_intelligence's ProductMatchResult and evidence_engine's
-P1Output - the API can stay stable for the frontend even if internal
-pipeline shapes change (same "freeze the interface, not the internals"
-principle used everywhere else in this project).
-
-This is a superset of what any single frontend component needs right
-now - the frontend integration layer picks out what it wants to render
-(e.g. today's UI shows one standard card; this API returns all of them,
-so nothing is lost if the UI is extended later).
-"""
-
 from typing import List, Optional
-from pydantic import BaseModel
+from uuid import UUID
+
+from pydantic import BaseModel, Field
 
 
 class ChatRequest(BaseModel):
     query: str
-    session_id: Optional[str] = None  # accepted but unused for now - see README section on statelessness
+    session_id: Optional[UUID] = None
 
 
 class StandardOut(BaseModel):
     standard_id: str
     is_number: str
     title: str
-    status: str                        # "current" | "withdrawn"
-    relationship_type: Optional[str] = None  # "primary" | "secondary" - None for catalog/list-driven answers with no single product context
-    is_mandatory: Optional[bool] = None  # None = no conformity route on file yet, NOT "not mandatory"
+    status: str
+    relationship_type: Optional[str] = None
+    is_mandatory: Optional[bool] = None
     source_url: Optional[str] = None
     confidence: Optional[float] = None
-    last_verified: Optional[str] = None  # "data as of" - see product_intelligence/src/pipeline.py
+    last_verified: Optional[str] = None
 
 
 class ClarificationOptionOut(BaseModel):
     label: str
-    query: str  # pre-built follow-up query the frontend can send verbatim on click
+    query: str
 
 
 class EvidenceOut(BaseModel):
@@ -46,26 +35,33 @@ class EvidenceOut(BaseModel):
 
 
 class ChatResponse(BaseModel):
-    status: str  # "matched" | "clarification_needed" | "not_found"
-
+    status: str
     answer: str
 
     matched_product_name: Optional[str] = None
-    standards: List[StandardOut] = []
+
+    standards: List[StandardOut] = Field(default_factory=list)
 
     confidence_score: float = 0.0
     confidence_label: str = "low"
+
     evidence_sufficient: bool = False
 
-    evidence: List[EvidenceOut] = []
-    sources: List[str] = []
+    evidence: List[EvidenceOut] = Field(default_factory=list)
+
+    sources: List[str] = Field(default_factory=list)
 
     needs_clarification: bool = False
     clarification_question: Optional[str] = None
-    clarification_options: List[ClarificationOptionOut] = []
 
-    detected_language: str = "en"       # ISO 639-1; "en" if no translation happened
-    from_cache: bool = False             # true if this exact query was served from cache
+    clarification_options: List[ClarificationOptionOut] = Field(
+        default_factory=list
+    )
+
+    detected_language: str = "en"
+
+    from_cache: bool = False
+
     disclaimer: str = (
         "Informational guidance only - not a substitute for official BIS "
         "certification advice. Always confirm with BIS or a licensed "
@@ -76,7 +72,7 @@ class ChatResponse(BaseModel):
 class FeedbackRequest(BaseModel):
     query: str
     answer: str
-    rating: str   # "up" | "down"
+    rating: str
     session_id: Optional[str] = None
     comment: Optional[str] = None
 
@@ -94,18 +90,16 @@ class HealthResponse(BaseModel):
 
 
 class CatalogStandardOut(BaseModel):
-    """One row in the Explore Standards catalog - broader than
-    ChatResponse's StandardOut since there's no single matched product
-    to scope it to here (this lists EVERY standard in the KB)."""
     standard_id: str
     is_number: str
     title: str
-    status: str                          # "current" | "withdrawn"
+    status: str
     scope_summary: Optional[str] = None
     product_category: Optional[str] = None
-    is_mandatory: Optional[bool] = None    # None = no conformity route on file yet
+    is_mandatory: Optional[bool] = None
     source_url: Optional[str] = None
-    ask_query: str                        # ready-to-send chat query for "ask about this standard"
+    ask_query: str
+
 
 class CatalogLabOut(BaseModel):
     lab_id: str

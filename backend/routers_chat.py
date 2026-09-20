@@ -1,40 +1,69 @@
 """
-POST /api/chat - the one endpoint the frontend's chat UI needs.
+POST /api/chat
 
-Converts the rich internal result (ProductMatchResult + P1Output)
-into the external ChatResponse contract (backend/models.py). Also wires in:
-  - conversation memory (session_store.py) - resolves follow-up queries
-    against the last matched product in this session
-  - exact-match query caching (query_cache.py)
-  - list/aggregate query detection (list_query.py) - short-circuits
-    straight to a structured KB filter, skipping RAG entirely for
-    "list all mandatory standards" style questions
+Main chat endpoint used by the frontend.
+
+Responsibilities:
+    - Authenticate the request using the user's JWT.
+    - Obtain user_id from the validated JWT.
+    - Create a session_id when the frontend does not provide one.
+    - Save the user's message automatically.
+    - Resolve follow-up questions using session context.
+    - Use exact-match query cache when appropriate.
+    - Handle structured list/aggregate queries.
+    - Run the normal P2 -> P1 pipeline.
+    - Save the assistant response automatically.
+
+Important:
+    user_id is NEVER accepted from the frontend.
+    It always comes from the authenticated JWT.
 """
 
 import sys
 from pathlib import Path
+from uuid import uuid4
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(
+    0,
+    str(Path(__file__).resolve().parent.parent),
+)
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 
+from .auth.dependencies import get_current_user
+from .config import P1_API_BASE_URL
+from .dependencies import (
+    get_product_pipeline,
+    get_query_cache,
+    get_session_store,
+)
+from .list_query import (
+    build_list_answer,
+    detect_list_intent,
+)
 from .models import (
     ChatRequest,
     ChatResponse,
-    StandardOut,
     ClarificationOptionOut,
     EvidenceOut,
+    StandardOut,
 )
-from .dependencies import get_product_pipeline, get_session_store, get_query_cache
-from .config import P1_API_BASE_URL
-from .list_query import detect_list_intent, build_list_answer
 from .routers_catalog import list_standards as get_catalog_standards
-from integration.orchestrator import run_full_pipeline_with_context  # noqa: E402
+from .chat_history_service import save_chat_message
+
+from integration.orchestrator import (
+    run_full_pipeline_with_context,
+)
+
 
 router = APIRouter()
 
 
-def _standards_out(applicable_standards) -> list[StandardOut]:
+def _standards_out(applicable_standards):
+    """
+    Convert internal P2 standard objects into the public API model.
+    """
+
     return [
         StandardOut(
             standard_id=s.standard_id,
@@ -51,53 +80,191 @@ def _standards_out(applicable_standards) -> list[StandardOut]:
     ]
 
 
-@router.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+def _get_session_id(request: ChatRequest):
+    """
+    Use the frontend-provided session ID when available.
+
+    Otherwise create a new UUID for the conversation.
+    """
+
+    if request.session_id is not None:
+        return request.session_id
+
+    return uuid4()
+
+
+def _save_message_or_raise(
+    user_id: str,
+    session_id,
+    role: str,
+    content: str,
+    metadata: dict | None = None,
+):
+    """
+    Persist one chat message.
+
+    Any database failure is surfaced as HTTP 500 instead of silently
+    returning a successful chat response while history was lost.
+    """
+
+    try:
+        save_chat_message(
+            user_id=str(user_id),
+            session_id=session_id,
+            role=role,
+            content=content,
+            metadata=metadata,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to save chat history",
+        ) from exc
+
+
+@router.post(
+    "/chat",
+    response_model=ChatResponse,
+)
+def chat(
+    request: ChatRequest,
+    current_user=Depends(get_current_user),
+):
+    """
+    Main BISNova chat endpoint.
+
+    Authentication:
+        Bearer JWT is required.
+
+    User isolation:
+        user_id comes from current_user, which comes from the JWT.
+    """
+
     query_cache = get_query_cache()
     session_store = get_session_store()
 
+    session_id = _get_session_id(request)
+    session_id_str = str(session_id)
+
+    user_id = str(current_user["id"])
+
+    # ---------------------------------------------------------------
+    # 1. Save user's message
+    # ---------------------------------------------------------------
+
+    _save_message_or_raise(
+        user_id=user_id,
+        session_id=session_id,
+        role="user",
+        content=request.query,
+        metadata={
+            "source": "chat",
+        },
+    )
+
+    # ---------------------------------------------------------------
+    # 2. Normalize query for exact-match cache
+    # ---------------------------------------------------------------
+
     normalized_for_cache = request.query.strip().lower()
 
-    # --- List/aggregate query short-circuit ---
-    # No cache and no P1 call. Catalog data itself is the answer.
-    list_intent = detect_list_intent(request.query)
-    if list_intent.is_list_query:
-        catalog = [s.model_dump() for s in get_catalog_standards()]
-        list_result = build_list_answer(list_intent, catalog)
+    # ---------------------------------------------------------------
+    # 3. Handle list / aggregate queries
+    # ---------------------------------------------------------------
 
-        return ChatResponse(
+    list_intent = detect_list_intent(request.query)
+
+    if list_intent.is_list_query:
+        catalog = [
+            standard.model_dump()
+            for standard in get_catalog_standards()
+        ]
+
+        list_result = build_list_answer(
+            list_intent,
+            catalog,
+        )
+
+        response = ChatResponse(
             status="matched",
             answer=list_result["answer"],
             standards=[
                 StandardOut(
                     **{
-                        k: v
-                        for k, v in s.items()
-                        if k in StandardOut.model_fields
+                        key: value
+                        for key, value in standard.items()
+                        if key in StandardOut.model_fields
                     }
                 )
-                for s in list_result["standards"]
+                for standard in list_result["standards"]
             ],
             confidence_score=list_result["confidence_score"],
             confidence_label=list_result["confidence_label"],
             evidence_sufficient=list_result["evidence_sufficient"],
         )
 
-    # --- Conversation memory ---
-    # Resolve the session context BEFORE checking the global query cache.
-    # This prevents a context-dependent query from accidentally receiving
-    # a context-free cached answer.
-    context_hint = session_store.get_context_hint(request.session_id)
+        # -----------------------------------------------------------
+        # Save assistant response
+        # -----------------------------------------------------------
 
-    # --- Exact-match cache ---
-    # Only context-free queries are allowed to use this cache.
+        _save_message_or_raise(
+            user_id=user_id,
+            session_id=session_id,
+            role="assistant",
+            content=response.answer,
+            metadata={
+                "source": "chat",
+                "from_cache": False,
+                "status": response.status,
+            },
+        )
+
+        return response
+
+    # ---------------------------------------------------------------
+    # 4. Get conversation context
+    # ---------------------------------------------------------------
+
+    context_hint = session_store.get_context_hint(
+        session_id_str
+    )
+
+    # ---------------------------------------------------------------
+    # 5. Exact-match cache
+    #
+    # Do not use cached answers when the session has a context hint,
+    # because follow-up questions may depend on that context.
+    # ---------------------------------------------------------------
+
     if context_hint is None:
-        cached = query_cache.get_or_none(normalized_for_cache)
+        cached = query_cache.get_or_none(
+            normalized_for_cache
+        )
 
         if cached is not None:
-            cached_response = ChatResponse(**cached)
+            cached_response = ChatResponse(
+                **cached
+            )
+
             cached_response.from_cache = True
+
+            _save_message_or_raise(
+                user_id=user_id,
+                session_id=session_id,
+                role="assistant",
+                content=cached_response.answer,
+                metadata={
+                    "source": "chat",
+                    "from_cache": True,
+                    "status": cached_response.status,
+                },
+            )
+
             return cached_response
+
+    # ---------------------------------------------------------------
+    # 6. Run normal P2 -> P1 pipeline
+    # ---------------------------------------------------------------
 
     product_pipeline = get_product_pipeline()
 
@@ -112,30 +279,46 @@ def chat(request: ChatRequest):
     p1_output = result["p1_output"]
     p1_success = result["p1_success"]
 
+    # ---------------------------------------------------------------
+    # 7. Update conversation context
+    # ---------------------------------------------------------------
+
     if p2_result.matched_product:
         session_store.update(
-            request.session_id,
+            session_id_str,
             p2_result.matched_product.canonical_name,
         )
 
+    # ---------------------------------------------------------------
+    # 8. Convert clarification options
+    # ---------------------------------------------------------------
+
     clarification_options = [
         ClarificationOptionOut(
-            label=opt.label,
-            query=f"{request.query} {opt.label}",
+            label=option.label,
+            query=f"{request.query} {option.label}",
         )
-        for opt in p2_result.clarification_options
+        for option in p2_result.clarification_options
     ]
+
+    # ---------------------------------------------------------------
+    # 9. Convert evidence
+    # ---------------------------------------------------------------
 
     evidence = [
         EvidenceOut(
-            chunk_id=e.chunk_id,
-            standard_id=e.standard_id,
-            text=e.text,
-            section_header=e.section_header,
-            source_url=e.source_url,
+            chunk_id=item.chunk_id,
+            standard_id=item.standard_id,
+            text=item.text,
+            section_header=item.section_header,
+            source_url=item.source_url,
         )
-        for e in p1_output.evidence
+        for item in p1_output.evidence
     ]
+
+    # ---------------------------------------------------------------
+    # 10. Build public response
+    # ---------------------------------------------------------------
 
     response = ChatResponse(
         status=p2_result.status,
@@ -145,7 +328,9 @@ def chat(request: ChatRequest):
             if p2_result.matched_product
             else None
         ),
-        standards=_standards_out(p2_result.applicable_standards),
+        standards=_standards_out(
+            p2_result.applicable_standards
+        ),
         confidence_score=p1_output.confidence_score,
         confidence_label=p1_output.confidence_label,
         evidence_sufficient=p1_output.evidence_sufficient,
@@ -157,18 +342,10 @@ def chat(request: ChatRequest):
         detected_language=p2_result.detected_language,
     )
 
-    # --- Cache only genuinely successful P1 responses ---
-    #
-    # p2_result.status can still be "matched" when P1 fails because the
-    # product was successfully identified by P2. Therefore status alone
-    # must NOT decide whether the result is cacheable.
-    #
-    # p1_success means:
-    #   - P1 was actually called
-    #   - HTTP request succeeded
-    #   - P1 returned a valid P1OutputPayload
-    #
-    # Context-dependent requests are never stored in the global cache.
+    # ---------------------------------------------------------------
+    # 11. Cache successful standalone matched queries
+    # ---------------------------------------------------------------
+
     if (
         p1_success
         and p2_result.status == "matched"
@@ -178,5 +355,30 @@ def chat(request: ChatRequest):
             normalized_for_cache,
             response.model_dump(),
         )
+
+    # ---------------------------------------------------------------
+    # 12. Save assistant response
+    # ---------------------------------------------------------------
+
+    _save_message_or_raise(
+        user_id=user_id,
+        session_id=session_id,
+        role="assistant",
+        content=response.answer,
+        metadata={
+            "source": "chat",
+            "from_cache": response.from_cache,
+            "status": response.status,
+            "matched_product_name": (
+                response.matched_product_name
+            ),
+            "confidence_score": (
+                response.confidence_score
+            ),
+            "evidence_sufficient": (
+                response.evidence_sufficient
+            ),
+        },
+    )
 
     return response

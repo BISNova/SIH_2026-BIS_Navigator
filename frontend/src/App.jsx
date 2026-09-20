@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import HowBisNovaHelps from './components/HowBisNovaHelps';
@@ -15,36 +15,502 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import AdminDashboard from './components/AdminDashboard';
 import { useAuth } from './AuthContext';
-import { sendChatMessage, sendFeedback, BISNovaAPIError } from './api';
+
+import {
+  sendChatMessage,
+  sendFeedback,
+  fetchChatHistory,
+  fetchChatSessions,
+  deleteChatHistory,
+  BISNovaAPIError,
+} from './api';
+
 import { generateChatTitle } from './chatNaming';
 import { markdownToPlainText } from './markdownToPlainText';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState('landing'); // 'landing' | 'chatbot'
-  // No pre-seeded chat history - a fresh visit (or "New Chat") always
-  // starts as a blank composer with no active chat, matching Claude/
-  // ChatGPT. A chat only gets created - and only appears in the sidebar
-  // - once the user actually sends a first message (see
-  // handleSendMessage's lazy-creation branch below).
+  const [viewMode, setViewMode] = useState('landing');
+
   const [chats, setChats] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
+
   const [isThinking, setIsThinking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isSmiling, setIsSmiling] = useState(false);
-  const [activeNav, setActiveNav] = useState('new-chat');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { user, isAdmin, logout, sessionExpired, clearSessionExpired } = useAuth();
 
-  // Any protected call (admin dashboard) that gets a 401 sets this -
-  // bounce to login and clear the flag so it doesn't fire again.
+  const [activeNav, setActiveNav] =
+    useState('new-chat');
+
+  const [isSidebarOpen, setIsSidebarOpen] =
+    useState(true);
+
+  // IMPORTANT:
+  // Saving to localStorage is disabled until the current
+  // user's local + DB history has finished loading.
+  const [hydratedUserId, setHydratedUserId] =
+    useState(null);
+
+  const {
+    user,
+    token,
+    isAdmin,
+    logout,
+    sessionExpired,
+    clearSessionExpired,
+  } = useAuth();
+
+  // ============================================================
+  // USER-SPECIFIC STORAGE KEY
+  // ============================================================
+
+  function getChatStorageKey(userId) {
+    if (!userId) return null;
+
+    return `bisnova_chat_sessions_${userId}`;
+  }
+
+  // ============================================================
+  // MERGE DATABASE HISTORY INTO A LOCAL CHAT
+  // ============================================================
+
+  function mergeDatabaseHistoryIntoChat(
+    localChat,
+    history
+  ) {
+    if (
+      !localChat ||
+      !Array.isArray(history) ||
+      history.length === 0
+    ) {
+      return localChat;
+    }
+
+    const localMessages =
+      Array.isArray(localChat.messages)
+        ? localChat.messages
+        : [];
+
+    const mergedMessages =
+      history.map((dbMessage, index) => {
+        const existingMessage =
+          localMessages[index];
+
+        const sender =
+          dbMessage.role === 'user'
+            ? 'user'
+            : 'bot';
+
+        // Preserve richer locally stored UI data
+        // whenever role/content still match.
+        if (
+          existingMessage &&
+          existingMessage.sender === sender &&
+          (
+            existingMessage.text ===
+              dbMessage.content ||
+            markdownToPlainText(
+              existingMessage.text || ''
+            ) ===
+              markdownToPlainText(
+                dbMessage.content || ''
+              )
+          )
+        ) {
+          return {
+            ...existingMessage,
+            sender,
+            text:
+              existingMessage.text ||
+              dbMessage.content,
+          };
+        }
+
+        // DB-only message.
+        return {
+          sender,
+          text: dbMessage.content,
+          time: dbMessage.created_at
+            ? new Date(
+                dbMessage.created_at
+              ).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            : '',
+          isNew: false,
+        };
+      });
+
+    return {
+      ...localChat,
+      messages: mergedMessages,
+    };
+  }
+
+  // ============================================================
+  // CREATE A FRONTEND CHAT FROM DB HISTORY
+  //
+  // Used when a session exists in DB but does not exist in
+  // localStorage. This enables cross-device recovery.
+  // ============================================================
+
+  function createChatFromDatabaseHistory(
+    session,
+    history
+  ) {
+    if (
+      !session?.session_id ||
+      !Array.isArray(history) ||
+      history.length === 0
+    ) {
+      return null;
+    }
+
+    const firstUserMessage =
+      history.find(
+        (message) =>
+          message.role === 'user'
+      );
+
+    const titleSource =
+      firstUserMessage?.content ||
+      'New Chat';
+
+    const messages =
+      history.map((dbMessage) => ({
+        sender:
+          dbMessage.role === 'user'
+            ? 'user'
+            : 'bot',
+
+        text: dbMessage.content,
+
+        time: dbMessage.created_at
+          ? new Date(
+              dbMessage.created_at
+            ).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+          : '',
+
+        isNew: false,
+      }));
+
+    return {
+      id: session.session_id,
+
+      title:
+        generateChatTitle(
+          titleSource
+        ),
+
+      pinned: false,
+
+      messages,
+    };
+  }
+
+  // ============================================================
+  // LOAD CURRENT USER'S CHATS
+  //
+  // 1. Load user-specific localStorage.
+  // 2. Ask DB for ALL sessions belonging to JWT user.
+  // 3. Combine local sessions + DB sessions.
+  // 4. Fetch DB history for every discovered session.
+  // 5. Preserve rich local UI data whenever possible.
+  // 6. Create frontend chats for DB-only sessions.
+  // 7. Only then mark hydration complete.
+  // ============================================================
+
+  useEffect(() => {
+    if (!user?.id) {
+      setHydratedUserId(null);
+      setChats([]);
+      setActiveChatId(null);
+      return;
+    }
+
+    const storageKey =
+      getChatStorageKey(user.id);
+
+    // Disable localStorage saving while loading.
+    setHydratedUserId(null);
+
+    let cancelled = false;
+
+    async function loadUserChats() {
+      let storedChats = [];
+
+      // --------------------------------------------------------
+      // STEP 1: LOAD LOCAL USER-SPECIFIC CHATS
+      // --------------------------------------------------------
+
+      try {
+        const raw =
+          localStorage.getItem(storageKey);
+
+        if (raw) {
+          const parsed = JSON.parse(raw);
+
+          if (Array.isArray(parsed)) {
+            storedChats = parsed;
+          }
+        }
+      } catch (error) {
+        console.error(
+          'Failed to load saved chats:',
+          error
+        );
+
+        storedChats = [];
+      }
+
+      if (cancelled) return;
+
+      // Show local chats immediately.
+      setChats(storedChats);
+      setActiveChatId(null);
+
+      // --------------------------------------------------------
+      // STEP 2: DISCOVER ALL DB SESSIONS FOR THIS USER
+      // --------------------------------------------------------
+
+      let dbSessions = [];
+
+      if (token) {
+        try {
+          dbSessions =
+            await fetchChatSessions(token);
+        } catch (error) {
+          console.warn(
+            'Could not retrieve DB chat sessions:',
+            error
+          );
+
+          dbSessions = [];
+        }
+      }
+
+      if (cancelled) return;
+
+      // --------------------------------------------------------
+      // STEP 3: BUILD UNIQUE SESSION ID LIST
+      // --------------------------------------------------------
+
+      const sessionMap =
+        new Map();
+
+      // Local sessions first so rich UI data remains available.
+      storedChats.forEach((chat) => {
+        sessionMap.set(
+          chat.id,
+          {
+            session_id: chat.id,
+            localChat: chat,
+            dbSession: null,
+          }
+        );
+      });
+
+      // Add DB-only sessions.
+      dbSessions.forEach((session) => {
+        const existing =
+          sessionMap.get(
+            session.session_id
+          );
+
+        if (existing) {
+          existing.dbSession = session;
+        } else {
+          sessionMap.set(
+            session.session_id,
+            {
+              session_id:
+                session.session_id,
+              localChat: null,
+              dbSession: session,
+            }
+          );
+        }
+      });
+
+      const discoveredSessions =
+        Array.from(
+          sessionMap.values()
+        );
+
+      // --------------------------------------------------------
+      // STEP 4: FETCH DB HISTORY FOR EVERY SESSION
+      // --------------------------------------------------------
+
+      let restoredChats = [];
+
+      if (
+        token &&
+        discoveredSessions.length > 0
+      ) {
+        const results =
+          await Promise.all(
+            discoveredSessions.map(
+              async (sessionInfo) => {
+                try {
+                  const history =
+                    await fetchChatHistory(
+                      sessionInfo.session_id,
+                      token
+                    );
+
+                  return {
+                    ...sessionInfo,
+                    history,
+                  };
+                } catch (error) {
+                  console.warn(
+                    `Could not restore DB history for chat ${sessionInfo.session_id}:`,
+                    error
+                  );
+
+                  return {
+                    ...sessionInfo,
+                    history: null,
+                  };
+                }
+              }
+            )
+          );
+
+        if (cancelled) return;
+
+        // ------------------------------------------------------
+        // STEP 5: MERGE LOCAL + DB
+        // ------------------------------------------------------
+
+        restoredChats =
+          results
+            .map(
+              ({
+                session_id,
+                localChat,
+                dbSession,
+                history,
+              }) => {
+                // Local + DB history.
+                if (
+                  localChat &&
+                  Array.isArray(history) &&
+                  history.length > 0
+                ) {
+                  return mergeDatabaseHistoryIntoChat(
+                    localChat,
+                    history
+                  );
+                }
+
+                // DB-only session.
+                if (
+                  !localChat &&
+                  dbSession &&
+                  Array.isArray(history) &&
+                  history.length > 0
+                ) {
+                  return createChatFromDatabaseHistory(
+                    dbSession,
+                    history
+                  );
+                }
+
+                // Local-only chat.
+                if (localChat) {
+                  return localChat;
+                }
+
+                return null;
+              }
+            )
+            .filter(Boolean);
+      } else {
+        // No token / DB unavailable.
+        // Preserve local chats.
+        restoredChats = storedChats;
+      }
+
+      if (cancelled) return;
+
+      // --------------------------------------------------------
+      // STEP 6: UPDATE CHAT STATE
+      // --------------------------------------------------------
+
+      setChats(restoredChats);
+
+      // Do not automatically select a chat after login/refresh.
+      setActiveChatId(null);
+
+      // --------------------------------------------------------
+      // STEP 7: ALLOW LOCAL STORAGE SAVING
+      // --------------------------------------------------------
+
+      setHydratedUserId(user.id);
+    }
+
+    loadUserChats();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, token]);
+
+  // ============================================================
+  // SAVE CURRENT USER'S CHATS
+  // ============================================================
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    if (hydratedUserId !== user.id) {
+      return;
+    }
+
+    const storageKey =
+      getChatStorageKey(user.id);
+
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify(chats)
+      );
+    } catch (error) {
+      console.error(
+        'Failed to save chats:',
+        error
+      );
+    }
+  }, [
+    chats,
+    user?.id,
+    hydratedUserId,
+  ]);
+
+  // ============================================================
+  // SESSION EXPIRY
+  // ============================================================
+
   useEffect(() => {
     if (sessionExpired) {
       setViewMode('login');
       clearSessionExpired();
     }
-  }, [sessionExpired, clearSessionExpired]);
+  }, [
+    sessionExpired,
+    clearSessionExpired,
+  ]);
+
+  // ============================================================
+  // MASCOT STATE
+  // ============================================================
 
   let mascotState = 'idle';
+
   if (isSmiling) {
     mascotState = 'smiling';
   } else if (isThinking) {
@@ -53,98 +519,204 @@ export default function App() {
     mascotState = 'reading';
   }
 
-  const activeChat = chats.find(c => c.id === activeChatId) || null;
+  const activeChat =
+    chats.find(
+      (c) => c.id === activeChatId
+    ) || null;
+
+  // ============================================================
+  // SIDEBAR
+  // ============================================================
 
   function handleToggleSidebar() {
-    setIsSidebarOpen(prev => !prev);
+    setIsSidebarOpen(
+      (prev) => !prev
+    );
   }
+
+  // ============================================================
+  // STANDARD CODE CLEANUP
+  // ============================================================
 
   function cleanStandardCode(rawCode) {
     if (!rawCode) return rawCode;
-    return rawCode.replace(/^(IS\s+)+/i, 'IS ');
+
+    return rawCode.replace(
+      /^(IS\s+)+/i,
+      'IS '
+    );
   }
 
-  // --- Maps a BISNova backend /api/chat response into the message shape
-  //     MessageList already knows how to render ---
-  function buildBotMessageFromResponse(apiResponse, userQuery) {
-    const standardCards = (apiResponse.standards || []).map(std => ({
-      code: cleanStandardCode(std.is_number),
+  // ============================================================
+  // BUILD BOT MESSAGE
+  // ============================================================
+
+  function buildBotMessageFromResponse(
+    apiResponse,
+    userQuery
+  ) {
+    const standardCards = (
+      apiResponse.standards || []
+    ).map((std) => ({
+      code: cleanStandardCode(
+        std.is_number
+      ),
       title: std.title,
       mandatory: std.is_mandatory,
-      relationship_type: std.relationship_type,
-      lastVerified: std.last_verified,
+      relationship_type:
+        std.relationship_type,
+      lastVerified:
+        std.last_verified,
       sourceUrl: std.source_url,
     }));
 
-    // Clarification options come back as ready-to-send follow-up queries -
-    // they slot directly into the existing action-chip mechanism, no new
-    // UI needed.
-    const actionChips = apiResponse.needs_clarification
-      ? (apiResponse.clarification_options || []).map(opt => ({
-          label: opt.label,
-          icon: '❓',
-          query: opt.query,
-        }))
-      : null;
+    const actionChips =
+      apiResponse.needs_clarification
+        ? (
+            apiResponse.clarification_options ||
+            []
+          ).map((opt) => ({
+            label: opt.label,
+            icon: '🔍',
+            query: opt.query,
+          }))
+        : null;
 
-    const text = apiResponse.needs_clarification
-      ? apiResponse.clarification_question
-      : markdownToPlainText(apiResponse.answer);
+    const text =
+      apiResponse.needs_clarification
+        ? apiResponse.clarification_question
+        : markdownToPlainText(
+            apiResponse.answer
+          );
 
     return {
       sender: 'bot',
       text,
-      standardCards: standardCards.length > 0 ? standardCards : null,
+
+      standardCards:
+        standardCards.length > 0
+          ? standardCards
+          : null,
+
       actionChips,
-      confidenceLabel: apiResponse.confidence_label,
-      sources: apiResponse.sources,
-      disclaimer: apiResponse.disclaimer,
-      // carried for the feedback buttons - see handleFeedback below
+
+      confidenceLabel:
+        apiResponse.confidence_label,
+
+      sources:
+        apiResponse.sources,
+
+      disclaimer:
+        apiResponse.disclaimer,
+
       feedbackQuery: userQuery,
-      feedbackAnswer: apiResponse.answer,
-      feedbackGiven: null,   // "up" | "down" | null, set after the user rates it
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+
+      feedbackAnswer:
+        apiResponse.answer,
+
+      feedbackGiven: null,
+
+      time:
+        new Date().toLocaleTimeString(
+          [],
+          {
+            hour: '2-digit',
+            minute: '2-digit',
+          }
+        ),
+
       isNew: true,
     };
   }
 
-  // --- Send Message ---
-  async function handleSendMessage(text, file = null) {
+  // ============================================================
+  // SEND MESSAGE
+  // ============================================================
+
+  async function handleSendMessage(
+    text,
+    file = null
+  ) {
     if (!text && !file) return;
 
-    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Protected /api/chat requires JWT.
+    if (!token) {
+      setViewMode('login');
+      return;
+    }
+
+    const currentTime =
+      new Date().toLocaleTimeString(
+        [],
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+        }
+      );
 
     const userMsg = {
       sender: 'user',
-      text: text || `Attached file: ${file.name}`,
-      file: file ? { name: file.name } : null,
+
+      text:
+        text ||
+        `Attached file: ${file.name}`,
+
+      file: file
+        ? {
+            name: file.name,
+          }
+        : null,
+
       time: currentTime,
-      isNew: true
+
+      isNew: true,
     };
 
-    // Lazy chat creation: no chat exists yet until the user actually
-    // sends something. This is the fix for "no chat that user didn't
-    // create" - a fresh visit or a "New Chat" click never adds a
-    // sidebar entry by itself, only a real sent message does. The
-    // chat's own id doubles as the backend's session_id, so
-    // conversation memory (see backend/session_store.py) is naturally
-    // scoped per chat - no separate id generator needed.
-    let targetChatId = activeChatId;
+    // ==========================================================
+    // CREATE NEW CHAT ONLY WHEN FIRST MESSAGE IS SENT
+    // ==========================================================
+
+    let targetChatId =
+      activeChatId;
+
     if (!targetChatId) {
-      targetChatId = `chat-${Date.now()}`;
+      targetChatId =
+        crypto.randomUUID();
+
       const newChat = {
         id: targetChatId,
-        title: generateChatTitle(text || file?.name || 'New Chat'),
+
+        title: generateChatTitle(
+          text ||
+            file?.name ||
+            'New Chat'
+        ),
+
         pinned: false,
+
         messages: [userMsg],
       };
-      setChats(prevChats => [newChat, ...prevChats]);
-      setActiveChatId(targetChatId);
+
+      setChats((prevChats) => [
+        newChat,
+        ...prevChats,
+      ]);
+
+      setActiveChatId(
+        targetChatId
+      );
     } else {
-      setChats(prevChats =>
-        prevChats.map(c =>
+      setChats((prevChats) =>
+        prevChats.map((c) =>
           c.id === targetChatId
-            ? { ...c, messages: [...c.messages, userMsg] }
+            ? {
+                ...c,
+
+                messages: [
+                  ...c.messages,
+                  userMsg,
+                ],
+              }
             : c
         )
       );
@@ -153,115 +725,82 @@ export default function App() {
     setIsThinking(true);
     setIsTyping(false);
 
-    // File attachments aren't wired to the backend yet (out of current
-    // scope) - only text queries are sent.
+    // File uploads are not connected yet.
     if (!text) {
       setIsThinking(false);
       return;
     }
 
     try {
-      const apiResponse = await sendChatMessage(text, targetChatId);
-      const botMsg = buildBotMessageFromResponse(apiResponse, text);
+      const apiResponse =
+        await sendChatMessage(
+          text,
+          targetChatId,
+          token
+        );
+
+      const botMsg =
+        buildBotMessageFromResponse(
+          apiResponse,
+          text
+        );
 
       setIsThinking(false);
       setIsSmiling(true);
 
-      setChats(prevChats =>
-        prevChats.map(c =>
+      setChats((prevChats) =>
+        prevChats.map((c) =>
           c.id === targetChatId
-            ? { ...c, messages: [...c.messages, botMsg] }
+            ? {
+                ...c,
+
+                messages: [
+                  ...c.messages,
+                  botMsg,
+                ],
+              }
             : c
         )
       );
 
-      setTimeout(() => setIsSmiling(false), 1200);
+      setTimeout(() => {
+        setIsSmiling(false);
+      }, 1200);
     } catch (err) {
       setIsThinking(false);
 
-      const message = err instanceof BISNovaAPIError
-        ? err.message
-        : "Something went wrong on my end. Please try again in a moment.";
+      const message =
+        err instanceof BISNovaAPIError
+          ? err.message
+          : 'Something went wrong on my end. Please try again in a moment.';
 
       const errorMsg = {
         sender: 'bot',
+
         text: message,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+
+        time:
+          new Date().toLocaleTimeString(
+            [],
+            {
+              hour: '2-digit',
+              minute: '2-digit',
+            }
+          ),
+
         isNew: true,
       };
 
-      setChats(prevChats =>
-        prevChats.map(c =>
+      setChats((prevChats) =>
+        prevChats.map((c) =>
           c.id === targetChatId
-            ? { ...c, messages: [...c.messages, errorMsg] }
-            : c
-        )
-      );
-    }
-  }
-
-  function handleOpenChatbotWithQuery(query) {
-    setViewMode('chatbot');
-    setTimeout(() => {
-      handleSendMessage(query);
-    }, 200);
-  }
-
-  async function handleFeedback(chatId, messageIndex, rating) {
-    // Optimistically mark it in the UI immediately
-    setChats(prevChats =>
-      prevChats.map(c =>
-        c.id === chatId
-          ? {
-              ...c,
-              messages: c.messages.map((m, i) =>
-                i === messageIndex ? { ...m, feedbackGiven: rating } : m
-              ),
-            }
-          : c
-      )
-    );
-
-    const chat = chats.find(c => c.id === chatId);
-    const msg = chat?.messages[messageIndex];
-    if (!msg) return;
-
-    try {
-      await sendFeedback({
-        query: msg.feedbackQuery || '',
-        answer: msg.feedbackAnswer || msg.text,
-        rating,
-        sessionId: chatId,
-      });
-    } catch (err) {
-      // Feedback failing silently is fine - it's not critical path, and
-      // we don't want a failed 👍/👎 to interrupt the conversation.
-    }
-  }
-
-  function handleNewChat() {
-    // Just reset to a blank composer - do NOT create a chat record yet.
-    // A sidebar entry only appears once the user actually sends a
-    // message (see handleSendMessage's lazy-creation branch) - this is
-    // the fix for "there should not be any chat that user didn't create".
-    setActiveChatId(null);
-    setActiveNav('new-chat');
-  }
-
-  function handleClearChat() {
-    if (confirm('Clear messages in this conversation?')) {
-      setChats(prev =>
-        prev.map(c =>
-          c.id === activeChatId
             ? {
                 ...c,
+
                 messages: [
-                  {
-                    sender: 'bot',
-                    text: "Conversation cleared. Ask me anything about Indian Standards, testing, or BIS certification!",
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                  }
-                ]
+                  ...c.messages,
+                  errorMsg,
+                ],
               }
             : c
         )
@@ -269,325 +808,774 @@ export default function App() {
     }
   }
 
-  function handlePinChat(chatId) {
-    setChats(prev =>
-      prev.map(c => (c.id === chatId ? { ...c, pinned: !c.pinned } : c))
-    );
+  // ============================================================
+  // OPEN CHAT WITH QUERY
+  // ============================================================
+
+  function handleOpenChatbotWithQuery(
+    query
+  ) {
+    setViewMode('chatbot');
+
+    setTimeout(() => {
+      handleSendMessage(query);
+    }, 200);
   }
 
-  function handleRenameChat(chatId, newTitle) {
-    setChats(prev =>
-      prev.map(c => (c.id === chatId ? { ...c, title: newTitle } : c))
+  // ============================================================
+  // FEEDBACK
+  // ============================================================
+
+  async function handleFeedback(
+    chatId,
+    messageIndex,
+    rating
+  ) {
+    setChats((prevChats) =>
+      prevChats.map((c) =>
+        c.id === chatId
+          ? {
+              ...c,
+
+              messages:
+                c.messages.map(
+                  (m, i) =>
+                    i === messageIndex
+                      ? {
+                          ...m,
+                          feedbackGiven:
+                            rating,
+                        }
+                      : m
+                ),
+            }
+          : c
+      )
     );
-  }
 
-  function handleDeleteChat(chatId) {
-    setChats(prev => prev.filter(c => c.id !== chatId));
+    const chat = chats.find(
+      (c) => c.id === chatId
+    );
 
-    if (activeChatId === chatId) {
-      const remaining = chats.filter(c => c.id !== chatId);
-      // Fall back to a blank composer (no chat selected), not a
-      // fabricated placeholder chat - same "no chat the user didn't
-      // create" principle as handleNewChat().
-      setActiveChatId(remaining.length > 0 ? remaining[0].id : null);
+    const msg =
+      chat?.messages[
+        messageIndex
+      ];
+
+    if (!msg) return;
+
+    try {
+      await sendFeedback(
+        msg.feedbackQuery || '',
+        msg.feedbackAnswer ||
+          msg.text,
+        rating,
+        chatId,
+        null
+      );
+    } catch (err) {
+      // Feedback is non-critical.
     }
   }
+
+  // ============================================================
+  // NEW CHAT
+  // ============================================================
+
+  function handleNewChat() {
+    setActiveChatId(null);
+    setActiveNav('new-chat');
+  }
+
+  // ============================================================
+  // CLEAR CHAT
+  //
+  // IMPORTANT:
+  // Clear now removes the conversation from BOTH:
+  // 1. Supabase DB
+  // 2. Frontend/localStorage
+  //
+  // This prevents the old conversation from returning
+  // after page refresh.
+  // ============================================================
+
+  async function handleClearChat() {
+    if (!activeChatId) {
+      return;
+    }
+
+    if (
+      !confirm(
+        'Clear messages in this conversation?'
+      )
+    ) {
+      return;
+    }
+
+    if (!token) {
+      setViewMode('login');
+      return;
+    }
+
+    const chatIdToClear =
+      activeChatId;
+
+    try {
+      // Delete DB history first.
+      await deleteChatHistory(
+        chatIdToClear,
+        token
+      );
+
+      // Remove the conversation from frontend state.
+      setChats((prevChats) =>
+        prevChats.filter(
+          (chat) =>
+            chat.id !== chatIdToClear
+        )
+      );
+
+      // Return to blank new-chat state.
+      setActiveChatId(null);
+      setActiveNav('new-chat');
+    } catch (error) {
+      console.error(
+        'Failed to clear chat:',
+        error
+      );
+
+      if (
+        error instanceof BISNovaAPIError &&
+        error.status === 401
+      ) {
+        setViewMode('login');
+        return;
+      }
+
+      alert(
+        error?.message ||
+          'Could not clear this conversation. Please try again.'
+      );
+    }
+  }
+
+  // ============================================================
+  // PIN CHAT
+  // ============================================================
+
+  function handlePinChat(chatId) {
+    setChats((prev) =>
+      prev.map((c) =>
+        c.id === chatId
+          ? {
+              ...c,
+              pinned: !c.pinned,
+            }
+          : c
+      )
+    );
+  }
+
+  // ============================================================
+  // RENAME CHAT
+  // ============================================================
+
+  function handleRenameChat(
+    chatId,
+    newTitle
+  ) {
+    setChats((prev) =>
+      prev.map((c) =>
+        c.id === chatId
+          ? {
+              ...c,
+              title: newTitle,
+            }
+          : c
+      )
+    );
+  }
+
+  // ============================================================
+  // DELETE CHAT
+  //
+  // IMPORTANT:
+  // Delete now removes the conversation from BOTH:
+  // 1. Supabase DB
+  // 2. Frontend/localStorage
+  // ============================================================
+
+  async function handleDeleteChat(
+    chatId
+  ) {
+    if (!chatId) {
+      return;
+    }
+
+    if (
+      !confirm(
+        'Delete this conversation permanently?'
+      )
+    ) {
+      return;
+    }
+
+    if (!token) {
+      setViewMode('login');
+      return;
+    }
+
+    try {
+      // Delete DB history first.
+      await deleteChatHistory(
+        chatId,
+        token
+      );
+
+      // Remove from frontend state.
+      setChats((prevChats) => {
+        const remaining =
+          prevChats.filter(
+            (chat) =>
+              chat.id !== chatId
+          );
+
+        // If deleted chat was active,
+        // open another remaining chat if available.
+        if (
+          activeChatId === chatId
+        ) {
+          setActiveChatId(
+            remaining.length > 0
+              ? remaining[0].id
+              : null
+          );
+        }
+
+        return remaining;
+      });
+    } catch (error) {
+      console.error(
+        'Failed to delete chat:',
+        error
+      );
+
+      if (
+        error instanceof BISNovaAPIError &&
+        error.status === 401
+      ) {
+        setViewMode('login');
+        return;
+      }
+
+      alert(
+        error?.message ||
+          'Could not delete this conversation. Please try again.'
+      );
+    }
+  }
+
+  // ============================================================
+  // SELECT CHAT
+  // ============================================================
 
   function handleSelectChat(chatId) {
     setActiveChatId(chatId);
   }
 
+  // ============================================================
+  // SIDEBAR NAVIGATION
+  // ============================================================
+
   function handleNavClick(name) {
     setActiveNav(name);
 
-    // These previously all sent meta-text like "Open Dashboard" as if it
-    // were a real user question - harmless against the old mock responder,
-    // but confusing now that this hits the real backend (which would
-    // honestly, correctly, return "not_found" for text that isn't an
-    // actual product question). Route each to something real instead.
-    if (name === 'Other Queries / FAQs') {
+    if (
+      name ===
+      'Other Queries / FAQs'
+    ) {
       setViewMode('faq');
       return;
     }
 
-    if (name === 'Explore Standards') {
-      setViewMode('explore-standards');
+    if (
+      name ===
+      'Explore Standards'
+    ) {
+      setViewMode(
+        'explore-standards'
+      );
       return;
     }
 
-    if (name === 'Testing and Labs') {
-      handleOpenChatbotWithQuery('Where can I get my product tested?');
+    if (
+      name ===
+      'Testing and Labs'
+    ) {
+      handleOpenChatbotWithQuery(
+        'Where can I get my product tested?'
+      );
       return;
     }
 
     if (name === 'Dashboard') {
-      // No dashboard page/design exists yet - safe no-op (fresh chat)
-      // rather than sending meaningless text to the real backend.
       handleNewChat();
       return;
     }
 
-    handleOpenChatbotWithQuery(`Tell me about ${name}`);
+    handleOpenChatbotWithQuery(
+      `Tell me about ${name}`
+    );
   }
 
+  // ============================================================
+  // LOGOUT
+  // ============================================================
+
   function handleLogout() {
+    // Clear React state only.
+    //
+    // IMPORTANT:
+    // Do NOT delete localStorage here.
+    //
+    // User-specific local chats remain under:
+    // bisnova_chat_sessions_<user-id>
+    //
+    // DB history remains protected by JWT.
+
+    setChats([]);
+    setActiveChatId(null);
+    setHydratedUserId(null);
+
     logout();
+
     setViewMode('landing');
   }
 
+  // ============================================================
+  // MASCOT
+  // ============================================================
+
   function handleMascotClick() {
     setIsSmiling(true);
-    setTimeout(() => setIsSmiling(false), 1200);
+
+    setTimeout(() => {
+      setIsSmiling(false);
+    }, 1200);
   }
 
-  function handleNavigateSection(sectionId) {
-    // Full FAQ page
-    if (sectionId === 'faq-page') {
+  // ============================================================
+  // NAVIGATION
+  // ============================================================
+
+  function handleNavigateSection(
+    sectionId
+  ) {
+    if (
+      sectionId === 'faq-page'
+    ) {
       setViewMode('faq');
       return;
     }
 
-    // Explore Standards is a dedicated page, not a landing-page section
-    if (sectionId === 'explore-standards') {
-      setViewMode('explore-standards');
+    if (
+      sectionId ===
+      'explore-standards'
+    ) {
+      setViewMode(
+        'explore-standards'
+      );
       return;
     }
 
-    // Return to landing page when needed
-    if (sectionId === 'home-page' || sectionId === 'hero') {
+    if (
+      sectionId === 'home-page' ||
+      sectionId === 'hero'
+    ) {
       setViewMode('landing');
+
       setTimeout(() => {
-        const el = document.getElementById('hero');
+        const el =
+          document.getElementById(
+            'hero'
+          );
+
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          el.scrollIntoView({
+            behavior: 'smooth',
+          });
         }
       }, 50);
+
       return;
     }
 
-    // Any other landing-page section target (e.g. 'how-bisnova-helps',
-    // 'standards-labs'). BUG FIX: these DOM nodes only exist while the
-    // landing page is actually rendered - if the user is currently on
-    // the FAQ page or Explore Standards page, clicking a section link
-    // silently did nothing, because document.getElementById() couldn't
-    // find an element that isn't mounted. Fix: switch to the landing
-    // page first, wait for it to render, then scroll.
-    if (viewMode !== 'landing') {
+    if (
+      viewMode !== 'landing'
+    ) {
       setViewMode('landing');
+
       setTimeout(() => {
-        const el = document.getElementById(sectionId);
+        const el =
+          document.getElementById(
+            sectionId
+          );
+
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          el.scrollIntoView({
+            behavior: 'smooth',
+          });
         }
       }, 50);
+
       return;
     }
 
-    const el = document.getElementById(sectionId);
+    const el =
+      document.getElementById(
+        sectionId
+      );
+
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({
+        behavior: 'smooth',
+      });
     }
   }
 
-// =========================================================================
-// Render FAQ Page View
-// =========================================================================
-if (viewMode === 'faq') {
-  return (
-    <div className="landing-page-root">
-      <Navbar
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-        viewMode={viewMode}
-        user={user}
-        isAdmin={isAdmin}
-        onLogout={handleLogout}
-        onGoToLogin={() => setViewMode('login')}
-        onGoToRegister={() => setViewMode('register')}
-        onGoToAdmin={() => setViewMode('admin')}
-      />
+  // ============================================================
+  // FAQ PAGE
+  // ============================================================
 
-      <FAQPage
-        onOpenChatbot={() => setViewMode('chatbot')}
-      />
-
-      <Footer
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-      />
-    </div>
-  );
-}
-
-// =========================================================================
-// Render Explore Standards Page View
-// =========================================================================
-if (viewMode === 'explore-standards') {
-  return (
-    <div className="landing-page-root">
-      <Navbar
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-        viewMode={viewMode}
-        user={user}
-        isAdmin={isAdmin}
-        onLogout={handleLogout}
-        onGoToLogin={() => setViewMode('login')}
-        onGoToRegister={() => setViewMode('register')}
-        onGoToAdmin={() => setViewMode('admin')}
-      />
-
-      <ExploreStandardsPage
-        onAskAboutStandard={handleOpenChatbotWithQuery}
-      />
-
-      <Footer
-        onOpenChatbot={() => setViewMode('chatbot')}
-        onNavigateSection={handleNavigateSection}
-      />
-    </div>
-  );
-}
-
-// =========================================================================
-// Render Login Page View
-// =========================================================================
-if (viewMode === 'login') {
-  return (
-    <LoginPage
-      onLoginSuccess={() => setViewMode('landing')}
-      onGoToRegister={() => setViewMode('register')}
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
-
-// =========================================================================
-// Render Register Page View
-// =========================================================================
-if (viewMode === 'register') {
-  return (
-    <RegisterPage
-      onGoToLogin={() => setViewMode('login')}
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
-
-// =========================================================================
-// Render Admin Dashboard View
-// =========================================================================
-if (viewMode === 'admin') {
-  if (!isAdmin) {
-    setViewMode('landing');
-    return null;
-  }
-
-  return (
-    <AdminDashboard
-      onBack={() => setViewMode('landing')}
-    />
-  );
-}
-
-  // =========================================================================
-  // Render Landing Page View
-  // =========================================================================
-  if (viewMode === 'landing') {
+  if (viewMode === 'faq') {
     return (
       <div className="landing-page-root">
         <Navbar
-          onOpenChatbot={() => setViewMode('chatbot')}
-          onNavigateSection={handleNavigateSection}
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
           viewMode={viewMode}
           user={user}
           isAdmin={isAdmin}
           onLogout={handleLogout}
-          onGoToLogin={() => setViewMode('login')}
-          onGoToRegister={() => setViewMode('register')}
-          onGoToAdmin={() => setViewMode('admin')}
+          onGoToLogin={() =>
+            setViewMode('login')
+          }
+          onGoToRegister={() =>
+            setViewMode('register')
+          }
+          onGoToAdmin={() =>
+            setViewMode('admin')
+          }
         />
 
-        <main className="landing-main-content">
-          <HeroSection
-            onOpenChatbot={() => setViewMode('chatbot')}
-            onExploreStandards={() => setViewMode('explore-standards')}
-          />
+        <FAQPage
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+        />
 
-          <HowBisNovaHelps
-            onOpenChatbotWithQuery={handleOpenChatbotWithQuery}
-          />
-
-          <StandardsAndLabs
-            onOpenChatbotWithQuery={handleOpenChatbotWithQuery}
-            onExploreStandards={() => setViewMode('explore-standards')}
-          />
-
-          <CtaBanner
-            onOpenChatbot={() => setViewMode('chatbot')}
-          />
-        </main>
-
-        <Footer onOpenChatbot={() => setViewMode('chatbot')} onNavigateSection={handleNavigateSection} />
+        <Footer
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+        />
       </div>
     );
   }
 
-  // =========================================================================
-  // Render Chatbot View
-  // =========================================================================
+  // ============================================================
+  // EXPLORE STANDARDS
+  // ============================================================
+
+  if (
+    viewMode ===
+    'explore-standards'
+  ) {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+          viewMode={viewMode}
+          user={user}
+          isAdmin={isAdmin}
+          onLogout={handleLogout}
+          onGoToLogin={() =>
+            setViewMode('login')
+          }
+          onGoToRegister={() =>
+            setViewMode('register')
+          }
+          onGoToAdmin={() =>
+            setViewMode('admin')
+          }
+        />
+
+        <ExploreStandardsPage
+          onAskAboutStandard={
+            handleOpenChatbotWithQuery
+          }
+        />
+
+        <Footer
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+        />
+      </div>
+    );
+  }
+
+  // ============================================================
+  // LOGIN
+  // ============================================================
+
+  if (viewMode === 'login') {
+    return (
+      <LoginPage
+        onLoginSuccess={() =>
+          setViewMode('landing')
+        }
+        onGoToRegister={() =>
+          setViewMode('register')
+        }
+        onBack={() =>
+          setViewMode('landing')
+        }
+      />
+    );
+  }
+
+  // ============================================================
+  // REGISTER
+  // ============================================================
+
+  if (
+    viewMode === 'register'
+  ) {
+    return (
+      <RegisterPage
+        onGoToLogin={() =>
+          setViewMode('login')
+        }
+        onBack={() =>
+          setViewMode('landing')
+        }
+      />
+    );
+  }
+
+  // ============================================================
+  // ADMIN
+  // ============================================================
+
+  if (viewMode === 'admin') {
+    if (!isAdmin) {
+      setViewMode('landing');
+      return null;
+    }
+
+    return (
+      <AdminDashboard
+        onBack={() =>
+          setViewMode('landing')
+        }
+      />
+    );
+  }
+
+  // ============================================================
+  // LANDING PAGE
+  // ============================================================
+
+  if (viewMode === 'landing') {
+    return (
+      <div className="landing-page-root">
+        <Navbar
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+          viewMode={viewMode}
+          user={user}
+          isAdmin={isAdmin}
+          onLogout={handleLogout}
+          onGoToLogin={() =>
+            setViewMode('login')
+          }
+          onGoToRegister={() =>
+            setViewMode('register')
+          }
+          onGoToAdmin={() =>
+            setViewMode('admin')
+          }
+        />
+
+        <main className="landing-main-content">
+          <HeroSection
+            onOpenChatbot={() =>
+              setViewMode('chatbot')
+            }
+            onExploreStandards={() =>
+              setViewMode(
+                'explore-standards'
+              )
+            }
+          />
+
+          <HowBisNovaHelps
+            onOpenChatbotWithQuery={
+              handleOpenChatbotWithQuery
+            }
+          />
+
+          <StandardsAndLabs
+            onOpenChatbotWithQuery={
+              handleOpenChatbotWithQuery
+            }
+            onExploreStandards={() =>
+              setViewMode(
+                'explore-standards'
+              )
+            }
+          />
+
+          <CtaBanner
+            onOpenChatbot={() =>
+              setViewMode('chatbot')
+            }
+          />
+        </main>
+
+        <Footer
+          onOpenChatbot={() =>
+            setViewMode('chatbot')
+          }
+          onNavigateSection={
+            handleNavigateSection
+          }
+        />
+      </div>
+    );
+  }
+
+  // ============================================================
+  // CHATBOT
+  // ============================================================
+
   return (
     <div className="app-container">
-      {/* Mobile Drawer Backdrop */}
       {isSidebarOpen && (
         <div
           className="sidebar-overlay active"
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={() =>
+            setIsSidebarOpen(false)
+          }
         />
       )}
 
-      {/* Left Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
-        onToggle={handleToggleSidebar}
-        onCloseMobile={() => setIsSidebarOpen(false)}
+        onToggle={
+          handleToggleSidebar
+        }
+        onCloseMobile={() =>
+          setIsSidebarOpen(false)
+        }
         chats={chats}
         activeChatId={activeChatId}
-        onSelectChat={handleSelectChat}
+        onSelectChat={
+          handleSelectChat
+        }
         onNewChat={handleNewChat}
         onPinChat={handlePinChat}
-        onRenameChat={handleRenameChat}
-        onDeleteChat={handleDeleteChat}
-        onNavClick={handleNavClick}
+        onRenameChat={
+          handleRenameChat
+        }
+        onDeleteChat={
+          handleDeleteChat
+        }
+        onNavClick={
+          handleNavClick
+        }
         activeNav={activeNav}
         mascotState={mascotState}
-        onMascotClick={handleMascotClick}
+        onMascotClick={
+          handleMascotClick
+        }
       />
 
-      {/* Main Chat Area */}
       <main className="chat-main">
         <ChatHeader
-          onToggleSidebar={handleToggleSidebar}
-          onGoHome={() => setViewMode('landing')}
-          onClearChat={handleClearChat}
+          onToggleSidebar={
+            handleToggleSidebar
+          }
+          onGoHome={() =>
+            setViewMode('landing')
+          }
+          onClearChat={
+            handleClearChat
+          }
         />
 
         <MessageList
-          messages={activeChat ? activeChat.messages : []}
+          messages={
+            activeChat
+              ? activeChat.messages
+              : []
+          }
           isThinking={isThinking}
-          onChipClick={(query) => handleSendMessage(query)}
-          onFeedback={(messageIndex, rating) => handleFeedback(activeChatId, messageIndex, rating)}
+          onChipClick={(query) =>
+            handleSendMessage(query)
+          }
+          onFeedback={(
+            messageIndex,
+            rating
+          ) =>
+            handleFeedback(
+              activeChatId,
+              messageIndex,
+              rating
+            )
+          }
         />
 
         <ChatInput
-          onSendMessage={handleSendMessage}
-          onTypingChange={(typing) => setIsTyping(typing)}
-          onSelectSuggestion={(query) => handleSendMessage(query)}
+          onSendMessage={
+            handleSendMessage
+          }
+          onTypingChange={(
+            typing
+          ) =>
+            setIsTyping(typing)
+          }
+          onSelectSuggestion={(
+            query
+          ) =>
+            handleSendMessage(query)
+          }
         />
 
         <p className="chat-disclaimer-footer">
-          Informational guidance only — not a substitute for official BIS
-          certification advice.
+          Informational guidance only —
+          not a substitute for official
+          BIS certification advice.
         </p>
       </main>
     </div>

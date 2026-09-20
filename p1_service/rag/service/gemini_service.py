@@ -28,15 +28,12 @@ class GeminiService:
         )
 
     def generate(self, prompt: str) -> str:
-        interaction = self.client.interactions.create(
+        response = self.client.models.generate_content(
             model=self.model,
-            input=prompt,
-            generation_config={
-                "thinking_level": "low",
-            },
+            contents=prompt,
         )
 
-        text = getattr(interaction, "output_text", None)
+        text = getattr(response, "text", None)
 
         if not text:
             raise RuntimeError("Gemini returned an empty response.")
