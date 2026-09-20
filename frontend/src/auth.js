@@ -44,14 +44,36 @@ async function request(path, { method = 'GET', body = null, token = null } = {})
     // No JSON body (e.g. a plain 500) - fine, payload stays null.
   }
 
-  if (!response.ok) {
-    const detail = payload?.detail || null;
-    throw new AuthAPIError(
-      detail || `Request failed (${response.status}).`,
-      response.status,
-      detail
-    );
+if (!response.ok) {
+  const detail = payload?.detail || null;
+
+  let message;
+
+  if (typeof detail === 'string') {
+    message = detail;
+  } else if (Array.isArray(detail)) {
+    message = detail
+      .map((item) => {
+        if (typeof item === 'string') return item;
+        return item?.msg || JSON.stringify(item);
+      })
+      .join('; ');
+  } else if (detail && typeof detail === 'object') {
+    message =
+      detail.message ||
+      detail.msg ||
+      detail.error ||
+      JSON.stringify(detail);
+  } else {
+    message = `Request failed (${response.status}).`;
   }
+
+  throw new AuthAPIError(
+    message,
+    response.status,
+    detail
+  );
+}
 
   return payload;
 }
