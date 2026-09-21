@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 
@@ -112,3 +113,46 @@ class CatalogLabOut(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     source_url: Optional[str] = None
+
+class ChecklistCertificationStepOut(BaseModel):
+    step_no: int
+    title: str
+    description: str
+    source_document_id: Optional[str] = None
+
+
+class ChecklistTestOut(BaseModel):
+    test_id: str
+    standard_id: str
+    test_name: str
+    test_category: Optional[str] = None
+    test_method: Optional[str] = None
+    clause_reference: Optional[str] = None
+    requirement: Optional[str] = None
+    unit: Optional[str] = None
+    acceptance_criteria: Optional[str] = None
+    sample_requirement: Optional[str] = None
+    frequency: Optional[str] = None
+    facility_requirement: Optional[str] = None
+    source_document_id: Optional[str] = None
+
+
+class ChecklistResponse(BaseModel):
+    product: dict
+    standards: list[dict]
+    certification_steps: list[ChecklistCertificationStepOut]
+    tests: list[ChecklistTestOut]
+    inspection_requirements: list[dict]
+
+
+class ChecklistProgressRequest(BaseModel):
+    product_id: str
+    completed_step_ids: list[str] = Field(default_factory=list)
+
+
+class ChecklistProgressResponse(BaseModel):
+    id: UUID
+    user_id: UUID
+    product_id: str
+    completed_step_ids: list[str]
+    updated_at: datetime

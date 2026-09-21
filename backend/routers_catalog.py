@@ -10,11 +10,28 @@ automatically reflect whatever Person 4 adds to knowledge_base/ next.
 """
 
 import pandas as pd
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from backend.auth.dependencies import get_current_user
+from backend.database import supabase
 
-from .models import CatalogStandardOut, CatalogLabOut
-from .dependencies import get_product_pipeline, get_labs_df, get_ah_centres_df
+from .models import (
+    CatalogStandardOut,
+    CatalogLabOut,
+    ChecklistResponse,
+    ChecklistCertificationStepOut,
+    ChecklistTestOut,
+    ChecklistProgressRequest,
+    ChecklistProgressResponse,
+)
 
+from .dependencies import (
+    get_product_pipeline,
+    get_labs_df,
+    get_ah_centres_df,
+    get_certification_steps,
+    get_tests,
+    get_inspection_requirements,
+)
 router = APIRouter()
 
 
@@ -104,3 +121,103 @@ def list_hallmarking_centres():
         }
         for _, row in df.iterrows()
     ]
+
+@router.get("/catalog/checklist/{product_id}", response_model=ChecklistResponse)
+def get_checklist(product_id: str):
+    pipeline = get_product_pipeline()
+
+    # Find the requested product.
+    product_matches = pipeline.products_df[
+        pipeline.products_df["product_id"] == product_id
+    ]
+
+    if product_matches.empty:
+        from fastapi import HTTPException
+
+        raise HTTPException(
+            status_code=404,
+            detail=f"Product '{product_id}' not found",
+        )
+
+    product_row = product_matches.iloc[0]
+    product = product_row.to_dict()
+
+    # Existing pipeline logic already knows how to map
+    # product_id -> applicable standards.
+    standards = pipeline._lookup_standards(product_id)
+
+    # certification_steps.json is grouped by standard_id.
+    certification_records = get_certification_steps()
+    certification_steps = []
+
+    standard_ids = {standard.standard_id for standard in standards}
+
+    for record in certification_records:
+        if record.get("standard_id") in standard_ids:
+            certification_steps.extend(record.get("steps", []))
+
+    # tests.json contains one test record per entry and has standard_id.
+    test_records = get_tests()
+
+    tests = [
+        record
+        for record in test_records
+        if record.get("standard_id") in standard_ids
+    ]
+
+    # Currently the KB file is empty, so this naturally returns [].
+    inspection_records = get_inspection_requirements()
+
+    return ChecklistResponse(
+        product=product,
+        standards=[standard.model_dump() for standard in standards],
+        certification_steps=[
+            ChecklistCertificationStepOut(**step)
+            for step in certification_steps
+        ],
+        tests=[
+            ChecklistTestOut(**test)
+            for test in tests
+        ],
+        inspection_requirements=inspection_records,
+    )
+
+@router.post(
+    "/checklist/progress",
+    response_model=ChecklistProgressResponse,
+)
+def save_checklist_progress(
+    request: ChecklistProgressRequest,
+    current_user=Depends(get_current_user),
+):
+    user_id = str(current_user["id"])
+
+    progress = {
+        "user_id": user_id,
+        "product_id": request.product_id,
+        "completed_step_ids": request.completed_step_ids,
+    }
+
+    try:
+        result = (
+            supabase
+            .table("checklist_progress")
+            .upsert(
+                progress,
+                on_conflict="user_id,product_id",
+            )
+            .execute()
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to save checklist progress",
+        ) from exc
+
+    if not result.data:
+        raise HTTPException(
+            status_code=500,
+            detail="Checklist progress was not saved",
+        )
+
+    return result.data[0]
