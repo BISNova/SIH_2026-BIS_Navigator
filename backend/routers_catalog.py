@@ -221,3 +221,33 @@ def save_checklist_progress(
         )
 
     return result.data[0]
+@router.get(
+    "/checklist/progress",
+    response_model=list[ChecklistProgressResponse],
+)
+def get_checklist_progress(
+    product_id: str | None = None,
+    current_user=Depends(get_current_user),
+):
+    user_id = str(current_user["id"])
+
+    try:
+        query = (
+            supabase
+            .table("checklist_progress")
+            .select("*")
+            .eq("user_id", user_id)
+        )
+
+        if product_id:
+            query = query.eq("product_id", product_id)
+
+        result = query.execute()
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to fetch checklist progress",
+        ) from exc
+
+    return result.data
