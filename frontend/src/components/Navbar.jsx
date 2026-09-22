@@ -10,6 +10,7 @@ export default function Navbar({
   onGoToLogin,
   onGoToRegister,
   onGoToAdmin,
+  onGoToDashboard,
 }) {
   const navClass = (section) => `nav-link${viewMode === section ? ' active' : ''}`;
 
@@ -46,19 +47,29 @@ export default function Navbar({
             Standards
           </a>
           <a
+            href="#testing-labs"
+            className={navClass('testing-labs')}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigateSection('testing-labs');
+            }}
+          >
+            Testing &amp; Labs
+          </a>
+          <a
             href="#faqs"
             className={navClass('faq')}
             onClick={(e) => {
-            e.preventDefault();
-            onNavigateSection('faq-page');
+              e.preventDefault();
+              onNavigateSection('faq-page');
             }}
           >
             FAQs
           </a>
           <a
             href="#dashboard"
-            className="nav-link"
-            onClick={(e) => { e.preventDefault(); onOpenChatbot(); }}
+            className={navClass('dashboard')}
+            onClick={(e) => { e.preventDefault(); onGoToDashboard(); }}
           >
             Dashboard
           </a>

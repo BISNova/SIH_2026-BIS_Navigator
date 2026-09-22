@@ -21,6 +21,42 @@ if str(PROJECT_ROOT) not in sys.path:
 KB_DIR = PROJECT_ROOT / "knowledge_base"
 LABS_PATH = KB_DIR / "structured" / "labs.json"
 
+TESTS_PATH = KB_DIR / "structured" / "tests.json"
+CERTIFICATION_STEPS_PATH = KB_DIR / "structured" / "certification_steps.json"
+INSPECTION_REQUIREMENTS_PATH = KB_DIR / "structured" / "inspection_requirements.json"
+SCHEMES_PATH = KB_DIR / "structured" / "schemes.json"
+
+
+def _load_json_df(path: Path) -> pd.DataFrame:
+    if not path.exists() or path.stat().st_size == 0:
+        return pd.DataFrame()
+    with open(path, encoding="utf-8") as f:
+        records = json.load(f)
+    return pd.DataFrame(records) if records else pd.DataFrame()
+
+
+@lru_cache
+def get_tests_df() -> pd.DataFrame:
+    return _load_json_df(TESTS_PATH)
+
+
+@lru_cache
+def get_certification_steps_df() -> pd.DataFrame:
+    return _load_json_df(CERTIFICATION_STEPS_PATH)
+
+
+@lru_cache
+def get_inspection_requirements_df() -> pd.DataFrame:
+    return _load_json_df(INSPECTION_REQUIREMENTS_PATH)
+
+
+@lru_cache
+def get_schemes_df() -> pd.DataFrame:
+    return _load_json_df(SCHEMES_PATH)
+
+
+
+
 
 @lru_cache
 def get_product_pipeline():

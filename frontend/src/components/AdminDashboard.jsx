@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../AuthContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+
 // NOTE: the exact shape of a "staged change" object wasn't specified by
 // the backend - this renders defensively (falls back to raw JSON for
 // anything it doesn't recognize) so it won't break once you confirm the
@@ -52,8 +54,85 @@ function StagedChangeCard({ change, onReview, isSubmitting }) {
   );
 }
 
+// NEW: backend/routers_admin.py needs the /admin/pending-labs,
+// /admin/pending-labs/{id}/approve and /admin/pending-labs/{id}/reject
+// endpoints from the previous message added before this will show real
+// data - it'll just render an empty state until then, it won't break.
+function PendingLabsSection({ token }) {
+  const [pendingLabs, setPendingLabs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [processingId, setProcessingId] = useState(null);
+
+  const load = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/pending-labs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPendingLabs(res.ok ? await res.json() : []);
+    } catch {
+      setPendingLabs([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function handleDecision(userId, decision) {
+    setProcessingId(userId);
+    try {
+      await fetch(`${API_BASE_URL}/admin/pending-labs/${userId}/${decision}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setPendingLabs((prev) => prev.filter((u) => u.id !== userId));
+    } finally {
+      setProcessingId(null);
+    }
+  }
+
+  return (
+    <div className="admin-section">
+      <h2 className="admin-section-title">Pending Lab Accounts</h2>
+      {isLoading && <p>Loading…</p>}
+      {!isLoading && pendingLabs.length === 0 && (
+        <p className="admin-empty-state">No lab accounts waiting for approval.</p>
+      )}
+      <div className="admin-card-list">
+        {pendingLabs.map((labUser) => (
+          <div key={labUser.id} className="admin-card">
+            <div className="admin-card-header">
+              <span className="admin-card-id">{labUser.email}</span>
+            </div>
+            <h3 className="admin-card-title">{labUser.name}</h3>
+            <div className="admin-card-actions">
+              <button
+                type="button"
+                className="admin-approve-btn"
+                disabled={processingId === labUser.id}
+                onClick={() => handleDecision(labUser.id, 'approve')}
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                className="admin-reject-btn"
+                disabled={processingId === labUser.id}
+                onClick={() => handleDecision(labUser.id, 'reject')}
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard({ onBack }) {
-  const { isAdmin, getStagedChanges, submitReview } = useAuth();
+  const { isAdmin, token, getStagedChanges, submitReview } = useAuth();
   const [changes, setChanges] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -126,6 +205,10 @@ export default function AdminDashboard({ onBack }) {
           Refresh
         </button>
       </div>
+
+      <PendingLabsSection token={token} />
+
+      <h2 className="admin-section-title">Staged Knowledge Base Changes</h2>
 
       {error && <div className="auth-error">{error}</div>}
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Footer({ onOpenChatbot, onNavigateSection }) {
+export default function Footer({ onOpenChatbot, onNavigateSection, onGoToDashboard }) {
   return (
     <footer className="landing-footer">
       <div className="footer-container">
@@ -33,7 +33,11 @@ export default function Footer({ onOpenChatbot, onNavigateSection }) {
                 FAQs
               </a>
             </li>
-            <li><a href="#" onClick={(e) => { e.preventDefault(); onOpenChatbot(); }}>Dashboard</a></li>
+            <li>
+              <a href="#dashboard" onClick={(e) => { e.preventDefault(); onGoToDashboard(); }}>
+                Dashboard
+              </a>
+            </li>
           </ul>
         </div>
 

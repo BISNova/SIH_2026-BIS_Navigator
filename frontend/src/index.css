@@ -1234,8 +1234,13 @@ html, body, #root {
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 28px;
 }
+
+.nav-chatbot-btn {
+  padding: 8px 10px;
+}
+.nav-chatbot-btn { padding: 8px 10px; }
 
 .nav-link {
   text-decoration: none;
@@ -3367,6 +3372,23 @@ html, body, #root {
   transition: all 0.15s ease;
 }
 
+.explore-category-select {
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  max-width: 320px;
+}
+
+.explore-category-select:focus {
+  outline: none;
+  border-color: var(--primary-red, #B83F4A);
+}
+
 .explore-pill:hover {
   border-color: var(--primary-blue);
   color: var(--primary-blue);
@@ -3627,4 +3649,31 @@ html, body, #root {
   color: #9ca3af;
   padding: 6px 16px 10px;
   margin: 0;
+}
+
+.chat-mic-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: background 0.15s ease;
+}
+
+.chat-mic-btn:hover { background: #f0f1f3; }
+
+.chat-mic-btn-active {
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.voice-input-error {
+  font-size: 0.78rem;
+  color: #a12a2a;
+  padding: 4px 12px 0;
 }

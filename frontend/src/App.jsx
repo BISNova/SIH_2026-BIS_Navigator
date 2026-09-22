@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import HowBisNovaHelps from './components/HowBisNovaHelps';
@@ -14,6 +14,7 @@ import ExploreStandardsPage from './components/ExploreStandardsPage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import AdminDashboard from './components/AdminDashboard';
+import UserDashboard from './components/UserDashboard';
 import { useAuth } from './AuthContext';
 import { sendChatMessage, sendFeedback, BISNovaAPIError } from './api';
 import { generateChatTitle } from './chatNaming';
@@ -321,9 +322,7 @@ export default function App() {
     }
 
     if (name === 'Dashboard') {
-      // No dashboard page/design exists yet - safe no-op (fresh chat)
-      // rather than sending meaningless text to the real backend.
-      handleNewChat();
+      setViewMode('dashboard');
       return;
     }
 
@@ -405,6 +404,7 @@ if (viewMode === 'faq') {
         onGoToLogin={() => setViewMode('login')}
         onGoToRegister={() => setViewMode('register')}
         onGoToAdmin={() => setViewMode('admin')}
+        onGoToDashboard={() => setViewMode('dashboard')}
       />
 
       <FAQPage
@@ -414,6 +414,7 @@ if (viewMode === 'faq') {
       <Footer
         onOpenChatbot={() => setViewMode('chatbot')}
         onNavigateSection={handleNavigateSection}
+        onGoToDashboard={() => setViewMode('dashboard')}
       />
     </div>
   );
@@ -435,6 +436,7 @@ if (viewMode === 'explore-standards') {
         onGoToLogin={() => setViewMode('login')}
         onGoToRegister={() => setViewMode('register')}
         onGoToAdmin={() => setViewMode('admin')}
+        onGoToDashboard={() => setViewMode('dashboard')}
       />
 
       <ExploreStandardsPage
@@ -490,6 +492,23 @@ if (viewMode === 'admin') {
   );
 }
 
+// =========================================================================
+// Render User Dashboard View
+// =========================================================================
+if (viewMode === 'dashboard') {
+  if (!user) {
+    setViewMode('login');
+    return null;
+  }
+  return (
+    <UserDashboard
+      onBack={() => setViewMode('landing')}
+      onGoToAdmin={() => setViewMode('admin')}
+      onGoToLogin={() => setViewMode('login')}
+    />
+  );
+}
+
   // =========================================================================
   // Render Landing Page View
   // =========================================================================
@@ -506,6 +525,7 @@ if (viewMode === 'admin') {
           onGoToLogin={() => setViewMode('login')}
           onGoToRegister={() => setViewMode('register')}
           onGoToAdmin={() => setViewMode('admin')}
+          onGoToDashboard={() => setViewMode('dashboard')}
         />
 
         <main className="landing-main-content">

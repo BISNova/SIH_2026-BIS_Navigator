@@ -86,9 +86,19 @@ export default function ExploreStandardsPage({ onAskAboutStandard }) {
             </button>
           )}
         </div>
+        <select
+          className="explore-category-select"
+          value={activeCategory}
+          onChange={e => setActiveCategory(e.target.value)}
+          aria-label="Filter by category"
+        >
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
       </section>
 
-      <section className="explore-standards-content">
+      {/* <section className="explore-standards-content">
         {!loading && !error && (
           <div className="explore-category-pills">
             {categories.map(cat => (
@@ -101,7 +111,9 @@ export default function ExploreStandardsPage({ onAskAboutStandard }) {
               </button>
             ))}
           </div>
-        )}
+        )} */}
+
+      <section className="explore-standards-content">
 
         {loading && (
           <div className="explore-state-message">Loading standards…</div>

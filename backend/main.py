@@ -24,6 +24,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import CORS_ORIGINS
 from .dependencies import get_product_pipeline
 from . import routers_chat, routers_debug, routers_catalog, routers_feedback, routers_admin
+from . import routers_voice, routers_checklist, routers_subscriptions
 from .auth import router as auth_router
 
 
@@ -50,6 +51,9 @@ app.include_router(routers_debug.router, prefix="/api")
 app.include_router(routers_catalog.router, prefix="/api")
 app.include_router(routers_feedback.router, prefix="/api")
 app.include_router(routers_admin.router, prefix="/api")
+app.include_router(routers_voice.router, prefix="/api")
+app.include_router(routers_checklist.router, prefix="/api")
+app.include_router(routers_subscriptions.router, prefix="/api")
 app.include_router(auth_router.router, prefix="/api")
 
 

@@ -36,6 +36,7 @@ LIST_PATTERNS = [
     r"\bhow\s+many\b",
     r"\ball\s+of\b.*\bstandards?\b",
     r"\bshow\s+(me\s+)?(all|every)\b",
+    r"\bgimme\s+\d+\b",
 ]
 
 MANDATORY_FILTER_PATTERN = r"\bmandatory\b"

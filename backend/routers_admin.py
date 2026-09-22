@@ -18,6 +18,8 @@ from pydantic import BaseModel
 from .dependencies import get_staging_queue
 from .auth.dependencies import require_roles
 
+from .database import supabase
+
 
 router = APIRouter()
 
@@ -56,3 +58,26 @@ def review_staged_change(
             "found": False,
         }
     )
+
+@router.get("/admin/pending-labs")
+def list_pending_labs(current_user=Depends(require_roles("admin"))):
+    result = (
+        supabase.table("users")
+        .select("id,name,email,role,status")
+        .eq("role", "lab")
+        .eq("status", "pending")
+        .execute()
+    )
+    return result.data
+
+
+@router.post("/admin/pending-labs/{user_id}/approve")
+def approve_lab(user_id: str, current_user=Depends(require_roles("admin"))):
+    supabase.table("users").update({"status": "active"}).eq("id", user_id).execute()
+    return {"status": "approved"}
+
+
+@router.post("/admin/pending-labs/{user_id}/reject")
+def reject_lab(user_id: str, current_user=Depends(require_roles("admin"))):
+    supabase.table("users").update({"status": "rejected"}).eq("id", user_id).execute()
+    return {"status": "rejected"}

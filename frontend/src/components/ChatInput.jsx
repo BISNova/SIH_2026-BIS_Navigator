@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useVoiceInput } from '../useVoiceInput';
 
 const PROMPT_SUGGESTIONS = [
   { label: 'What is BIS?', query: 'What is Bureau of Indian Standards (BIS)?' },
@@ -12,6 +13,26 @@ export default function ChatInput({ onSendMessage, onTypingChange, onSelectSugge
   const [attachedFile, setAttachedFile] = useState(null);
   const fileInputRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+
+  const {
+    isSupported: isVoiceSupported,
+    isListening,
+    error: voiceError,
+    startListening,
+    stopListening,
+    isTranscribing,
+  } = useVoiceInput();
+
+  function handleMicClick() {
+    if (isListening) {
+      stopListening();
+      return;
+    }
+    startListening((transcript) => {
+      setInputText(transcript);
+      onTypingChange(true);
+    });
+  }
 
   function handleInputChange(e) {
     const val = e.target.value;
@@ -95,6 +116,26 @@ export default function ChatInput({ onSendMessage, onTypingChange, onSelectSugge
           <span className="clip-icon">📎</span>
         </button>
 
+        {(
+          <button
+            type="button"
+            className={`chat-mic-btn${isListening ? ' chat-mic-btn-active' : ''}`}
+            onClick={handleMicClick}
+            title={
+              isListening
+                ? 'Listening… click to stop'
+                : isVoiceSupported
+                  ? 'Speak your question'
+                  : 'Voice input is not supported in this browser'
+            }
+            aria-label="Voice input"
+          >
+            <span className="mic-icon">{isListening ? '⏹️' : '🎙️'}</span>
+          </button>
+        )}
+
+        {isTranscribing && <span className="voice-transcribing-note">Transcribing…</span>}
+
         <input
           type="text"
           className="chat-main-text-input"
@@ -122,6 +163,8 @@ export default function ChatInput({ onSendMessage, onTypingChange, onSelectSugge
           </svg>
         </button>
       </form>
+
+      {voiceError && <div className="voice-input-error">{voiceError}</div>}
 
       {/* Bottom Row: Quick Suggestion Chips + AI Disclaimer */}
       <div className="chat-dock-footer-row">
