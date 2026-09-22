@@ -20,6 +20,10 @@ if str(PROJECT_ROOT) not in sys.path:
 
 KB_DIR = PROJECT_ROOT / "knowledge_base"
 LABS_PATH = KB_DIR / "structured" / "labs.json"
+AH_CENTRES_PATH = KB_DIR / "structured" / "ah_centres.json"
+CERTIFICATION_STEPS_PATH = KB_DIR / "structured" / "certification_steps.json"
+TESTS_PATH = KB_DIR / "structured" / "tests.json"
+INSPECTION_REQUIREMENTS_PATH = KB_DIR / "structured" / "inspection_requirements.json"
 
 TESTS_PATH = KB_DIR / "structured" / "tests.json"
 CERTIFICATION_STEPS_PATH = KB_DIR / "structured" / "certification_steps.json"
@@ -103,3 +107,34 @@ def get_staging_queue():
     from .kb_updater.staging import ChangeStagingQueue
     return ChangeStagingQueue()
 
+@lru_cache
+def get_ah_centres_df() -> pd.DataFrame:
+    """
+    Assaying & Hallmarking Centres are loaded directly from the
+    shared knowledge_base/structured/ah_centres.json file for
+    the catalog endpoint.
+    """
+    with open(AH_CENTRES_PATH, encoding="utf-8") as f:
+        records = json.load(f)
+
+    return pd.DataFrame(records)
+
+@lru_cache
+def get_certification_steps() -> list:
+    with open(CERTIFICATION_STEPS_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@lru_cache
+def get_tests() -> list:
+    with open(TESTS_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@lru_cache
+def get_inspection_requirements() -> list:
+    if INSPECTION_REQUIREMENTS_PATH.stat().st_size == 0:
+        return []
+
+    with open(INSPECTION_REQUIREMENTS_PATH, encoding="utf-8") as f:
+        return json.load(f)
