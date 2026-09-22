@@ -9,7 +9,8 @@
 # --- Web framework ---
 fastapi
 uvicorn[standard]
-
+google-genai
+python-multipart
 # --- Product Intelligence ---
 pandas>=2.0
 scikit-learn>=1.3
