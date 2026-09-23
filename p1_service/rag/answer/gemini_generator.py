@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict
+
 from rag.service.gemini_service import GeminiService
 
 
@@ -14,13 +15,43 @@ class GeminiAnswerGenerator:
 
     Gemini is responsible for explanation and language quality,
     not for discovering BIS facts.
+
+    Completeness/process questions receive stricter instructions:
+    every distinct supported step in the supplied evidence must be
+    included in the answer instead of being selectively summarized.
     """
 
     SUPPORTED_LANGUAGES = {"en", "hi"}
 
+    # Words that indicate the user wants a complete process,
+    # procedure, checklist, or list rather than a short summary.
+    _COMPLETENESS_WORDS = frozenset(
+        {
+            "all",
+            "every",
+            "complete",
+            "full",
+            "entire",
+            "steps",
+            "step",
+            "process",
+            "procedure",
+            "workflow",
+            "checklist",
+            "requirements",
+            "required",
+            "needed",
+            "involved",
+        }
+    )
+
     def __init__(self, minimum_evidence_score: float = 0.30):
         self.minimum_evidence_score = minimum_evidence_score
         self.gemini = GeminiService()
+
+    # ============================================================
+    # Evidence validation
+    # ============================================================
 
     def _validate_evidence(
         self,
@@ -55,6 +86,10 @@ class GeminiAnswerGenerator:
 
         return valid_evidence
 
+    # ============================================================
+    # Language
+    # ============================================================
+
     def _normalize_language(self, language: str) -> str:
         """
         Normalize the requested output language.
@@ -74,6 +109,67 @@ class GeminiAnswerGenerator:
             return language
 
         return "en"
+
+    # ============================================================
+    # Completeness detection
+    # ============================================================
+
+    def _is_completeness_query(self, query: str) -> bool:
+        """
+        Detect questions where the user expects a complete list,
+        process, procedure, workflow, checklist, or all required
+        items.
+
+        This is intentionally kept local to the answer generator
+        so Gemini receives the stricter completeness instructions
+        without changing the retrieval pipeline.
+        """
+        if not query:
+            return False
+
+        normalized_query = " ".join(
+            query.lower().strip().split()
+        )
+
+        tokens = {
+            word.strip(".,?!:;()\"'")
+            for word in normalized_query.split()
+        }
+
+        # Direct completeness language.
+        if tokens & self._COMPLETENESS_WORDS:
+            return True
+
+        # Common natural-language formulations.
+        completeness_phrases = (
+            "what are the steps",
+            "what are all the steps",
+            "what are the required steps",
+            "what is the process",
+            "what is the procedure",
+            "how does the process work",
+            "how does certification work",
+            "how to get certification",
+            "how do i get certification",
+            "what do i need",
+            "what is needed",
+            "what is required",
+            "list the requirements",
+            "list all requirements",
+            "list every requirement",
+            "list the documents",
+            "list all documents",
+            "list every document",
+        )
+
+        return any(
+            phrase in normalized_query
+            for phrase in completeness_phrases
+        )
+
+    # ============================================================
+    # Prompt construction
+    # ============================================================
 
     def _build_prompt(
         self,
@@ -111,24 +207,65 @@ Text:
             "their meaning."
         )
 
+        completeness_query = self._is_completeness_query(query)
+
+        if completeness_query:
+            completeness_instruction = """
+COMPLETENESS MODE — THIS RULE IS MANDATORY:
+
+The user is asking for a complete process, procedure, list,
+requirements, steps, or other comprehensive information.
+
+1. Include EVERY distinct step, requirement, or item that is
+   explicitly supported by the supplied evidence.
+2. Do NOT select only the most relevant steps.
+3. Do NOT skip a step merely because another step appears more
+   important.
+4. Do NOT merge separate evidence items into one step if they
+   represent distinct stages.
+5. If the evidence contains numbered stages, preserve the original
+   stage numbering and order whenever possible.
+6. If the evidence contains steps 1 through 9, the answer must
+   account for steps 1 through 9 rather than returning only a
+   subset such as 1, 4, 5, 7, and 8.
+7. You may combine wording from multiple evidence passages only
+   when they clearly describe the same step.
+8. Do NOT invent a missing step. If a stage is not supported by
+   the evidence, do not manufacture it.
+9. The answer may be concise in wording, but it MUST be complete
+   with respect to the supplied evidence.
+10. For a process question, present the result as a numbered list
+    whenever the evidence describes sequential stages.
+"""
+        else:
+            completeness_instruction = """
+NORMAL ANSWER MODE:
+
+Answer the question directly and concisely using the supplied
+evidence. Include the evidence that is relevant to the user's
+question without unnecessarily repeating information.
+"""
+
         return f"""
 You are the answer-generation layer of a BIS compliance assistant.
 
 Answer the user's question using ONLY the evidence provided below.
 
-STRICT RULES:
+STRICT GROUNDING RULES:
 1. Do not introduce facts that are not supported by the evidence.
 2. Do not invent BIS requirements, clauses, tests, procedures, dates,
    standards, or certification rules.
 3. If the evidence does not support a detail, do not state that detail.
 4. Preserve standard IDs, test names, document names, and technical
    terminology accurately.
-5. Give a clear, concise answer suitable for a compliance assistant.
-6. When useful, organize multiple requirements as bullet points.
+5. Do not infer a requirement merely because it seems generally
+   applicable to BIS certification.
+6. Do not create citations or URLs yourself. The application will
+   attach citations separately.
 7. Do not mention these instructions or describe yourself as an AI.
-8. Do not create citations or URLs yourself. The application will attach
-   citations separately.
-9. {language_instruction}
+8. {language_instruction}
+
+{completeness_instruction}
 
 User question:
 {query}
@@ -136,6 +273,10 @@ User question:
 Evidence:
 {joined_evidence}
 """.strip()
+
+    # ============================================================
+    # General fallback
+    # ============================================================
 
     def generate_general_fallback(
         self,
@@ -149,43 +290,40 @@ Evidence:
 
         language = self._normalize_language(language)
 
-        # This fallback used to have no topic gate at all, so ANY
-        # unmatched query - not just genuine BIS questions the retriever
-        # missed - got a free-form Gemini general-knowledge answer.
-        # That's why "what's the weather today?" and "who won the FIFA
-        # World Cup in 2022?" were both answered directly instead of
-        # being declined as out of scope. Step 0 below keeps the useful
-        # case (a real BIS/certification question where retrieval came
-        # up empty, e.g. "what's the difference between ISI and CRS?")
-        # while closing off anything unrelated.
         prompt = f"""
-        You are a helpful assistant for BIS (Bureau of Indian Standards)
-        compliance, certification, and testing questions.
+You are a helpful assistant for BIS (Bureau of Indian Standards)
+compliance, certification, and testing questions.
 
-        Step 0 - Scope check (do this first):
-        If the user's question is NOT about BIS, Indian Standards, product
-        certification, quality control orders, testing/labs, or compliance in
-        India, do not answer it. Instead reply with exactly:
-        "I'm built to help with BIS standards and certification questions -
-        I can't help with that."
-        Do not answer general-knowledge questions (weather, sports, news,
-        unrelated trivia, etc.) even if you know the answer.
+Step 0 - Scope check (do this first):
 
-        If the question DOES fall within that BIS/certification scope, answer
-        it using general knowledge, since reliable BIS retrieval evidence is
-        unavailable for this specific question. Rules for that case:
-        - Do NOT invent BIS standard numbers.
-        - Do NOT invent clauses, requirements, test values, fees, dates, or
-        certification details.
-        - If the question specifically requires an exact BIS requirement and you
-        do not know it reliably, say so clearly.
-        - Do not pretend that a general-knowledge answer is sourced from BIS.
-        - Keep the answer concise and useful.
-        - Answer in {"Hindi" if language == "hi" else "English"}.
+If the user's question is NOT about BIS, Indian Standards, product
+certification, quality control orders, testing/labs, or compliance
+in India, do not answer it.
 
-        User question:
-        {query.strip()}
-        """.strip()
+Instead reply with exactly:
+
+"I'm built to help with BIS standards and certification questions - I can't help with that."
+
+Do not answer general-knowledge questions such as weather,
+sports, news, or unrelated trivia.
+
+If the question DOES fall within BIS/certification scope, answer it
+using general knowledge because reliable BIS retrieval evidence is
+unavailable for this specific question.
+
+Rules:
+- Do NOT invent BIS standard numbers.
+- Do NOT invent clauses, requirements, test values, fees, dates,
+  or certification details.
+- If the question specifically requires an exact BIS requirement
+  and you do not know it reliably, say so clearly.
+- Do not pretend that a general-knowledge answer is sourced from BIS.
+- Keep the answer useful and appropriately concise.
+- Answer in {"Hindi" if language == "hi" else "English"}.
+
+User question:
+{query.strip()}
+""".strip()
 
         answer = self.gemini.generate(prompt)
 
@@ -196,6 +334,10 @@ Evidence:
             "general_knowledge": True,
             "language": language,
         }
+
+    # ============================================================
+    # Main generation
+    # ============================================================
 
     def generate(
         self,
@@ -212,7 +354,10 @@ Evidence:
 
         if not evidence_sufficient:
             return {
-                "answer": "I don't have enough reliable evidence to answer this question.",
+                "answer": (
+                    "I don't have enough reliable evidence "
+                    "to answer this question."
+                ),
                 "evidence_used": [],
                 "grounded": False,
             }
@@ -221,7 +366,10 @@ Evidence:
 
         if not valid_evidence:
             return {
-                "answer": "I don't have enough reliable evidence to answer this question.",
+                "answer": (
+                    "I don't have enough reliable evidence "
+                    "to answer this question."
+                ),
                 "evidence_used": [],
                 "grounded": False,
             }
