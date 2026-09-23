@@ -1021,6 +1021,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
       </div>
     );
@@ -1107,6 +1108,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
       </div>
     );
@@ -1129,6 +1131,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
 
         <ExploreStandardsPage onAskAboutStandard={handleOpenChatbotWithQuery} />
@@ -1136,6 +1139,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
       </div>
     );
@@ -1158,6 +1162,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
 
         <TestingLabsPage onOpenChatbot={handleOpenChatbotWithQuery} />
@@ -1165,6 +1170,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
       </div>
     );
@@ -1227,6 +1233,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
+          onGoToDashboard={() => setViewMode("dashboard")}
         />
 
         <main className="landing-main-content">
@@ -1250,6 +1257,8 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
+          onGoToDashboard={() => setViewMode("dashboard")}
+          
         />
       </div>
     );
@@ -1306,11 +1315,6 @@ export default function App() {
           onTypingChange={(typing) => setIsTyping(typing)}
           onSelectSuggestion={(query) => handleSendMessage(query)}
         />
-
-        <p className="chat-disclaimer-footer">
-          Informational guidance only — not a substitute for official BIS
-          certification advice.
-        </p>
       </main>
     </div>
   );
