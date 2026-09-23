@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -17,6 +17,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import AdminDashboard from "./components/AdminDashboard";
 import UserDashboard from "./components/UserDashboard";
+import LabInbox from "./components/LabInbox";
 
 import { useAuth } from "./AuthContext";
 
@@ -841,6 +842,10 @@ export default function App() {
   // SIDEBAR NAVIGATION
   // ============================================================
 
+  function handleGoToDashboard() {
+    setViewMode(user && user.role === "lab" ? "lab-inbox" : "dashboard");
+  }
+
   function handleNavClick(name) {
     setActiveNav(name);
 
@@ -861,7 +866,7 @@ export default function App() {
     }
 
     if (name === "Dashboard") {
-      setViewMode("dashboard");
+      setViewMode(user && user.role === "lab" ? "lab-inbox" : "dashboard");
       handleNewChat();
       return;
     }
@@ -983,7 +988,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <FAQPage onOpenChatbot={() => setViewMode("chatbot")} />
@@ -991,7 +996,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
       </div>
     );
@@ -1013,7 +1018,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <ExploreStandardsPage onAskAboutStandard={handleOpenChatbotWithQuery} />
@@ -1021,7 +1026,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
       </div>
     );
@@ -1072,6 +1077,10 @@ export default function App() {
       setViewMode("login");
       return null;
     }
+    if (user.role === "lab") {
+      setViewMode("lab-inbox");
+      return null;
+    }
     return (
       <UserDashboard
         onBack={() => setViewMode("landing")}
@@ -1079,6 +1088,17 @@ export default function App() {
         onGoToLogin={() => setViewMode("login")}
       />
     );
+  }
+
+  // =========================================================================
+  // Render Lab Inbox View (lab-role users only)
+  // =========================================================================
+  if (viewMode === "lab-inbox") {
+    if (!user) {
+      setViewMode("login");
+      return null;
+    }
+    return <LabInbox onBack={() => setViewMode("landing")} />;
   }
 
   // =========================================================================
@@ -1100,7 +1120,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <FAQPage onOpenChatbot={() => setViewMode("chatbot")} />
@@ -1108,7 +1128,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
       </div>
     );
@@ -1131,7 +1151,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <ExploreStandardsPage onAskAboutStandard={handleOpenChatbotWithQuery} />
@@ -1139,7 +1159,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
       </div>
     );
@@ -1162,7 +1182,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <TestingLabsPage onOpenChatbot={handleOpenChatbotWithQuery} />
@@ -1170,7 +1190,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
       </div>
     );
@@ -1233,7 +1253,7 @@ export default function App() {
           onGoToLogin={() => setViewMode("login")}
           onGoToRegister={() => setViewMode("register")}
           onGoToAdmin={() => setViewMode("admin")}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
         />
 
         <main className="landing-main-content">
@@ -1257,7 +1277,7 @@ export default function App() {
         <Footer
           onOpenChatbot={() => setViewMode("chatbot")}
           onNavigateSection={handleNavigateSection}
-          onGoToDashboard={() => setViewMode("dashboard")}
+          onGoToDashboard={handleGoToDashboard}
           
         />
       </div>

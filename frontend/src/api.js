@@ -297,3 +297,57 @@ export async function fetchHallmarkingCentres() {
 
   return handleResponse(response);
 }
+
+/**
+ * Save a newly-registered lab's contact number + hours. Public - the
+ * lab can't log in yet while pending, so this is called right after
+ * registration using the id the register response returns.
+ */
+export async function submitLabProfile({ userId, contactNumber, openingTime, closingTime }) {
+  let response;
+
+  try {
+    response = await fetch(
+      `${API_BASE_URL}/labs/profile`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          contact_number: contactNumber,
+          opening_time: openingTime,
+          closing_time: closingTime,
+        }),
+      }
+    );
+  } catch {
+    throw new BISNovaAPIError(
+      'Could not reach the BISNova server. Please check your connection and try again.'
+    );
+  }
+
+  return handleResponse(response);
+}
+
+
+/**
+ * Fetch approved platform-registered labs (brand-new labs, not the
+ * original scraped BIS catalog) to merge into the Testing & Labs page.
+ */
+export async function fetchPlatformLabs() {
+  let response;
+
+  try {
+    response = await fetch(
+      `${API_BASE_URL}/labs/platform-registered`
+    );
+  } catch {
+    throw new BISNovaAPIError(
+      'Could not reach the BISNova server. Please check your connection and try again.'
+    );
+  }
+
+  return handleResponse(response);
+}

@@ -2,12 +2,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
     fetchCatalogLabs,
     fetchHallmarkingCentres,
+    fetchPlatformLabs,
     BISNovaAPIError,
 } from '../api';
+import { useAuth } from '../AuthContext';
+import BookingModal from './BookingModal';
 
 export default function TestingLabsPage({ onOpenChatbot }) {
     const [activeTab, setActiveTab] = useState('labs');
-
+    const { user } = useAuth();
+    const [bookingLab, setBookingLab] = useState(null);
     // -----------------------------
     // Laboratory data
     // -----------------------------
@@ -49,9 +53,25 @@ export default function TestingLabsPage({ onOpenChatbot }) {
         fetchCatalogLabs()
             .then(data => {
                 if (cancelled) return;
+                const catalogLabs = (Array.isArray(data) ? data : []).map(l => ({
+                    ...l,
+                    platform_registered: false,
+                    lab_user_id: null,
+                }));
 
-                setLabs(Array.isArray(data) ? data : []);
-                setLabsLoading(false);
+                // Second call - additive only, never blocks or breaks
+                // the existing catalog labs if it fails.
+                fetchPlatformLabs()
+                    .then(platformLabs => {
+                        if (cancelled) return;
+                        setLabs([...catalogLabs, ...(Array.isArray(platformLabs) ? platformLabs : [])]);
+                        setLabsLoading(false);
+                    })
+                    .catch(() => {
+                        if (cancelled) return;
+                        setLabs(catalogLabs);
+                        setLabsLoading(false);
+                    });
             })
             .catch(err => {
                 if (cancelled) return;
@@ -628,12 +648,25 @@ export default function TestingLabsPage({ onOpenChatbot }) {
 
                                             <div className="testing-lab-card-actions">
 
-                                                <button
-                                                    type="button"
-                                                    className="testing-lab-scope-btn"
-                                                >
-                                                    View Testing Scope →
-                                                </button>
+                                                 {lab.platform_registered ? (
+                                                    <button
+                                                        type="button"
+                                                        className="testing-lab-scope-btn testing-lab-book-btn"
+                                                        onClick={() => setBookingLab(lab)}
+                                                    >
+                                                        Book Testing Slot →
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        className="testing-lab-scope-btn testing-lab-book-btn-disabled"
+                                                        onClick={() =>
+                                                            alert('This lab is not registered on our platform yet - contact them directly using the details above.')
+                                                        }
+                                                    >
+                                                        Book Testing Slot →
+                                                    </button>
+                                                )}
 
                                                 <button
                                                     type="button"
@@ -799,6 +832,13 @@ export default function TestingLabsPage({ onOpenChatbot }) {
                 )}
 
             </main>
+            {bookingLab && (
+                <BookingModal
+                    lab={bookingLab}
+                    currentUser={user}
+                    onClose={() => setBookingLab(null)}
+                />
+            )}
         </div>
     );
 }

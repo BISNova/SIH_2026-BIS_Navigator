@@ -133,19 +133,27 @@ def detect_language(text: str) -> LanguageDetectionResult:
 logger = logging.getLogger(__name__)
 
 
-def translate_to_english(text: str, source_language: str) -> str:
+def _translate_to_english_all(text: str, source_language: str) -> list[str]:
     """
-    Best-effort translation to English. Tries GoogleTranslator first,
-    then falls back to MyMemoryTranslator (a different free, no-API-key
-    endpoint) if the first is unreachable or rate-limited - one flaky
-    provider shouldn't silently kill every Hindi query. Failures are
-    now logged instead of swallowed, so you can actually see in your
-    server logs whether translation is working in your deployment.
+    Try every configured free translator and return every DISTINCT
+    successful translation, instead of stopping at the first success.
+
+    Why: GoogleTranslator and MyMemoryTranslator are independent
+    services and often phrase the same source sentence differently -
+    one may render a domain term in a way that matches the KB's
+    wording, the other may not. Keeping only "whichever ran first"
+    means retrieval quality depends on an arbitrary ordering. Callers
+    that want retrieval resilience should search with ALL of these
+    (see EvidencePipeline.run()'s query_variants) rather than trust
+    a single one.
     """
     if source_language == "en":
-        return text
+        return [text]
 
     from deep_translator import GoogleTranslator, MyMemoryTranslator
+
+    variants: list[str] = []
+    seen: set[str] = set()
 
     for translator_cls, kwargs in [
         (GoogleTranslator, {"source": source_language, "target": "en"}),
@@ -153,28 +161,47 @@ def translate_to_english(text: str, source_language: str) -> str:
     ]:
         try:
             translated = translator_cls(**kwargs).translate(text)
+
             if translated and translated.strip():
-                return translated
-            logger.warning(
-                "%s returned empty translation for lang=%s query=%r",
-                translator_cls.__name__, source_language, text,
-            )
+                key = translated.strip().lower()
+
+                if key not in seen:
+                    seen.add(key)
+                    variants.append(translated.strip())
+
+            else:
+                logger.warning(
+                    "%s returned empty translation for lang=%s query=%r",
+                    translator_cls.__name__, source_language, text,
+                )
         except Exception as exc:
             logger.warning(
                 "%s failed for lang=%s query=%r: %s",
                 translator_cls.__name__, source_language, text, exc,
             )
 
-    logger.error(
-        "All translators failed for lang=%s query=%r - falling back to original text",
-        source_language, text,
-    )
-    return text
+    if not variants:
+        logger.error(
+            "All translators failed for lang=%s query=%r - falling back to original text",
+            source_language, text,
+        )
+
+    return variants
+
+
+def translate_to_english(text: str, source_language: str) -> str:
+    """
+    Best-effort SINGLE translation to English - kept for existing
+    callers. Returns the first successful translator's output, or the
+    original text unchanged if every translator failed.
+    """
+    variants = _translate_to_english_all(text, source_language)
+    return variants[0] if variants else text
 
 
 def normalize_query_to_english(text: str) -> tuple[str, str]:
     """
-    The one function callers actually need: detect the language, and
+    The original single-result entry point: detect the language, and
     return (english_text, detected_language_code). If detection or
     translation fails or isn't needed, english_text == text.
     """
@@ -184,3 +211,29 @@ def normalize_query_to_english(text: str) -> tuple[str, str]:
 
     translated = translate_to_english(text, result.language)
     return translated, result.language
+
+
+def normalize_query_to_english_variants(text: str) -> tuple[list[str], str]:
+    """
+    Like normalize_query_to_english, but returns EVERY distinct
+    successful translation instead of just one. Use this wherever the
+    result feeds something that can search/rank against multiple
+    phrasings and keep the best (product matching, evidence
+    retrieval) - it costs nothing extra (both translators already run
+    today, one of them was just being discarded), and it means one
+    translator's odd phrasing of a domain term no longer determines
+    the whole result on its own.
+
+    Always returns at least one element (falls back to [text] if every
+    translator failed, same fallback behavior as translate_to_english).
+    """
+    result = detect_language(text)
+    if not result.is_non_english:
+        return [text], "en"
+
+    variants = _translate_to_english_all(text, result.language)
+
+    if not variants:
+        variants = [text]
+
+    return variants, result.language

@@ -77,6 +77,15 @@ class ProductMatchResult(BaseModel):
     normalized_query: str
     detected_language: str = "en"  # ISO 639-1 code; "en" if no translation was needed
 
+    # Every distinct English translation P2's translators produced for
+    # this query (see language.normalize_query_to_english_variants).
+    # normalized_query is always variants[0] when non-empty - this
+    # field exists so P1 can search with ALL of them and keep whatever
+    # finds the best evidence, instead of only ever seeing the one
+    # translator that happened to run first. Empty for English queries
+    # (nothing to vary).
+    normalized_query_variants: List[str] = []
+
     status: str  # "matched" | "clarification_needed" | "not_found"
 
     product_candidates: List[ProductCandidate] = []

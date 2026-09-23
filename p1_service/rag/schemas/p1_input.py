@@ -27,6 +27,13 @@ class P1Input(BaseModel):
     query: str
     normalized_query: Optional[str] = None
 
+    # Every distinct English translation P2's translators produced for
+    # this query (language.normalize_query_to_english_variants on the
+    # P2 side). normalized_query is always variants[0] when non-empty.
+    # Empty for English queries (nothing to vary) - see
+    # EvidencePipeline.run()'s query_variants for how P1 uses this.
+    normalized_query_variants: List[str] = Field(default_factory=list)
+
     status: str
 
     matched_product: Optional[MatchedProduct] = None

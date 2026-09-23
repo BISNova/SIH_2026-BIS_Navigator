@@ -27,7 +27,7 @@ from .matcher import ProductMatcher
 from .normalize import normalize
 from .confidence import decide
 from .clarification import get_clarification
-from .language import normalize_query_to_english
+from .language import normalize_query_to_english_variants
 from .schemas import (
     ProductMatchResult,
     ProductCandidate,
@@ -163,26 +163,42 @@ class ProductIntelligencePipeline:
         correctly right after "I make pressure cookers" - see
         backend/session_store.py for where context_hint comes from.
         """
-        english_query, detected_language = normalize_query_to_english(query)
+        english_variants, detected_language = normalize_query_to_english_variants(query)
 
-        result = self._process_english(english_query, original_query=query)
+        result = self._process_english(english_variants, original_query=query)
         result.detected_language = detected_language
 
         if (
             result.status == "not_found"
             and context_hint
-            and _looks_like_followup(normalize(english_query))
+            and _looks_like_followup(normalize(english_variants[0]))
         ):
-            augmented = f"{english_query} {context_hint}".strip()
-            augmented_result = self._process_english(augmented, original_query=query)
+            augmented_variants = [
+                f"{variant} {context_hint}".strip()
+                for variant in english_variants
+            ]
+            augmented_result = self._process_english(augmented_variants, original_query=query)
             if augmented_result.status != "not_found":
                 augmented_result.detected_language = detected_language
                 return augmented_result
 
         return result
 
-    def _process_english(self, query: str, original_query: str) -> ProductMatchResult:
-        ranked = self.matcher.rank(query)  # [(row_index, score), ...] all rows
+    def _process_english(self, query_variants: List[str], original_query: str) -> ProductMatchResult:
+        # Rank against EVERY translation variant and keep the best
+        # score per product row, instead of trusting a single
+        # translator's phrasing. Costs nothing extra in API terms -
+        # TF-IDF matching is pure local computation, and the variants
+        # themselves already come free from language.py running both
+        # translators anyway.
+        best_scores: dict[int, float] = {}
+
+        for variant in query_variants:
+            for row_index, score in self.matcher.rank(variant):
+                if score > best_scores.get(row_index, 0.0):
+                    best_scores[row_index] = score
+
+        ranked = sorted(best_scores.items(), key=lambda item: item[1], reverse=True)
 
         top_candidates: List[ProductCandidate] = [
             self._row_to_candidate(idx, score)
@@ -196,7 +212,8 @@ class ProductIntelligencePipeline:
 
         result = ProductMatchResult(
             query=original_query,
-            normalized_query=normalize(query),
+            normalized_query=normalize(query_variants[0]),
+            normalized_query_variants=[normalize(v) for v in query_variants],
             status=decision.status,
             product_candidates=top_candidates,
             confidence_score=round(float(top1_score), 4),

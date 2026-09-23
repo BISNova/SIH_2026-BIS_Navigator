@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { AuthAPIError } from '../auth';
+import { submitLabProfile } from '../api';
 
 // Admin is deliberately not an option here - server-side seeded only,
 // per backend confirmation. Only these three are allowed from the
@@ -21,6 +22,9 @@ export default function RegisterPage({ onGoToLogin, onBack }) {
   const [successMessage, setSuccessMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [contactNumber, setContactNumber] = useState('');
+  const [openingTime, setOpeningTime] = useState('');
+  const [closingTime, setClosingTime] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,7 +33,23 @@ export default function RegisterPage({ onGoToLogin, onBack }) {
     setIsSubmitting(true);
 
     try {
-      await register({ name, email, password, role });
+      const newUser = await register({ name, email, password, role });
+
+      if (role === 'lab') {
+        // Best-effort - if this one call fails, the account still
+        // exists and is pending; the lab can be asked to re-submit
+        // hours after approval rather than losing the whole signup.
+        try {
+          await submitLabProfile({
+            userId: newUser.id,
+            contactNumber,
+            openingTime,
+            closingTime,
+          });
+        } catch {
+          // Swallowed deliberately - see comment above.
+        }
+      }
 
       // Registration never auto-logs in (see AuthContext) - so the
       // message here is the ONLY place a lab user finds out they're
@@ -133,9 +153,44 @@ export default function RegisterPage({ onGoToLogin, onBack }) {
             </label>
 
             {role === 'lab' && (
-              <p className="auth-hint">
-                Lab accounts require manual approval before you can log in.
-              </p>
+              <>
+                <label className="auth-label">
+                  Contact Number
+                  <input
+                    type="tel"
+                    className="auth-input"
+                    value={contactNumber}
+                    onChange={(e) => setContactNumber(e.target.value)}
+                    required
+                  />
+                </label>
+
+                <label className="auth-label">
+                  Opening Time
+                  <input
+                    type="time"
+                    className="auth-input"
+                    value={openingTime}
+                    onChange={(e) => setOpeningTime(e.target.value)}
+                    required
+                  />
+                </label>
+
+                <label className="auth-label">
+                  Closing Time
+                  <input
+                    type="time"
+                    className="auth-input"
+                    value={closingTime}
+                    onChange={(e) => setClosingTime(e.target.value)}
+                    required
+                  />
+                </label>
+
+                <p className="auth-hint">
+                  Lab accounts require manual approval before you can log in.
+                </p>
+              </>
             )}
 
             <button type="submit" className="auth-submit-btn" disabled={isSubmitting}>

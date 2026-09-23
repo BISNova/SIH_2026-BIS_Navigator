@@ -80,6 +80,19 @@ class P1Service:
             )
 
         # --------------------------------------------------
+        # 3b. Every distinct English translation P2's translators
+        #     produced for this query (Google Translate's and
+        #     MyMemory's phrasings of the same source text often
+        #     differ). Passed through so EvidencePipeline can search
+        #     with all of them and keep whichever finds the best
+        #     evidence - see EvidencePipeline.run().
+        # --------------------------------------------------
+
+        query_variants = list(
+            getattr(p1_input, "normalized_query_variants", []) or []
+        )
+
+        # --------------------------------------------------
         # 4. Get applicable standard IDs
         # --------------------------------------------------
 
@@ -98,6 +111,7 @@ class P1Service:
             query=query,
             standard_ids=standard_ids,
             language=p1_input.language,
+            query_variants=query_variants,
         )
 
         # --------------------------------------------------

@@ -39,6 +39,8 @@ from . import (
     routers_admin,
     routers_voice,
     routers_subscriptions,
+    routers_labs,
+    routers_lab_chat,
 )
 from .auth import router as auth_router
 
@@ -83,6 +85,8 @@ app.include_router(routers_feedback.router, prefix="/api")
 app.include_router(routers_admin.router, prefix="/api")
 app.include_router(routers_voice.router, prefix="/api")
 app.include_router(routers_subscriptions.router, prefix="/api")
+app.include_router(routers_labs.router, prefix="/api")
+app.include_router(routers_lab_chat.router, prefix="/api")
 app.include_router(auth_router.router, prefix="/api")
 app.include_router(
     routers_chat_history.router,

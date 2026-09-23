@@ -401,3 +401,235 @@
   .checklist-page, .checklist-page * { visibility: visible; }
   .checklist-page { position: absolute; left: 0; top: 0; width: 100%; }
 }
+
+/* --- Lab booking button states --- */
+
+.testing-lab-book-btn {
+  background: var(--primary-red, #B83F4A);
+  color: #fff;
+  border-color: var(--primary-red, #B83F4A);
+}
+
+.testing-lab-book-btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Booking modal --- */
+
+.booking-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.booking-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.booking-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.booking-modal-header h3 { flex: 1; margin: 0; font-size: 1.05rem; }
+
+.booking-call-btn {
+  text-decoration: none;
+  background: #e9f8ef;
+  color: #1e7a44;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.booking-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.booking-modal-hours {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin: 0 0 6px;
+}
+
+.booking-modal-disclaimer {
+  font-size: 0.75rem;
+  color: #8b8f98;
+  margin: 0 0 14px;
+}
+
+/* --- Shared mini chat box (booking modal + lab inbox thread) --- */
+
+.mini-chat-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 220px;
+}
+
+.mini-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 2px;
+}
+
+.mini-chat-bubble {
+  max-width: 78%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.mini-chat-bubble.mine {
+  align-self: flex-end;
+  background: var(--primary-red, #B83F4A);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.mini-chat-bubble.theirs {
+  align-self: flex-start;
+  background: #f0f1f3;
+  color: #171416;
+  border-bottom-left-radius: 4px;
+}
+
+.mini-chat-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mini-chat-input-row .auth-input { margin: 0; }
+.mini-chat-input-row .auth-submit-btn { width: auto; padding: 10px 18px; white-space: nowrap; }
+
+/* --- Lab inbox page (WhatsApp-style two-pane) --- */
+
+.lab-inbox-page {
+  display: flex;
+  height: 100vh;
+}
+
+.lab-inbox-sidebar {
+  width: 300px;
+  border-right: 1px solid #e2e4ea;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.lab-inbox-sidebar-header h2 {
+  font-size: 1.1rem;
+  margin: 10px 0 16px;
+}
+
+.lab-inbox-conversation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lab-inbox-conversation-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.lab-inbox-conversation-item:hover,
+.lab-inbox-conversation-item.active {
+  background: #f7f7f9;
+}
+
+.lab-inbox-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary-red, #B83F4A);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.lab-inbox-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 24px;
+}
+
+.lab-inbox-empty-state {
+  margin: auto;
+  color: #8b8f98;
+}
+
+.lab-inbox-thread-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e2e4ea;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.lab-inbox-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+}
+
+.lab-inbox-status-dot.online {
+  background: #1e7a44;
+}
+
+.lab-inbox-thread-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lab-inbox-composer {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.lab-inbox-composer .auth-input { margin: 0; }
+.lab-inbox-composer .auth-submit-btn { width: auto; padding: 10px 18px; white-space: nowrap; }
