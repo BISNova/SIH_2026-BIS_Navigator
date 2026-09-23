@@ -3,9 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import sys
 from typing import Any
+
 from fastembed import TextEmbedding
-# 
-# from sentence_transformers import SentenceTransformer
 
 
 # ============================================================
@@ -24,19 +23,6 @@ if str(RAG_DIR) not in sys.path:
 
 # ============================================================
 # Existing P1 components
-#
-# FIX (found during P2/frontend integration testing): these were
-# previously bare imports ("from retrieval.retriever import ..."),
-# which relied on RAG_DIR being separately added to sys.path. That
-# meant this file's modules (e.g. answer.gemini_generator) and the
-# REST of the codebase's modules (e.g. rag.answer.gemini_generator,
-# used in rag/service/p1_service.py and rag/knowledge/*.py) were two
-# DIFFERENT module objects in sys.modules, despite being the same
-# file. Patching/mocking one (e.g. in a test) silently didn't affect
-# the other, which is a real and confusing latent bug for anyone
-# writing tests against this pipeline. Normalized to the same
-# "rag."-prefixed absolute imports used everywhere else in this
-# codebase so there's only ever one module identity.
 # ============================================================
 
 from rag.retrieval.retriever import EvidenceRetriever
@@ -118,9 +104,25 @@ class EvidencePipeline:
     query-aware evidence selection.
 
     For test-completeness queries, authoritative P4 TEST
-    records are preserved in full. Reranking determines their
-    order, but the normal semantic-score threshold is not used
-    to discard an authoritative P4 test record.
+    records are preserved in full.
+
+    IMPORTANT:
+    A query can contain a test-completeness phrase while also
+    asking for documents, factory inspection, licensing,
+    certification process, etc.
+
+    Such a query must NOT enter the test-only preservation path.
+
+    Example:
+
+        "What tests are required?"
+            → test-completeness query
+
+        "What standard applies, what tests are required,
+         what documents are needed, and how does factory
+         inspection work?"
+            → multi-part completeness query
+            → NOT test-only
     """
 
     # ========================================================
@@ -135,8 +137,9 @@ class EvidencePipeline:
     ):
         print("Loading embedding model...")
 
-        # self.model = SentenceTransformer(model_name)
-        self.model = TextEmbedding(model_name=f"sentence-transformers/{model_name}")
+        self.model = TextEmbedding(
+            model_name=f"sentence-transformers/{model_name}"
+        )
 
         print("Embedding model loaded.")
 
@@ -176,63 +179,91 @@ class EvidencePipeline:
     # Query embedding
     # ========================================================
 
-    def _embed_query(self, query: str) -> list[float]:
-        # embedding = self.model.encode(
-        #     query,
-        #     normalize_embeddings=True,
-        # )
-        embedding = next(self.model.embed([query]))
-        return embedding.tolist()
+    def _embed_query(
+        self,
+        query: str,
+    ) -> list[float]:
 
-    def _embed_queries(self, queries: list[str]) -> list[list[float]]:
-        """Batch form of _embed_query - one local model call for N texts."""
-        if not queries:
-            return []
-        return [embedding.tolist() for embedding in self.model.embed(queries)]
+        embedding = next(
+            self.model.embed([query])
+        )
+
+        return embedding.tolist()
 
     # ========================================================
     # Similarity
     # ========================================================
-
-    @staticmethod
-    def _cosine_similarity(
-        vector_a: list[float],
-        vector_b: list[float],
-    ) -> float:
-        """Pure vector math - both vectors are already normalized by fastembed."""
-        if not vector_a or not vector_b:
-            return 0.0
-
-        similarity = float(
-            sum(a * b for a, b in zip(vector_a, vector_b))
-        )
-
-        return max(0.0, min(similarity, 1.0))
 
     def _calculate_similarity(
         self,
         query_embedding: list[float],
         text: str,
     ) -> float:
+
         if not text or not text.strip():
             return 0.0
 
-        # evidence_embedding = self.model.encode(
-        #     text,
-        #     normalize_embeddings=True,
-        # )
-        evidence_embedding = next(self.model.embed([text]))
+        evidence_embedding = next(
+            self.model.embed([text])
+        )
 
-        return self._cosine_similarity(query_embedding, evidence_embedding.tolist())
+        similarity = float(
+            sum(
+                q * e
+                for q, e in zip(
+                    query_embedding,
+                    evidence_embedding.tolist(),
+                )
+            )
+        )
+
+        return max(
+            0.0,
+            min(similarity, 1.0),
+        )
 
     # ========================================================
     # General completeness detection
     # ========================================================
 
+    _COMPLETENESS_PROCESS_WORDS = frozenset({
+        "step",
+        "steps",
+        "process",
+        "procedure",
+        "workflow",
+        "licence",
+        "license",
+        "certification",
+        "requirement",
+        "requirements",
+        "document",
+        "documents",
+        "checklist",
+    })
+
+    _COMPLETENESS_SCOPE_WORDS = frozenset({
+        "all",
+        "every",
+        "complete",
+        "full",
+        "entire",
+        "first",
+        "next",
+        "final",
+        "last",
+        "before",
+        "after",
+        "required",
+        "needed",
+        "involved",
+    })
+
     def _is_completeness_query(
         self,
         query: str,
     ) -> bool:
+
         if not query:
             return False
 
@@ -240,61 +271,24 @@ class EvidencePipeline:
             query.lower().strip().split()
         )
 
-        completeness_terms = (
-            "what tests are required",
-            "what tests are needed",
-            "which tests are required",
-            "which tests are needed",
-            "list all tests",
-            "list the tests",
-            "all required tests",
-            "all tests",
-            "required tests",
-            "tests required",
-            "what requirements are required",
-            "what are the requirements",
-            "which requirements are required",
-            "list all requirements",
-            "list the requirements",
-            "all requirements",
-            "required requirements",
-            "what documents are required",
-            "which documents are required",
-            "list all documents",
-            "list the documents",
-            "all required documents",
-            "what certification steps",
-            "what are the certification steps",
-            "list all certification steps",
-            "all certification steps",
-            # Licence/certification process & steps phrasing - added after
-            # observing "what are the steps involved in granting a BIS
-            # licence under IS 2082:2018?" only return 4 of 9 real steps
-            # because it matched none of the phrases above and fell back
-            # to plain top-5 semantic reranking instead of full P4 coverage.
-            "what are the steps",
-            "steps involved",
-            "steps required",
-            "steps to obtain",
-            "steps for",
-            "list all steps",
-            "all steps",
-            "licence steps",
-            "license steps",
-            "certification process",
-            "how to obtain a licence",
-            "how to obtain a license",
-            "how to get a bis licence",
-            "how to get a bis license",
-            "process for obtaining",
-            "procedure for obtaining",
-            "grant of licence",
-            "grant of license",
+        tokens = {
+            word.strip(
+                ".,?!:;()\"'"
+            )
+            for word in normalized_query.split()
+        }
+
+        has_process_word = bool(
+            tokens & self._COMPLETENESS_PROCESS_WORDS
         )
 
-        return any(
-            phrase in normalized_query
-            for phrase in completeness_terms
+        has_scope_word = bool(
+            tokens & self._COMPLETENESS_SCOPE_WORDS
+        )
+
+        return (
+            has_process_word
+            and has_scope_word
         )
 
     # ========================================================
@@ -305,6 +299,7 @@ class EvidencePipeline:
         self,
         query: str,
     ) -> bool:
+
         if not query:
             return False
 
@@ -351,21 +346,81 @@ class EvidencePipeline:
         )
 
     # ========================================================
+    # Multi-part query detection
+    # ========================================================
+
+    def _is_multi_part_query(
+        self,
+        query: str,
+    ) -> bool:
+        """
+        Detect whether a test-related query also asks for
+        other information categories.
+
+        This prevents a multi-part query such as:
+
+            "What standard applies, what tests are required,
+             what documents are needed, and how does factory
+             inspection work?"
+
+        from being treated as a test-only completeness query.
+
+        The test-completeness preservation path is intentionally
+        kept for genuinely test-focused questions.
+        """
+
+        if not query:
+            return False
+
+        normalized_query = " ".join(
+            query.lower().strip().split()
+        )
+
+        non_test_intent_terms = (
+            "standard",
+            "standards",
+            "document",
+            "documents",
+            "factory",
+            "inspection",
+            "assessment",
+            "licence",
+            "license",
+            "certification",
+            "process",
+            "procedure",
+            "application",
+            "marking",
+            "labelling",
+            "after getting",
+            "after obtaining",
+        )
+
+        matched_terms = sum(
+            term in normalized_query
+            for term in non_test_intent_terms
+        )
+
+        return matched_terms >= 2
+
+    # ========================================================
     # Prepare P4 evidence
     # ========================================================
 
     def _prepare_p4_evidence(
         self,
         query: str,
-        query_embeddings: list[list[float]],
+        query_embedding: list[float],
         standard_ids: list[str],
     ) -> list[dict[str, Any]]:
+
         if not standard_ids:
             return []
 
         p4_records: list[Any] = []
 
         for standard_id in standard_ids:
+
             records = (
                 self.p4_evidence_builder.build_for_standard(
                     standard_id
@@ -375,7 +430,7 @@ class EvidencePipeline:
             if records:
                 p4_records.extend(records)
 
-        items: list[dict[str, Any]] = []
+        prepared: list[dict[str, Any]] = []
 
         for record in p4_records:
 
@@ -396,28 +451,9 @@ class EvidencePipeline:
             if not text or not str(text).strip():
                 continue
 
-            items.append(item)
-
-        if not items:
-            return []
-
-        # One batched local-model call for every P4 record text,
-        # instead of one call per record.
-        document_embeddings = self._embed_queries(
-            [str(item["text"]) for item in items]
-        )
-
-        prepared: list[dict[str, Any]] = []
-
-        for item, document_embedding in zip(items, document_embeddings):
-
-            # Best score across every query variant (translated
-            # English phrasing) - one translator's miss on this
-            # record shouldn't sink it if another translator's
-            # phrasing matches well.
-            similarity_score = max(
-                self._cosine_similarity(query_embedding, document_embedding)
-                for query_embedding in query_embeddings
+            similarity_score = self._calculate_similarity(
+                query_embedding=query_embedding,
+                text=str(text),
             )
 
             item["similarity_score"] = similarity_score
@@ -445,12 +481,16 @@ class EvidencePipeline:
 
         seen_chunk_ids: set[str] = set()
 
-        for item in p1_evidence + p4_evidence:
+        for item in (
+            p1_evidence + p4_evidence
+        ):
 
             if not isinstance(item, dict):
                 continue
 
-            chunk_id = item.get("chunk_id")
+            chunk_id = item.get(
+                "chunk_id"
+            )
 
             if not chunk_id:
                 continue
@@ -465,60 +505,6 @@ class EvidencePipeline:
         return merged
 
     # ========================================================
-    # Merge multiple retrieval passes (one per translation variant of
-    # the same query), keeping whichever hit scored higher for a given
-    # chunk_id.
-    #
-    # This is what makes translation "best effort" instead of "single
-    # point of failure": if one translator's phrasing finds a chunk
-    # another one's phrasing missed, both survive; if both find it,
-    # the better-scored version wins.
-    # ========================================================
-
-    def _merge_by_best_score(
-        self,
-        *candidate_lists: list[dict[str, Any]],
-    ) -> list[dict[str, Any]]:
-
-        best_by_chunk_id: dict[str, dict[str, Any]] = {}
-
-        for candidates in candidate_lists:
-            for item in candidates:
-
-                if not isinstance(item, dict):
-                    continue
-
-                chunk_id = item.get("chunk_id")
-
-                if not chunk_id:
-                    continue
-
-                score = float(
-                    item.get(
-                        "similarity_score",
-                        item.get("rerank_score", 0.0),
-                    )
-                )
-
-                existing = best_by_chunk_id.get(chunk_id)
-
-                if existing is None:
-                    best_by_chunk_id[chunk_id] = item
-                    continue
-
-                existing_score = float(
-                    existing.get(
-                        "similarity_score",
-                        existing.get("rerank_score", 0.0),
-                    )
-                )
-
-                if score > existing_score:
-                    best_by_chunk_id[chunk_id] = item
-
-        return list(best_by_chunk_id.values())
-
-    # ========================================================
     # Identify P4 test evidence
     # ========================================================
 
@@ -531,10 +517,15 @@ class EvidencePipeline:
             return False
 
         chunk_id = str(
-            candidate.get("chunk_id", "")
+            candidate.get(
+                "chunk_id",
+                "",
+            )
         ).strip().upper()
 
-        return chunk_id.startswith("P4-TEST-")
+        return chunk_id.startswith(
+            "P4-TEST-"
+        )
 
     # ========================================================
     # Evidence selection with standard coverage
@@ -564,6 +555,7 @@ class EvidencePipeline:
         if not standard_ids:
 
             if evidence_limit == self.rerank_top_k:
+
                 return self.selector.select(
                     candidates=candidates
                 )
@@ -579,12 +571,18 @@ class EvidencePipeline:
                     )
                 )
 
-                if score < self.selector.minimum_score:
+                if (
+                    score
+                    < self.selector.minimum_score
+                ):
                     continue
 
                 selected.append(candidate)
 
-                if len(selected) >= evidence_limit:
+                if (
+                    len(selected)
+                    >= evidence_limit
+                ):
                     break
 
             return selected
@@ -594,20 +592,18 @@ class EvidencePipeline:
         # ----------------------------------------------------
 
         expected_standards = list(
-            dict.fromkeys(standard_ids)
+            dict.fromkeys(
+                standard_ids
+            )
         )
 
         # ----------------------------------------------------
         # SPECIAL CASE:
-        # Test-completeness query
+        # Genuine test-completeness query
         #
-        # For authoritative P4 TEST records:
-        #
-        #   reranking = ordering
-        #   P4 completeness = preservation
-        #
-        # We intentionally DO NOT discard a P4 test simply
-        # because its rerank score is below 0.30.
+        # IMPORTANT:
+        # Multi-part queries are prevented from reaching this
+        # branch by _is_multi_part_query().
         # ----------------------------------------------------
 
         if test_completeness_query:
@@ -615,18 +611,12 @@ class EvidencePipeline:
             p4_test_candidates = [
                 candidate
                 for candidate in candidates
-                if self._is_p4_test_evidence(candidate)
+                if self._is_p4_test_evidence(
+                    candidate
+                )
             ]
 
             if p4_test_candidates:
-
-                # Preserve every authoritative P4 test record.
-                #
-                # They have already been selected from the
-                # standard-specific P4 knowledge base.
-                #
-                # Their rerank score is still useful for ordering,
-                # but not for deleting an authoritative requirement.
 
                 selected = list(
                     p4_test_candidates
@@ -653,12 +643,6 @@ class EvidencePipeline:
                     reverse=True,
                 )
 
-                # Make sure every requested standard that has
-                # P4 test records remains represented.
-                #
-                # Since all P4 test records are preserved, this
-                # naturally maintains standard coverage.
-
                 return selected
 
         # ----------------------------------------------------
@@ -676,10 +660,15 @@ class EvidencePipeline:
                 )
             )
 
-            if score < self.selector.minimum_score:
+            if (
+                score
+                < self.selector.minimum_score
+            ):
                 continue
 
-            valid_candidates.append(candidate)
+            valid_candidates.append(
+                candidate
+            )
 
         if not valid_candidates:
             return []
@@ -720,12 +709,18 @@ class EvidencePipeline:
                     "chunk_id"
                 )
 
-                if chunk_id in selected_chunk_ids:
+                if (
+                    chunk_id
+                    in selected_chunk_ids
+                ):
                     continue
 
-                if candidate.get(
-                    "standard_id"
-                ) != standard_id:
+                if (
+                    candidate.get(
+                        "standard_id"
+                    )
+                    != standard_id
+                ):
                     continue
 
                 best_candidate = candidate
@@ -735,20 +730,30 @@ class EvidencePipeline:
             if best_candidate is None:
                 continue
 
-            selected.append(best_candidate)
-
-            selected_chunk_ids.add(
-                best_candidate.get("chunk_id")
+            selected.append(
+                best_candidate
             )
 
-            if len(selected) >= evidence_limit:
+            selected_chunk_ids.add(
+                best_candidate.get(
+                    "chunk_id"
+                )
+            )
+
+            if (
+                len(selected)
+                >= evidence_limit
+            ):
                 break
 
         # ----------------------------------------------------
         # Fill remaining evidence slots
         # ----------------------------------------------------
 
-        if len(selected) < evidence_limit:
+        if (
+            len(selected)
+            < evidence_limit
+        ):
 
             for candidate in valid_candidates:
 
@@ -756,14 +761,24 @@ class EvidencePipeline:
                     "chunk_id"
                 )
 
-                if chunk_id in selected_chunk_ids:
+                if (
+                    chunk_id
+                    in selected_chunk_ids
+                ):
                     continue
 
-                selected.append(candidate)
+                selected.append(
+                    candidate
+                )
 
-                selected_chunk_ids.add(chunk_id)
+                selected_chunk_ids.add(
+                    chunk_id
+                )
 
-                if len(selected) >= evidence_limit:
+                if (
+                    len(selected)
+                    >= evidence_limit
+                ):
                     break
 
         selected.sort(
@@ -795,7 +810,6 @@ class EvidencePipeline:
         query: str,
         standard_ids: list[str] | None = None,
         language: str = "en",
-        query_variants: list[str] | None = None,
     ) -> dict:
 
         if not query or not query.strip():
@@ -805,79 +819,51 @@ class EvidencePipeline:
 
         # ----------------------------------------------------
         # Query embedding
-        #
-        # `query` is expected to already be the English-translated/
-        # normalized text (P2's normalize_query_to_english output) -
-        # _is_completeness_query/_is_test_completeness_query below
-        # match literal English phrases against it, and it's what
-        # Gemini sees as the question to answer, so that stays as-is.
-        #
-        # `query_variants`, if supplied, is every OTHER English
-        # translation P2's translators produced for the same source
-        # text (language.normalize_query_to_english_variants) - e.g.
-        # Google Translate's and MyMemory's phrasings of the same
-        # Hindi sentence often differ. We embed and search with all
-        # of them and keep whichever hit scores higher per document
-        # (see _merge_by_best_score), so one translator's odd
-        # phrasing of a domain term no longer determines retrieval
-        # quality on its own. All batched into a single local model
-        # call.
         # ----------------------------------------------------
 
-        all_query_texts = [query]
-        seen_lower = {query.strip().lower()}
-
-        for variant in (query_variants or []):
-            if not variant or not variant.strip():
-                continue
-            key = variant.strip().lower()
-            if key in seen_lower:
-                continue
-            seen_lower.add(key)
-            all_query_texts.append(variant)
-
-        query_embeddings = self._embed_queries(all_query_texts)
+        query_embedding = self._embed_query(
+            query
+        )
 
         # ----------------------------------------------------
         # P1 retrieval
         # ----------------------------------------------------
 
-        retrieved_lists = [
+        retrieved_candidates = (
             self.retriever.retrieve(
-                query_embedding=embedding,
+                query_embedding=query_embedding,
                 top_k=self.retrieval_top_k,
                 standard_ids=standard_ids,
             )
-            for embedding in query_embeddings
-        ]
-
-        retrieved_candidates = (
-            self._merge_by_best_score(*retrieved_lists)
-            if len(retrieved_lists) > 1
-            else retrieved_lists[0]
         )
 
         # ----------------------------------------------------
         # P4 retrieval
         # ----------------------------------------------------
 
-        p4_candidates: list[dict[str, Any]] = []
+        p4_candidates: list[
+            dict[str, Any]
+        ] = []
 
         if standard_ids:
 
-            p4_candidates = self._prepare_p4_evidence(
-                query=query,
-                query_embeddings=query_embeddings,
-                standard_ids=standard_ids,
+            p4_candidates = (
+                self._prepare_p4_evidence(
+                    query=query,
+                    query_embedding=query_embedding,
+                    standard_ids=standard_ids,
+                )
             )
 
         # ----------------------------------------------------
         # Merge P1 + P4
         # ----------------------------------------------------
 
-        combined_candidates = self._merge_evidence(
-            p1_evidence=retrieved_candidates,
-            p4_evidence=p4_candidates,
+        combined_candidates = (
+            self._merge_evidence(
+                p1_evidence=retrieved_candidates,
+                p4_evidence=p4_candidates,
+            )
         )
 
         # ----------------------------------------------------
@@ -885,23 +871,63 @@ class EvidencePipeline:
         # ----------------------------------------------------
 
         completeness_query = (
-            self._is_completeness_query(query)
+            self._is_completeness_query(
+                query
+            )
         )
 
+        raw_test_completeness_query = (
+            self._is_test_completeness_query(
+                query
+            )
+        )
+
+        multi_part_query = (
+            self._is_multi_part_query(
+                query
+            )
+        )
+
+        # ----------------------------------------------------
+        # IMPORTANT FIX:
+        #
+        # A multi-part query that contains
+        # "what tests are required" must NOT be treated as
+        # a test-only completeness query.
+        #
+        # Example:
+        #
+        # "What standard applies, what tests are required,
+        #  what documents are needed, and how does factory
+        #  inspection work?"
+        #
+        # raw_test_completeness_query = True
+        # multi_part_query = True
+        #
+        # final test_completeness_query = False
+        # completeness_query = True
+        # ----------------------------------------------------
+
         test_completeness_query = (
-            self._is_test_completeness_query(query)
+            raw_test_completeness_query
+            and not multi_part_query
         )
 
         # ----------------------------------------------------
         # Evidence budget
         # ----------------------------------------------------
 
-        if test_completeness_query and standard_ids:
+        if (
+            test_completeness_query
+            and standard_ids
+        ):
 
             test_p4_count = sum(
                 1
                 for item in p4_candidates
-                if self._is_p4_test_evidence(item)
+                if self._is_p4_test_evidence(
+                    item
+                )
             )
 
             evidence_budget = max(
@@ -909,7 +935,10 @@ class EvidencePipeline:
                 test_p4_count,
             )
 
-        elif completeness_query and standard_ids:
+        elif (
+            completeness_query
+            and standard_ids
+        ):
 
             evidence_budget = max(
                 self.rerank_top_k,
@@ -918,29 +947,40 @@ class EvidencePipeline:
 
         else:
 
-            evidence_budget = self.rerank_top_k
+            evidence_budget = (
+                self.rerank_top_k
+            )
 
         # ----------------------------------------------------
         # Reranking candidates
         # ----------------------------------------------------
 
-        if test_completeness_query and standard_ids:
+        if (
+            test_completeness_query
+            and standard_ids
+        ):
 
             p4_test_candidates = [
                 item
                 for item in p4_candidates
-                if self._is_p4_test_evidence(item)
+                if self._is_p4_test_evidence(
+                    item
+                )
             ]
 
             if p4_test_candidates:
 
                 test_chunk_ids = {
-                    item.get("chunk_id")
+                    item.get(
+                        "chunk_id"
+                    )
                     for item in p4_test_candidates
                 }
 
                 p4_chunk_ids = {
-                    item.get("chunk_id")
+                    item.get(
+                        "chunk_id"
+                    )
                     for item in p4_candidates
                 }
 
@@ -948,9 +988,13 @@ class EvidencePipeline:
                     item
                     for item in combined_candidates
                     if (
-                        item.get("chunk_id")
+                        item.get(
+                            "chunk_id"
+                        )
                         not in p4_chunk_ids
-                        or item.get("chunk_id")
+                        or item.get(
+                            "chunk_id"
+                        )
                         in test_chunk_ids
                     )
                 ]
@@ -963,21 +1007,31 @@ class EvidencePipeline:
 
             coverage_rerank_top_k = max(
                 evidence_budget,
-                len(reranking_candidates),
+                len(
+                    reranking_candidates
+                ),
             )
 
-        elif completeness_query and standard_ids:
+        elif (
+            completeness_query
+            and standard_ids
+        ):
 
             coverage_rerank_top_k = max(
                 evidence_budget,
-                len(combined_candidates),
+                len(
+                    combined_candidates
+                ),
             )
 
             reranking_candidates = (
                 combined_candidates
             )
 
-        elif standard_ids and len(standard_ids) > 1:
+        elif (
+            standard_ids
+            and len(standard_ids) > 1
+        ):
 
             coverage_rerank_top_k = max(
                 self.rerank_top_k,
@@ -1002,11 +1056,13 @@ class EvidencePipeline:
         # Reranking
         # ----------------------------------------------------
 
-        reranked_candidates = self.reranker.rerank(
-            query=query,
-            candidates=reranking_candidates,
-            top_k=coverage_rerank_top_k,
-            standard_ids=standard_ids,
+        reranked_candidates = (
+            self.reranker.rerank(
+                query=query,
+                candidates=reranking_candidates,
+                top_k=coverage_rerank_top_k,
+                standard_ids=standard_ids,
+            )
         )
 
         # ----------------------------------------------------
@@ -1063,17 +1119,29 @@ class EvidencePipeline:
         # Gemini answer generation
         # ----------------------------------------------------
 
-        if not evidence_sufficient and not standard_ids:
-            answer_result = self.answer_generator.generate_general_fallback(
-                query=query,
-                language=language,
+        if (
+            not evidence_sufficient
+            and not standard_ids
+        ):
+
+            answer_result = (
+                self.answer_generator.generate_general_fallback(
+                    query=query,
+                    language=language,
+                )
             )
+
         else:
-            answer_result = self.answer_generator.generate(
-                query=query,
-                evidence=selected_evidence,
-                evidence_sufficient=evidence_sufficient,
-                language=language,
+
+            answer_result = (
+                self.answer_generator.generate(
+                    query=query,
+                    evidence=selected_evidence,
+                    evidence_sufficient=(
+                        evidence_sufficient
+                    ),
+                    language=language,
+                )
             )
 
         # ----------------------------------------------------
@@ -1106,7 +1174,9 @@ class EvidencePipeline:
             "p4_test_evidence_count": sum(
                 1
                 for item in p4_candidates
-                if self._is_p4_test_evidence(item)
+                if self._is_p4_test_evidence(
+                    item
+                )
             ),
 
             "combined_evidence_count": len(
@@ -1183,6 +1253,14 @@ class EvidencePipeline:
                 completeness_query
             ),
 
+            "raw_test_completeness_query": (
+                raw_test_completeness_query
+            ),
+
+            "multi_part_query": (
+                multi_part_query
+            ),
+
             "test_completeness_query": (
                 test_completeness_query
             ),
@@ -1190,8 +1268,6 @@ class EvidencePipeline:
             "evidence_budget": (
                 evidence_budget
             ),
-
-            "query_variants_used": all_query_texts,
         }
 
 
@@ -1238,6 +1314,16 @@ if __name__ == "__main__":
 
     print("\nCompleteness query:")
     print(result["completeness_query"])
+
+    print("\nRaw test completeness query:")
+    print(
+        result[
+            "raw_test_completeness_query"
+        ]
+    )
+
+    print("\nMulti-part query:")
+    print(result["multi_part_query"])
 
     print("\nTest completeness query:")
     print(result["test_completeness_query"])
@@ -1350,6 +1436,16 @@ if __name__ == "__main__":
     print("\nCompleteness query:")
     print(result["completeness_query"])
 
+    print("\nRaw test completeness query:")
+    print(
+        result[
+            "raw_test_completeness_query"
+        ]
+    )
+
+    print("\nMulti-part query:")
+    print(result["multi_part_query"])
+
     print("\nTest completeness query:")
     print(result["test_completeness_query"])
 
@@ -1458,6 +1554,16 @@ if __name__ == "__main__":
     print("\nCompleteness query:")
     print(result["completeness_query"])
 
+    print("\nRaw test completeness query:")
+    print(
+        result[
+            "raw_test_completeness_query"
+        ]
+    )
+
+    print("\nMulti-part query:")
+    print(result["multi_part_query"])
+
     print("\nTest completeness query:")
     print(result["test_completeness_query"])
 
@@ -1515,6 +1621,16 @@ if __name__ == "__main__":
     print("\nCompleteness query:")
     print(result["completeness_query"])
 
+    print("\nRaw test completeness query:")
+    print(
+        result[
+            "raw_test_completeness_query"
+        ]
+    )
+
+    print("\nMulti-part query:")
+    print(result["multi_part_query"])
+
     print("\nTest completeness query:")
     print(result["test_completeness_query"])
 
@@ -1547,8 +1663,65 @@ if __name__ == "__main__":
 
         print("No citations generated.")
 
+    # ========================================================
+    # TEST 5
+    # ========================================================
+
     print("\n" + "=" * 70)
     print(
-        "P1 + P4 + Gemini end-to-end pipeline test completed."
+        "TEST 5 — Multi-part MSME query classification"
+    )
+    print("=" * 70)
+
+    query = (
+        "I manufacture stainless steel pressure cookers "
+        "in India and want to get BIS certification for "
+        "my product. Please tell me which standard applies, "
+        "what tests are required, what documents I need, "
+        "how the factory inspection works, and what I need "
+        "to do after getting the licence to keep it valid."
+    )
+
+    print("\nQuery:")
+    print(query)
+
+    print("\nExpected:")
+    print(
+        "raw_test_completeness_query = True"
+    )
+    print(
+        "multi_part_query = True"
+    )
+    print(
+        "test_completeness_query = False"
+    )
+
+    print("\nActual raw test completeness:")
+    print(
+        pipeline._is_test_completeness_query(
+            query
+        )
+    )
+
+    print("\nActual multi-part:")
+    print(
+        pipeline._is_multi_part_query(
+            query
+        )
+    )
+
+    print("\nActual final test completeness:")
+    print(
+        pipeline._is_test_completeness_query(
+            query
+        )
+        and not pipeline._is_multi_part_query(
+            query
+        )
+    )
+
+    print("\n" + "=" * 70)
+    print(
+        "P1 + P4 + Gemini pipeline test completed."
     )
     print("=" * 70)

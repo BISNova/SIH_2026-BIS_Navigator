@@ -27,7 +27,7 @@ from .matcher import ProductMatcher
 from .normalize import normalize
 from .confidence import decide
 from .clarification import get_clarification
-from .language import normalize_query_to_english_variants
+from .language import normalize_query_to_english
 from .schemas import (
     ProductMatchResult,
     ProductCandidate,
@@ -163,42 +163,38 @@ class ProductIntelligencePipeline:
         correctly right after "I make pressure cookers" - see
         backend/session_store.py for where context_hint comes from.
         """
-        english_variants, detected_language = normalize_query_to_english_variants(query)
+        english_query, detected_language = normalize_query_to_english(query)
 
-        result = self._process_english(english_variants, original_query=query)
+        result = self._process_english(english_query, original_query=query)
         result.detected_language = detected_language
 
+        # This used to only fire on status == "not_found". But a
+        # followup like "what tests need to be done for this standard?"
+        # doesn't necessarily come back not_found - the fuzzy matcher
+        # can latch onto a weak/wrong candidate and return
+        # "clarification_needed" (or even a shaky "matched") instead,
+        # which silently skipped the context_hint fallback entirely and
+        # produced a generic, non-product-specific answer despite the
+        # conversation already having established the product. Widened
+        # to anything short of a clean "matched", and now only accepts
+        # the augmented version if IT resolves to a clean match - so
+        # this can't downgrade an already-good match into something
+        # worse.
         if (
-            result.status == "not_found"
+            result.status != "matched"
             and context_hint
-            and _looks_like_followup(normalize(english_variants[0]))
+            and _looks_like_followup(normalize(english_query))
         ):
-            augmented_variants = [
-                f"{variant} {context_hint}".strip()
-                for variant in english_variants
-            ]
-            augmented_result = self._process_english(augmented_variants, original_query=query)
-            if augmented_result.status != "not_found":
+            augmented = f"{english_query} {context_hint}".strip()
+            augmented_result = self._process_english(augmented, original_query=query)
+            if augmented_result.status == "matched":
                 augmented_result.detected_language = detected_language
                 return augmented_result
 
         return result
 
-    def _process_english(self, query_variants: List[str], original_query: str) -> ProductMatchResult:
-        # Rank against EVERY translation variant and keep the best
-        # score per product row, instead of trusting a single
-        # translator's phrasing. Costs nothing extra in API terms -
-        # TF-IDF matching is pure local computation, and the variants
-        # themselves already come free from language.py running both
-        # translators anyway.
-        best_scores: dict[int, float] = {}
-
-        for variant in query_variants:
-            for row_index, score in self.matcher.rank(variant):
-                if score > best_scores.get(row_index, 0.0):
-                    best_scores[row_index] = score
-
-        ranked = sorted(best_scores.items(), key=lambda item: item[1], reverse=True)
+    def _process_english(self, query: str, original_query: str) -> ProductMatchResult:
+        ranked = self.matcher.rank(query)  # [(row_index, score), ...] all rows
 
         top_candidates: List[ProductCandidate] = [
             self._row_to_candidate(idx, score)
@@ -212,8 +208,7 @@ class ProductIntelligencePipeline:
 
         result = ProductMatchResult(
             query=original_query,
-            normalized_query=normalize(query_variants[0]),
-            normalized_query_variants=[normalize(v) for v in query_variants],
+            normalized_query=normalize(query),
             status=decision.status,
             product_candidates=top_candidates,
             confidence_score=round(float(top1_score), 4),

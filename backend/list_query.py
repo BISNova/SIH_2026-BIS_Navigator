@@ -29,14 +29,22 @@ from dataclasses import dataclass
 from typing import Optional
 
 LIST_PATTERNS = [
-    r"\blist\s+(all|every)\b",
+    # NOTE: these used to be bare "list all/every" and "show all/every"
+    # with no object, which meant ANY "list every ___" phrasing matched -
+    # including "list every certification process step mentioned in the
+    # evidence for IS 2347", which has nothing to do with the standards
+    # catalog. That query got short-circuited straight to a dump of all
+    # 42 KB standards instead of ever reaching P1. Scoped to "standards"
+    # (optionally with "how many"/"give me N") so this only fires for
+    # actual catalog-browsing queries.
+    r"\blist\s+(all|every)\s+(the\s+)?(mandatory\s+)?standards?\b",
     r"\ball\s+(the\s+)?(mandatory\s+)?standards?\b",
-    r"\bgive\s+me\s+\d+\b",
-    r"\btop\s+\d+\b",
-    r"\bhow\s+many\b",
+    r"\bgive\s+me\s+\d+\s+(mandatory\s+)?standards?\b",
+    r"\btop\s+\d+\s+(mandatory\s+)?standards?\b",
+    r"\bhow\s+many\s+(mandatory\s+)?standards?\b",
     r"\ball\s+of\b.*\bstandards?\b",
-    r"\bshow\s+(me\s+)?(all|every)\b",
-    r"\bgimme\s+\d+\b",
+    r"\bshow\s+(me\s+)?(all|every)\s+(the\s+)?(mandatory\s+)?standards?\b",
+    r"\bgimme\s+\d+\s+(mandatory\s+)?standards?\b",
 ]
 
 MANDATORY_FILTER_PATTERN = r"\bmandatory\b"
