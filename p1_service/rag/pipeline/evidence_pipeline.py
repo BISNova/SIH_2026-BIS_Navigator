@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pathlib import Path
 import sys
@@ -50,31 +50,31 @@ class EvidencePipeline:
     Flow:
 
         Query
-          ↓
+          Γåô
         Query Embedding
-          ↓
-        ┌─────────────────────────────┐
-        │                             │
-        ▼                             ▼
+          Γåô
+        ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+        Γöé                             Γöé
+        Γû╝                             Γû╝
     P1 Chroma                  P4 Structured Knowledge
     P1 Retrieval               P4 Evidence Builder
-        │                             │
-        └──────────────┬──────────────┘
-                       ▼
+        Γöé                             Γöé
+        ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö¼ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+                       Γû╝
                 Merged Evidence
-                       ↓
+                       Γåô
                     Reranking
-                       ↓
+                       Γåô
           Query-aware Evidence Selection
-                       ↓
+                       Γåô
                 Evidence Sufficiency
-                       ↓
+                       Γåô
                 Confidence Scoring
-                       ↓
+                       Γåô
               Gemini Answer Generation
-                       ↓
+                       Γåô
                 Citation Building
-                       ↓
+                       Γåô
               Final Evidence Package
 
     Important architecture rule:
@@ -116,13 +116,13 @@ class EvidencePipeline:
     Example:
 
         "What tests are required?"
-            → test-completeness query
+            ΓåÆ test-completeness query
 
         "What standard applies, what tests are required,
          what documents are needed, and how does factory
          inspection work?"
-            → multi-part completeness query
-            → NOT test-only
+            ΓåÆ multi-part completeness query
+            ΓåÆ NOT test-only
     """
 
     # ========================================================
@@ -190,9 +190,30 @@ class EvidencePipeline:
 
         return embedding.tolist()
 
+    def _embed_queries(self, queries: list[str]) -> list[list[float]]:
+        """Batch form of _embed_query - one local model call for N texts."""
+        if not queries:
+            return []
+        return [embedding.tolist() for embedding in self.model.embed(queries)]
+
     # ========================================================
     # Similarity
     # ========================================================
+
+    @staticmethod
+    def _cosine_similarity(
+        vector_a: list[float],
+        vector_b: list[float],
+    ) -> float:
+        """Pure vector math - both vectors are already normalized by fastembed."""
+        if not vector_a or not vector_b:
+            return 0.0
+
+        similarity = float(
+            sum(a * b for a, b in zip(vector_a, vector_b))
+        )
+
+        return max(0.0, min(similarity, 1.0))
 
     def _calculate_similarity(
         self,
@@ -207,20 +228,7 @@ class EvidencePipeline:
             self.model.embed([text])
         )
 
-        similarity = float(
-            sum(
-                q * e
-                for q, e in zip(
-                    query_embedding,
-                    evidence_embedding.tolist(),
-                )
-            )
-        )
-
-        return max(
-            0.0,
-            min(similarity, 1.0),
-        )
+        return self._cosine_similarity(query_embedding, evidence_embedding.tolist())
 
     # ========================================================
     # General completeness detection
@@ -410,7 +418,7 @@ class EvidencePipeline:
     def _prepare_p4_evidence(
         self,
         query: str,
-        query_embedding: list[float],
+        query_embeddings: list[list[float]],
         standard_ids: list[str],
     ) -> list[dict[str, Any]]:
 
@@ -430,7 +438,7 @@ class EvidencePipeline:
             if records:
                 p4_records.extend(records)
 
-        prepared: list[dict[str, Any]] = []
+        items: list[dict[str, Any]] = []
 
         for record in p4_records:
 
@@ -451,9 +459,28 @@ class EvidencePipeline:
             if not text or not str(text).strip():
                 continue
 
-            similarity_score = self._calculate_similarity(
-                query_embedding=query_embedding,
-                text=str(text),
+            items.append(item)
+
+        if not items:
+            return []
+
+        # One batched local-model call for every P4 record text,
+        # instead of one call per record.
+        document_embeddings = self._embed_queries(
+            [str(item["text"]) for item in items]
+        )
+
+        prepared: list[dict[str, Any]] = []
+
+        for item, document_embedding in zip(items, document_embeddings):
+
+            # Best score across every query variant (translated
+            # English phrasing) - one translator's miss on this
+            # record shouldn't sink it if another translator's
+            # phrasing matches well.
+            similarity_score = max(
+                self._cosine_similarity(query_embedding, document_embedding)
+                for query_embedding in query_embeddings
             )
 
             item["similarity_score"] = similarity_score
@@ -503,6 +530,60 @@ class EvidencePipeline:
             merged.append(item)
 
         return merged
+
+    # ========================================================
+    # Merge multiple retrieval passes (one per translation variant of
+    # the same query), keeping whichever hit scored higher for a given
+    # chunk_id.
+    #
+    # This is what makes translation "best effort" instead of "single
+    # point of failure": if one translator's phrasing finds a chunk
+    # another one's phrasing missed, both survive; if both find it,
+    # the better-scored version wins.
+    # ========================================================
+
+    def _merge_by_best_score(
+        self,
+        *candidate_lists: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
+
+        best_by_chunk_id: dict[str, dict[str, Any]] = {}
+
+        for candidates in candidate_lists:
+            for item in candidates:
+
+                if not isinstance(item, dict):
+                    continue
+
+                chunk_id = item.get("chunk_id")
+
+                if not chunk_id:
+                    continue
+
+                score = float(
+                    item.get(
+                        "similarity_score",
+                        item.get("rerank_score", 0.0),
+                    )
+                )
+
+                existing = best_by_chunk_id.get(chunk_id)
+
+                if existing is None:
+                    best_by_chunk_id[chunk_id] = item
+                    continue
+
+                existing_score = float(
+                    existing.get(
+                        "similarity_score",
+                        existing.get("rerank_score", 0.0),
+                    )
+                )
+
+                if score > existing_score:
+                    best_by_chunk_id[chunk_id] = item
+
+        return list(best_by_chunk_id.values())
 
     # ========================================================
     # Identify P4 test evidence
@@ -810,6 +891,7 @@ class EvidencePipeline:
         query: str,
         standard_ids: list[str] | None = None,
         language: str = "en",
+        query_variants: list[str] | None = None,
     ) -> dict:
 
         if not query or not query.strip():
@@ -819,22 +901,56 @@ class EvidencePipeline:
 
         # ----------------------------------------------------
         # Query embedding
+        #
+        # `query` is expected to already be the English-translated/
+        # normalized text (P2's normalize_query_to_english output) -
+        # _is_completeness_query/_is_test_completeness_query below
+        # match literal English phrases against it, and it's what
+        # Gemini sees as the question to answer, so that stays as-is.
+        #
+        # `query_variants`, if supplied, is every OTHER English
+        # translation P2's translators produced for the same source
+        # text (language.normalize_query_to_english_variants) - e.g.
+        # Google Translate's and MyMemory's phrasings of the same
+        # Hindi sentence often differ. We embed and search with all
+        # of them and keep whichever hit scores higher per document
+        # (see _merge_by_best_score), so one translator's odd
+        # phrasing of a domain term no longer determines retrieval
+        # quality on its own. All batched into a single local model
+        # call.
         # ----------------------------------------------------
 
-        query_embedding = self._embed_query(
-            query
-        )
+        all_query_texts = [query]
+        seen_lower = {query.strip().lower()}
+
+        for variant in (query_variants or []):
+            if not variant or not variant.strip():
+                continue
+            key = variant.strip().lower()
+            if key in seen_lower:
+                continue
+            seen_lower.add(key)
+            all_query_texts.append(variant)
+
+        query_embeddings = self._embed_queries(all_query_texts)
 
         # ----------------------------------------------------
         # P1 retrieval
         # ----------------------------------------------------
 
-        retrieved_candidates = (
+        retrieved_lists = [
             self.retriever.retrieve(
-                query_embedding=query_embedding,
+                query_embedding=embedding,
                 top_k=self.retrieval_top_k,
                 standard_ids=standard_ids,
             )
+            for embedding in query_embeddings
+        ]
+
+        retrieved_candidates = (
+            self._merge_by_best_score(*retrieved_lists)
+            if len(retrieved_lists) > 1
+            else retrieved_lists[0]
         )
 
         # ----------------------------------------------------
@@ -847,13 +963,14 @@ class EvidencePipeline:
 
         if standard_ids:
 
-            p4_candidates = (
-                self._prepare_p4_evidence(
-                    query=query,
-                    query_embedding=query_embedding,
-                    standard_ids=standard_ids,
-                )
+            p4_candidates = self._prepare_p4_evidence(
+                query=query,
+                query_embeddings=query_embeddings,
+                standard_ids=standard_ids,
             )
+
+
+
 
         # ----------------------------------------------------
         # Merge P1 + P4
@@ -1268,6 +1385,8 @@ class EvidencePipeline:
             "evidence_budget": (
                 evidence_budget
             ),
+
+            "query_variants_used": all_query_texts,
         }
 
 
@@ -1279,7 +1398,7 @@ if __name__ == "__main__":
 
     print("=" * 70)
     print(
-        "P1 + P4 + Gemini — End-to-End Evidence Pipeline"
+        "P1 + P4 + Gemini ΓÇö End-to-End Evidence Pipeline"
     )
     print("=" * 70)
 
@@ -1291,7 +1410,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 1 — P4 + Gemini: Domestic Pressure Cooker"
+        "TEST 1 ΓÇö P4 + Gemini: Domestic Pressure Cooker"
     )
     print("=" * 70)
 
@@ -1407,7 +1526,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 2 — P4 + Gemini: "
+        "TEST 2 ΓÇö P4 + Gemini: "
         "Storage Electric Water Heater"
     )
     print("=" * 70)
@@ -1530,7 +1649,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 3 — General P1 question"
+        "TEST 3 ΓÇö General P1 question"
     )
     print("=" * 70)
 
@@ -1597,7 +1716,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 4 — Unknown / unrelated question"
+        "TEST 4 ΓÇö Unknown / unrelated question"
     )
     print("=" * 70)
 
@@ -1669,7 +1788,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 5 — Multi-part MSME query classification"
+        "TEST 5 ΓÇö Multi-part MSME query classification"
     )
     print("=" * 70)
 
