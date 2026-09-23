@@ -50,31 +50,31 @@ class EvidencePipeline:
     Flow:
 
         Query
-          Γåô
+          ↓
         Query Embedding
-          Γåô
-        ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
-        Γöé                             Γöé
-        Γû╝                             Γû╝
+          ↓
+        ┌──────────────────────────────┐
+        │                              │
+        ↓                              ↓
     P1 Chroma                  P4 Structured Knowledge
     P1 Retrieval               P4 Evidence Builder
-        Γöé                             Γöé
-        ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö¼ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
-                       Γû╝
+        │                              │
+        └──────────────┬───────────────┘
+                       ↓
                 Merged Evidence
-                       Γåô
+                       ↓
                     Reranking
-                       Γåô
+                       ↓
           Query-aware Evidence Selection
-                       Γåô
+                       ↓
                 Evidence Sufficiency
-                       Γåô
+                       ↓
                 Confidence Scoring
-                       Γåô
+                       ↓
               Gemini Answer Generation
-                       Γåô
+                       ↓
                 Citation Building
-                       Γåô
+                       ↓
               Final Evidence Package
 
     Important architecture rule:
@@ -116,13 +116,13 @@ class EvidencePipeline:
     Example:
 
         "What tests are required?"
-            ΓåÆ test-completeness query
+            → test-completeness query
 
         "What standard applies, what tests are required,
          what documents are needed, and how does factory
          inspection work?"
-            ΓåÆ multi-part completeness query
-            ΓåÆ NOT test-only
+            → multi-part completeness query
+            → NOT test-only
     """
 
     # ========================================================
@@ -228,7 +228,10 @@ class EvidencePipeline:
             self.model.embed([text])
         )
 
-        return self._cosine_similarity(query_embedding, evidence_embedding.tolist())
+        return self._cosine_similarity(
+            query_embedding,
+            evidence_embedding.tolist(),
+        )
 
     # ========================================================
     # General completeness detection
@@ -267,6 +270,33 @@ class EvidencePipeline:
         "involved",
     })
 
+    # These words specifically describe a sequential
+    # certification/licensing process.
+    #
+    # This is intentionally separate from
+    # _COMPLETENESS_PROCESS_WORDS so that we can detect
+    # natural questions such as:
+    #
+    #     "What are the certification steps?"
+    #
+    # even when the user does not explicitly say:
+    #
+    #     "What are ALL the certification steps?"
+    #
+    _CERTIFICATION_PROCESS_WORDS = frozenset({
+        "step",
+        "steps",
+        "process",
+        "procedure",
+        "workflow",
+    })
+
+    _CERTIFICATION_WORDS = frozenset({
+        "certification",
+        "licence",
+        "license",
+    })
+
     def _is_completeness_query(
         self,
         query: str,
@@ -294,9 +324,54 @@ class EvidencePipeline:
             tokens & self._COMPLETENESS_SCOPE_WORDS
         )
 
-        return (
+        # Existing rule:
+        #
+        #     process-related word + explicit scope word
+        #
+        # Examples:
+        #     "list all certification requirements"
+        #     "give every certification step"
+        #     "full certification procedure"
+        explicit_completeness = (
             has_process_word
             and has_scope_word
+        )
+
+        # New rule:
+        #
+        # Natural certification-process questions should also
+        # retrieve the complete process evidence even when the
+        # user does not explicitly say "all" or "every".
+        #
+        # Examples:
+        #     "what are the certification steps?"
+        #     "what is the certification process?"
+        #     "what is the licence procedure?"
+        #
+        # We require BOTH:
+        #     certification/licence/license
+        # AND:
+        #     step/process/procedure/workflow
+        #
+        # This avoids turning every question containing a generic
+        # word such as "certification" or "requirement" into a
+        # completeness query.
+        has_certification_word = bool(
+            tokens & self._CERTIFICATION_WORDS
+        )
+
+        has_certification_process_word = bool(
+            tokens & self._CERTIFICATION_PROCESS_WORDS
+        )
+
+        certification_process_query = (
+            has_certification_word
+            and has_certification_process_word
+        )
+
+        return (
+            explicit_completeness
+            or certification_process_query
         )
 
     # ========================================================
@@ -472,14 +547,20 @@ class EvidencePipeline:
 
         prepared: list[dict[str, Any]] = []
 
-        for item, document_embedding in zip(items, document_embeddings):
+        for item, document_embedding in zip(
+            items,
+            document_embeddings,
+        ):
 
             # Best score across every query variant (translated
             # English phrasing) - one translator's miss on this
             # record shouldn't sink it if another translator's
             # phrasing matches well.
             similarity_score = max(
-                self._cosine_similarity(query_embedding, document_embedding)
+                self._cosine_similarity(
+                    query_embedding,
+                    document_embedding,
+                )
                 for query_embedding in query_embeddings
             )
 
@@ -926,13 +1007,18 @@ class EvidencePipeline:
         for variant in (query_variants or []):
             if not variant or not variant.strip():
                 continue
+
             key = variant.strip().lower()
+
             if key in seen_lower:
                 continue
+
             seen_lower.add(key)
             all_query_texts.append(variant)
 
-        query_embeddings = self._embed_queries(all_query_texts)
+        query_embeddings = self._embed_queries(
+            all_query_texts
+        )
 
         # ----------------------------------------------------
         # P1 retrieval
@@ -948,7 +1034,9 @@ class EvidencePipeline:
         ]
 
         retrieved_candidates = (
-            self._merge_by_best_score(*retrieved_lists)
+            self._merge_by_best_score(
+                *retrieved_lists
+            )
             if len(retrieved_lists) > 1
             else retrieved_lists[0]
         )
@@ -968,9 +1056,6 @@ class EvidencePipeline:
                 query_embeddings=query_embeddings,
                 standard_ids=standard_ids,
             )
-
-
-
 
         # ----------------------------------------------------
         # Merge P1 + P4
@@ -1398,7 +1483,7 @@ if __name__ == "__main__":
 
     print("=" * 70)
     print(
-        "P1 + P4 + Gemini ΓÇö End-to-End Evidence Pipeline"
+        "P1 + P4 + Gemini — End-to-End Evidence Pipeline"
     )
     print("=" * 70)
 
@@ -1410,7 +1495,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 1 ΓÇö P4 + Gemini: Domestic Pressure Cooker"
+        "TEST 1 — P4 + Gemini: Domestic Pressure Cooker"
     )
     print("=" * 70)
 
@@ -1526,7 +1611,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 2 ΓÇö P4 + Gemini: "
+        "TEST 2 — P4 + Gemini: "
         "Storage Electric Water Heater"
     )
     print("=" * 70)
@@ -1649,7 +1734,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 3 ΓÇö General P1 question"
+        "TEST 3 — General P1 question"
     )
     print("=" * 70)
 
@@ -1716,7 +1801,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 4 ΓÇö Unknown / unrelated question"
+        "TEST 4 — Unknown / unrelated question"
     )
     print("=" * 70)
 
@@ -1788,7 +1873,7 @@ if __name__ == "__main__":
 
     print("\n" + "=" * 70)
     print(
-        "TEST 5 ΓÇö Multi-part MSME query classification"
+        "TEST 5 — Multi-part MSME query classification"
     )
     print("=" * 70)
 
@@ -1838,6 +1923,40 @@ if __name__ == "__main__":
             query
         )
     )
+
+    # ========================================================
+    # TEST 6
+    # Completeness detection for natural certification queries
+    # ========================================================
+
+    print("\n" + "=" * 70)
+    print(
+        "TEST 6 — Natural certification-process completeness"
+    )
+    print("=" * 70)
+
+    certification_queries = [
+        "What are the certification steps?",
+        "What is the certification process?",
+        "What is the certification procedure?",
+        "What is the certification workflow?",
+        "What is the licence process?",
+        "What is the license procedure?",
+        "What are all the certification steps?",
+    ]
+
+    for certification_query in certification_queries:
+
+        print(
+            f"\n{certification_query}"
+        )
+
+        print(
+            "Completeness:",
+            pipeline._is_completeness_query(
+                certification_query
+            )
+        )
 
     print("\n" + "=" * 70)
     print(
