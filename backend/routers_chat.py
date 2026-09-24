@@ -248,6 +248,14 @@ def chat(
 
             cached_response.from_cache = True
 
+            # Preserve product context even when the answer comes
+            # from the exact-match cache.
+            if cached_response.matched_product_name:
+                session_store.update(
+                    session_id_str,
+                    cached_response.matched_product_name,
+                )
+
             _save_message_or_raise(
                 user_id=user_id,
                 session_id=session_id,
