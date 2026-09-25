@@ -72,7 +72,7 @@ export default function HeroSection({ onOpenChatbot, onExploreStandards }) {
             <div className="trust-badge-item">
               <span className="trust-icon">🌐</span>
               <div className="trust-text">
-                <strong>English & Hindi</strong>
+                <strong>Multilingual Interaction</strong>
                 <span>supported</span>
               </div>
             </div>
